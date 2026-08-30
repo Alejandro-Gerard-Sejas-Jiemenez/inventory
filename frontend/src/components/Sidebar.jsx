@@ -1,28 +1,8 @@
 import React from 'react';
-import {
-  LayoutDashboard,
-  Package,
-  ShoppingCart,
-  Truck,
-  Layers,
-  ArrowLeftRight,
-  Database,
-  FileText,
-} from 'lucide-react';
 import logoImg from '../assets/logo.png';
+import { SIDEBAR_MENU_ITEMS } from '../data/menuItems';
 
 export function Sidebar({ currentTab, onSelectTab, stats }) {
-  const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'productos', label: 'Productos & Stock', icon: Package, badge: stats?.totalProductos },
-    { id: 'ventas', label: 'Ventas & Clientes', icon: ShoppingCart, badge: stats?.totalVentas },
-    { id: 'compras', label: 'Compras & Proveedores', icon: Truck, badge: stats?.totalProveedores },
-    { id: 'catalogos', label: 'Catálogos & Atributos', icon: Layers, badge: stats?.totalModelos },
-    { id: 'movimientos', label: 'Kardex / Movimientos', icon: ArrowLeftRight },
-    { id: 'bitacora', label: 'Bitácora del Sistema', icon: FileText },
-    { id: 'database', label: 'Esquema BD (16 Tablas)', icon: Database },
-  ];
-
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
@@ -36,9 +16,11 @@ export function Sidebar({ currentTab, onSelectTab, stats }) {
       </div>
 
       <nav className="sidebar-nav">
-        {menuItems.map((item) => {
+        {SIDEBAR_MENU_ITEMS.map((item) => {
           const Icon = item.icon;
           const isActive = currentTab === item.id;
+          const badgeValue = item.badgeKey ? stats?.[item.badgeKey] : undefined;
+
           return (
             <button
               key={item.id}
@@ -49,8 +31,8 @@ export function Sidebar({ currentTab, onSelectTab, stats }) {
                 <Icon size={18} />
                 <span>{item.label}</span>
               </div>
-              {item.badge !== undefined && (
-                <span className="nav-item-badge">{item.badge}</span>
+              {badgeValue !== undefined && (
+                <span className="nav-item-badge">{badgeValue}</span>
               )}
             </button>
           );

@@ -5,6 +5,7 @@ import { InputField } from './common/InputField';
 import { SelectField } from './common/SelectField';
 import { Button } from './common/Button';
 import { Card } from './common/Card';
+import { TIPOS_MOVIMIENTO } from '../data/movementTypes';
 
 export function MovimientoModal({ isOpen, onClose, onSave, producto, usuarios = [] }) {
   const [formData, setFormData] = useState({
@@ -58,12 +59,6 @@ export function MovimientoModal({ isOpen, onClose, onSave, producto, usuarios = 
     }
   };
 
-  const tipoOptions = [
-    { value: 'ENTRADA', label: 'ENTRADA (Aumentar existencias)' },
-    { value: 'SALIDA', label: 'SALIDA (Disminuir existencias)' },
-    { value: 'AJUSTE', label: 'AJUSTE (Fijar stock exacto)' },
-  ];
-
   return (
     <Modal
       isOpen={isOpen}
@@ -116,7 +111,7 @@ export function MovimientoModal({ isOpen, onClose, onSave, producto, usuarios = 
           label="Tipo de Operación"
           value={formData.tipo}
           onChange={(e) => setFormData({ ...formData, tipo: e.target.value })}
-          options={tipoOptions}
+          options={TIPOS_MOVIMIENTO}
           required
         />
 

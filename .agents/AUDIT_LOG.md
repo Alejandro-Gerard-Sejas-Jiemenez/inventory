@@ -194,6 +194,40 @@
   - Remoto: `https://github.com/Alejandro-Gerard-Sejas-Jiemenez/inventory.git` (rama `main`)
   - Exclusiones de `.gitignore` respetadas al 100% (sin PDFs, sin binarios `.db`, sin `target/` ni `node_modules/`).
 
+---
+
+## Bloque 07: Desacoplamiento y Aislamiento de Datasets Mockup del Frontend
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `DATA-1` |
+| **Fecha** | 2026-08-30 |
+| **Módulo** | Frontend (`src/data/`) |
+| **Skills Aplicadas** | `clean-code`, `react-modern-frontend`, `spec-driven-development` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Identificar datos estáticos, esquemas de tablas y arrays de opciones mezclados dentro de las vistas JSX.
+- Diseñar módulo centralizado `frontend/src/data/` para separar esquemas, opciones, constantes y datasets mock de prueba.
+
+### Fase 2: IMPLEMENTACIÓN
+- Creación de archivos en `frontend/src/data/`:
+  - `databaseSchema.js`: Metadatos y definición de las 16 tablas del sistema.
+  - `menuItems.js`: Rutas y elementos de navegación del Sidebar.
+  - `paymentMethods.js`: Métodos de pago y estados de órdenes.
+  - `movementTypes.js`: Operaciones de inventario y Kardex.
+  - `mockData.js`: Datasets mock de prueba y semillas aisladas.
+  - `index.js`: Exportador unificado.
+- Refactorización de vistas y modales para consumir los datos desde `../data`:
+  - `DatabaseView.jsx`, `Sidebar.jsx`, `VentasView.jsx`, `MovimientoModal.jsx`.
+
+### Fase 3: VERIFICACIÓN
+- Linter (`npm run lint` / `oxlint`): 0 errores.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `refactor(frontend): decouple mock datasets and schema into dedicated data module`
+  - Sincronizado en `origin/main`.
+
+
 
 
 

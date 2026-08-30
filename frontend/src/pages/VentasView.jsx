@@ -7,6 +7,7 @@ import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
 import { DataTable } from '../components/common/DataTable';
 import { Tabs } from '../components/common/Tabs';
+import { METODOS_PAGO } from '../data/paymentMethods';
 
 export function VentasView({
   ventas = [],
@@ -143,12 +144,6 @@ export function VentasView({
     { header: 'Dirección', render: (cl) => <span style={{ color: 'var(--text-muted)' }}>{cl.direccion || '-'}</span> },
   ];
 
-  const metodosPago = [
-    { value: 'EFECTIVO', label: 'Efectivo en Caja' },
-    { value: 'QR', label: 'Pago QR / Transferencia' },
-    { value: 'TARJETA', label: 'Tarjeta Débito / Crédito' },
-  ];
-
   return (
     <div className="view-container">
       <div className="view-header">
@@ -203,7 +198,7 @@ export function VentasView({
                       label="Método de Pago"
                       value={selectedMetodo}
                       onChange={(e) => setSelectedMetodo(e.target.value)}
-                      options={metodosPago}
+                      options={METODOS_PAGO}
                       required
                     />
 

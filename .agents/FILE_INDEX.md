@@ -225,6 +225,14 @@ frontend/
     ├── assets/
     │   └── logo.png                             ← Logo oficial de Los Caseritos
     │
+    ├── data/                                    ← Datasets, metadatos y mocks aislados
+    │   ├── databaseSchema.js                    ← Esquema y metadatos de las 16 tablas
+    │   ├── menuItems.js                         ← Configuración de rutas de navegación
+    │   ├── paymentMethods.js                    ← Métodos de pago y estados
+    │   ├── movementTypes.js                     ← Tipos de operación Kardex
+    │   ├── mockData.js                          ← Datasets de prueba/mock para desarrollo
+    │   └── index.js                             ← Exportador central de datos
+    │
     └── services/
         └── api.js                               ← Cliente HTTP / Servicios de comunicación con el Backend
 ```

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Clock, User, HardDrive, FileText } from 'lucide-react';
+import { Clock, User, HardDrive, FileText } from 'lucide-react';
 import { Card, CardTitle, CardBody } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { DataTable } from '../components/common/DataTable';
