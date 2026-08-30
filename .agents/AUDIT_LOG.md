@@ -227,6 +227,46 @@
   - Commit: `refactor(frontend): decouple mock datasets and schema into dedicated data module`
   - Sincronizado en `origin/main`.
 
+---
+
+## Bloque 08: Refactorización Modular de Páginas y Extracción de Subcomponentes
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `UI-2` |
+| **Fecha** | 2026-08-30 |
+| **Módulo** | Frontend (`components/`, `pages/`) |
+| **Skills Aplicadas** | `clean-code`, `react-modern-frontend`, `ui-ux-usability`, `git-workflow`, `spec-driven-development` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Diagnosticar sobrecarga de responsabilidades en vistas principales (`VentasView`, `ComprasView`, `CatalogosView`, `ProductosView`).
+- Diseñar componentes atómicos para encabezados estructurados (`PageHeader`) y avisos del sistema (`AlertBanner`).
+- Diseñar sub-formularios específicos aislados (`NuevoModeloForm`, `NuevoMaterialForm`, `NuevoColorForm`, `NuevaCompraForm`, `NuevoProveedorForm`, `NuevaVentaPOSForm`, `NuevoClienteForm`, `ProductoColumns`).
+
+### Fase 2: IMPLEMENTACIÓN
+- Creación de componentes estructurales en `components/common/`:
+  - `PageHeader.jsx`: Encabezado con título, subtítulo, badges y slot de acciones.
+  - `AlertBanner.jsx`: Avisos estructurados con iconos y variantes cromáticas.
+- Creación de sub-componentes especializados:
+  - `components/catalogos/`: `NuevoModeloForm.jsx`, `NuevoMaterialForm.jsx`, `NuevoColorForm.jsx`.
+  - `components/compras/`: `NuevaCompraForm.jsx`, `NuevoProveedorForm.jsx`.
+  - `components/ventas/`: `NuevaVentaPOSForm.jsx`, `NuevoClienteForm.jsx`.
+  - `components/productos/`: `ProductoColumns.jsx`.
+- Refactorización de todas las páginas para actuar como coordinadores limpios (< 130 líneas por archivo):
+  - `CatalogosView.jsx`, `ComprasView.jsx`, `VentasView.jsx`, `ProductosView.jsx`, `DashboardView.jsx`, `MovimientosView.jsx`, `BitacoraView.jsx`, `DatabaseView.jsx`.
+- Actualización de estilos en `frontend/src/index.css`.
+
+### Fase 3: VERIFICACIÓN
+- Linter (`npm run lint` / `oxlint`): 0 errores.
+- Verificación en navegador mediante subagente:
+  - Comprobación del flujo de apertura y cancelación de formularios POS, órdenes de compra y catálogos.
+  - Verificación visual de PageHeader y AlertBanner en todas las vistas.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `refactor(frontend): decompose page responsibilities into modular subcomponents`
+  - Rama: `main` sincronizada en GitHub.
+
+
 
 
 

@@ -195,6 +195,8 @@ frontend/
     ├── components/                              ← Componentes de UI
     │   ├── common/                              ← Kit de componentes UI reutilizables
     │   │   ├── Card.jsx                         ← Tarjeta contenedora con header, title y body
+    │   │   ├── PageHeader.jsx                   ← Encabezado estructurado con título, subtítulo y acciones
+    │   │   ├── AlertBanner.jsx                  ← Banners de aviso estructurados con iconos y estados
     │   │   ├── InputField.jsx                   ← Campo de entrada con validación, iconos y labels
     │   │   ├── SelectField.jsx                  ← Selector estilizado con opciones
     │   │   ├── TextAreaField.jsx                ← Área de texto auto-ajustable
@@ -205,6 +207,23 @@ frontend/
     │   │   ├── Tabs.jsx                         ← Pestañas accesibles con conteo
     │   │   ├── Modal.jsx                        ← Modal accesible con tecla Escape y backdrop
     │   │   └── index.js                         ← Exportador unificado de common
+    │   │
+    │   ├── catalogos/                           ← Sub-componentes específicos de Catálogos
+    │   │   ├── NuevoModeloForm.jsx              ← Formulario aislado para alta de modelos
+    │   │   ├── NuevoMaterialForm.jsx            ← Formulario aislado para alta de materiales
+    │   │   └── NuevoColorForm.jsx               ← Formulario aislado para alta de colores
+    │   │
+    │   ├── compras/                             ← Sub-componentes específicos de Compras
+    │   │   ├── NuevaCompraForm.jsx              ← Formulario dinámico de órdenes de compra
+    │   │   └── NuevoProveedorForm.jsx           ← Formulario aislado para alta de proveedores
+    │   │
+    │   ├── ventas/                              ← Sub-componentes específicos de Ventas
+    │   │   ├── NuevaVentaPOSForm.jsx            ← Formulario de punto de venta (POS) y carrito
+    │   │   └── NuevoClienteForm.jsx             ← Formulario aislado para alta de clientes
+    │   │
+    │   ├── productos/                           ← Sub-componentes específicos de Productos
+    │   │   └── ProductoColumns.jsx              ← Definición desacoplada de columnas de tabla
+    │   │
     │   ├── Sidebar.jsx                          ← Menú lateral con logo oficial de Los Caseritos
     │   ├── ProductoModal.jsx                    ← Modal para crear/editar productos
     │   ├── MovimientoModal.jsx                  ← Modal para registrar entradas/salidas de stock

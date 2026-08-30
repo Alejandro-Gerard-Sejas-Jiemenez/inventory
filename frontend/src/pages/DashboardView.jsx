@@ -10,13 +10,14 @@ import {
   Layers,
   ArrowRight,
 } from 'lucide-react';
+import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardHeader, CardTitle, CardBody } from '../components/common/Card';
 import { StatCard } from '../components/common/StatCard';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { DataTable } from '../components/common/DataTable';
 
-export function DashboardView({ stats, productos, onSelectTab }) {
+export function DashboardView({ stats, productos = [], onSelectTab }) {
   const lowStockProducts = productos.filter((p) => p.stockActual <= p.stockMinimo);
 
   const alertColumns = [
@@ -53,15 +54,15 @@ export function DashboardView({ stats, productos, onSelectTab }) {
 
   return (
     <div className="view-container">
-      <div className="view-header">
-        <div>
-          <h2>Panel de Control General</h2>
-          <p>Resumen integral y métricas en tiempo real de Los Caseritos</p>
-        </div>
-        <Button variant="brand" onClick={() => onSelectTab('productos')} icon={Package}>
-          Gestionar Productos
-        </Button>
-      </div>
+      <PageHeader
+        title="Panel de Control General"
+        subtitle="Resumen integral y métricas en tiempo real de Los Caseritos"
+        actions={
+          <Button variant="brand" onClick={() => onSelectTab('productos')} icon={Package}>
+            Gestionar Productos
+          </Button>
+        }
+      />
 
       {/* Métricas Principales */}
       <div className="stats-grid">

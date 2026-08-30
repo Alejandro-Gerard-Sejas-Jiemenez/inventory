@@ -7,3 +7,6 @@ export * from './Badge';
 export * from './DataTable';
 export * from './Modal';
 export * from './Tabs';
+export * from './StatCard';
+export * from './PageHeader';
+export * from './AlertBanner';

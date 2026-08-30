@@ -1,5 +1,7 @@
 import React from 'react';
 import { Database, CheckCircle, Table, ExternalLink } from 'lucide-react';
+import { PageHeader } from '../components/common/PageHeader';
+import { AlertBanner } from '../components/common/AlertBanner';
 import { Card, CardTitle, CardBody } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
@@ -42,47 +44,29 @@ export function DatabaseView() {
 
   return (
     <div className="view-container">
-      <div className="view-header">
-        <div>
-          <h2>Esquema de Base de Datos Relacional</h2>
-          <p>16 Tablas Normalizadas en H2 Database y Mapeadas en Spring Data JPA</p>
-        </div>
-        <a
-          href="http://localhost:8088/h2-console"
-          target="_blank"
-          rel="noreferrer"
-          style={{ textDecoration: 'none' }}
-        >
-          <Button variant="secondary" icon={ExternalLink}>
-            Abrir Consola H2 SQL
-          </Button>
-        </a>
-      </div>
-
-      <Card style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'rgba(245, 158, 11, 0.3)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div
-            style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: 'var(--radius-md)',
-              background: 'var(--brand-gold-bg)',
-              color: 'var(--brand-gold)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
+      <PageHeader
+        title="Esquema de Base de Datos Relacional"
+        subtitle="16 Tablas Normalizadas en H2 Database y Mapeadas en Spring Data JPA"
+        actions={
+          <a
+            href="http://localhost:8088/h2-console"
+            target="_blank"
+            rel="noreferrer"
+            style={{ textDecoration: 'none' }}
           >
-            <Database size={22} />
-          </div>
-          <div>
-            <strong style={{ color: 'var(--text-white)' }}>Monolito Modular & Persistencia H2 Local</strong>
-            <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
-              Backend: Spring Boot 3.4.2 (Puerto 8088) · Base de datos en archivo <code>./data/inventariodb</code> · Frontend: React 19 + Vite
-            </p>
-          </div>
-        </div>
-      </Card>
+            <Button variant="secondary" icon={ExternalLink}>
+              Abrir Consola H2 SQL
+            </Button>
+          </a>
+        }
+      />
+
+      <AlertBanner
+        variant="brand"
+        icon={Database}
+        title="Monolito Modular & Persistencia H2 Local"
+        message="Backend: Spring Boot 3.4.2 (Puerto 8088) · Base de datos en archivo ./data/inventariodb · Frontend: React 19 + Vite"
+      />
 
       <Card>
         <CardTitle icon={Database} subtitle="Estructura de tablas distribuidas en los 5 módulos funcionales">

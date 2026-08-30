@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowLeftRight, ArrowDownRight, ArrowUpRight, RefreshCw, User } from 'lucide-react';
+import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardTitle, CardBody } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { DataTable } from '../components/common/DataTable';
@@ -98,12 +99,10 @@ export function MovimientosView({ movimientos = [] }) {
 
   return (
     <div className="view-container">
-      <div className="view-header">
-        <div>
-          <h2>Auditoría de Movimientos & Kardex</h2>
-          <p>Trazabilidad detallada de cambios de inventario (Entradas, Salidas, Ajustes, Compras y Ventas)</p>
-        </div>
-      </div>
+      <PageHeader
+        title="Auditoría de Movimientos & Kardex"
+        subtitle="Trazabilidad detallada de cambios de inventario (Entradas, Salidas, Ajustes, Compras y Ventas)"
+      />
 
       <Card>
         <CardTitle icon={ArrowLeftRight} subtitle="Registro cronológico de variaciones de stock en tiempo real">

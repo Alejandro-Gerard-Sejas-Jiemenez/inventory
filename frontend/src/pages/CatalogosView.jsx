@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { Plus, Trash2, Tag, Palette, Box, Layers } from 'lucide-react';
+import { Trash2, Tag, Palette, Box, Layers } from 'lucide-react';
+import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardTitle, CardBody } from '../components/common/Card';
-import { InputField } from '../components/common/InputField';
-import { TextAreaField } from '../components/common/TextAreaField';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
 import { DataTable } from '../components/common/DataTable';
 import { Tabs } from '../components/common/Tabs';
+import { NuevoModeloForm } from '../components/catalogos/NuevoModeloForm';
+import { NuevoMaterialForm } from '../components/catalogos/NuevoMaterialForm';
+import { NuevoColorForm } from '../components/catalogos/NuevoColorForm';
 
 export function CatalogosView({
-  modelos,
-  materiales,
-  colores,
+  modelos = [],
+  materiales = [],
+  colores = [],
   onCreateModelo,
   onDeleteModelo,
   onCreateColor,
@@ -20,48 +22,6 @@ export function CatalogosView({
   onDeleteMaterial,
 }) {
   const [activeSubTab, setActiveSubTab] = useState('modelos');
-  const [loading, setLoading] = useState(false);
-
-  // Forms State
-  const [nuevoModelo, setNuevoModelo] = useState({ nombre: '', marca: '', descripcion: '' });
-  const [nuevoColor, setNuevoColor] = useState({ nombre: '', codigoHex: '#F59E0B' });
-  const [nuevoMaterial, setNuevoMaterial] = useState({ nombre: '', descripcion: '' });
-
-  const handleModeloSubmit = async (e) => {
-    e.preventDefault();
-    if (!nuevoModelo.nombre) return;
-    try {
-      setLoading(true);
-      await onCreateModelo(nuevoModelo);
-      setNuevoModelo({ nombre: '', marca: '', descripcion: '' });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleColorSubmit = async (e) => {
-    e.preventDefault();
-    if (!nuevoColor.nombre) return;
-    try {
-      setLoading(true);
-      await onCreateColor(nuevoColor);
-      setNuevoColor({ nombre: '', codigoHex: '#F59E0B' });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleMaterialSubmit = async (e) => {
-    e.preventDefault();
-    if (!nuevoMaterial.nombre) return;
-    try {
-      setLoading(true);
-      await onCreateMaterial(nuevoMaterial);
-      setNuevoMaterial({ nombre: '', descripcion: '' });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const tabsConfig = [
     { id: 'modelos', label: 'Modelos', count: modelos.length, icon: Box },
@@ -69,7 +29,6 @@ export function CatalogosView({
     { id: 'colores', label: 'Colores', count: colores.length, icon: Palette },
   ];
 
-  // Table Columns Configurations
   const modeloColumns = [
     { header: 'ID', accessor: 'idModelo', width: '70px', render: (m) => <span style={{ color: 'var(--text-muted)' }}>#{m.idModelo}</span> },
     { header: 'Modelo', accessor: 'nombre', render: (m) => <strong style={{ color: 'var(--text-white)' }}>{m.nombre}</strong> },
@@ -152,49 +111,15 @@ export function CatalogosView({
 
   return (
     <div className="view-container">
-      <div className="view-header">
-        <div>
-          <h2>Catálogos & Atributos del Sistema</h2>
-          <p>Gestión modular de Modelos, Materiales y Colores para el inventario de Los Caseritos</p>
-        </div>
-        <Tabs tabs={tabsConfig} activeTab={activeSubTab} onChange={setActiveSubTab} />
-      </div>
+      <PageHeader
+        title="Catálogos & Atributos del Sistema"
+        subtitle="Gestión modular de Modelos, Materiales y Colores para el inventario de Los Caseritos"
+        actions={<Tabs tabs={tabsConfig} activeTab={activeSubTab} onChange={setActiveSubTab} />}
+      />
 
       {activeSubTab === 'modelos' && (
         <div className="grid-split-form">
-          <Card>
-            <CardTitle icon={Box} subtitle="Registrar nueva variante de modelo">
-              Nuevo Modelo
-            </CardTitle>
-            <CardBody>
-              <form onSubmit={handleModeloSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <InputField
-                  label="Nombre del Modelo"
-                  placeholder="Ej. Galaxy Book 4 Pro / iPhone 15"
-                  value={nuevoModelo.nombre}
-                  onChange={(e) => setNuevoModelo({ ...nuevoModelo, nombre: e.target.value })}
-                  required
-                />
-                <InputField
-                  label="Marca / Fabricante"
-                  placeholder="Ej. Apple, Samsung, Dell"
-                  value={nuevoModelo.marca}
-                  onChange={(e) => setNuevoModelo({ ...nuevoModelo, marca: e.target.value })}
-                />
-                <TextAreaField
-                  label="Descripción"
-                  placeholder="Detalles del modelo, procesador o serie..."
-                  rows={3}
-                  value={nuevoModelo.descripcion}
-                  onChange={(e) => setNuevoModelo({ ...nuevoModelo, descripcion: e.target.value })}
-                />
-                <Button type="submit" variant="brand" icon={Plus} loading={loading}>
-                  Guardar Modelo
-                </Button>
-              </form>
-            </CardBody>
-          </Card>
-
+          <NuevoModeloForm onSubmit={onCreateModelo} />
           <Card>
             <CardTitle icon={Layers} subtitle="Modelos activos en el catálogo">
               Listado de Modelos ({modelos.length})
@@ -213,33 +138,7 @@ export function CatalogosView({
 
       {activeSubTab === 'materiales' && (
         <div className="grid-split-form">
-          <Card>
-            <CardTitle icon={Tag} subtitle="Registrar nuevo tipo de material">
-              Nuevo Material
-            </CardTitle>
-            <CardBody>
-              <form onSubmit={handleMaterialSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <InputField
-                  label="Nombre del Material"
-                  placeholder="Ej. Titanio Grado 5 / Silicona Premium"
-                  value={nuevoMaterial.nombre}
-                  onChange={(e) => setNuevoMaterial({ ...nuevoMaterial, nombre: e.target.value })}
-                  required
-                />
-                <TextAreaField
-                  label="Descripción"
-                  placeholder="Propiedades, textura o uso..."
-                  rows={3}
-                  value={nuevoMaterial.descripcion}
-                  onChange={(e) => setNuevoMaterial({ ...nuevoMaterial, descripcion: e.target.value })}
-                />
-                <Button type="submit" variant="brand" icon={Plus} loading={loading}>
-                  Guardar Material
-                </Button>
-              </form>
-            </CardBody>
-          </Card>
-
+          <NuevoMaterialForm onSubmit={onCreateMaterial} />
           <Card>
             <CardTitle icon={Layers} subtitle="Materiales activos en el catálogo">
               Listado de Materiales ({materiales.length})
@@ -258,52 +157,7 @@ export function CatalogosView({
 
       {activeSubTab === 'colores' && (
         <div className="grid-split-form">
-          <Card>
-            <CardTitle icon={Palette} subtitle="Registrar nuevo tono de color">
-              Nuevo Color
-            </CardTitle>
-            <CardBody>
-              <form onSubmit={handleColorSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <InputField
-                  label="Nombre del Color"
-                  placeholder="Ej. Amarillo Caserito / Negro Carbón"
-                  value={nuevoColor.nombre}
-                  onChange={(e) => setNuevoColor({ ...nuevoColor, nombre: e.target.value })}
-                  required
-                />
-                <div className="form-field-group">
-                  <label className="form-field-label">Código HEX & Muestra</label>
-                  <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                    <input
-                      type="color"
-                      style={{
-                        width: '45px',
-                        height: '42px',
-                        padding: '2px',
-                        backgroundColor: 'var(--bg-primary)',
-                        border: '1px solid var(--border-color)',
-                        borderRadius: 'var(--radius-md)',
-                        cursor: 'pointer',
-                      }}
-                      value={nuevoColor.codigoHex}
-                      onChange={(e) => setNuevoColor({ ...nuevoColor, codigoHex: e.target.value })}
-                    />
-                    <input
-                      type="text"
-                      className="form-field-input"
-                      value={nuevoColor.codigoHex}
-                      onChange={(e) => setNuevoColor({ ...nuevoColor, codigoHex: e.target.value })}
-                      placeholder="#F59E0B"
-                    />
-                  </div>
-                </div>
-                <Button type="submit" variant="brand" icon={Plus} loading={loading}>
-                  Guardar Color
-                </Button>
-              </form>
-            </CardBody>
-          </Card>
-
+          <NuevoColorForm onSubmit={onCreateColor} />
           <Card>
             <CardTitle icon={Layers} subtitle="Colores disponibles para productos">
               Listado de Colores ({colores.length})

@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
-import { Plus, Search, Filter, Edit, Trash2, ArrowUpDown, AlertTriangle } from 'lucide-react';
+import { Plus, Search, Filter, AlertTriangle } from 'lucide-react';
 import { ProductoModal } from '../components/ProductoModal';
+import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardBody } from '../components/common/Card';
 import { InputField } from '../components/common/InputField';
 import { SelectField } from '../components/common/SelectField';
 import { Button } from '../components/common/Button';
-import { Badge } from '../components/common/Badge';
 import { DataTable } from '../components/common/DataTable';
+import { getProductoColumns } from '../components/productos/ProductoColumns';
 
 export function ProductosView({
-  productos,
-  modelos,
-  materiales,
-  colores,
-  loading,
+  productos = [],
+  modelos = [],
+  materiales = [],
+  colores = [],
+  loading = false,
   onSaveProducto,
   onDeleteProducto,
   onOpenMovimiento,
@@ -37,165 +38,32 @@ export function ProductosView({
     setModalOpen(true);
   };
 
-  const columns = [
-    {
-      header: 'SKU',
-      accessor: 'sku',
-      width: '120px',
-      render: (p) => <Badge variant="brand">{p.sku}</Badge>,
-    },
-    {
-      header: 'Producto',
-      accessor: 'nombre',
-      render: (p) => (
-        <div>
-          <strong style={{ color: 'var(--text-white)' }}>{p.nombre}</strong>
-          {p.descripcion && (
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-              {p.descripcion.length > 55 ? `${p.descripcion.substring(0, 55)}...` : p.descripcion}
-            </div>
-          )}
-        </div>
-      ),
-    },
-    {
-      header: 'Modelo & Marca',
-      render: (p) => (
-        <div>
-          <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
-            {p.modelo?.nombre || '-'}
-          </div>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            {p.modelo?.marca || 'Genérica'}
-          </span>
-        </div>
-      ),
-    },
-    {
-      header: 'Material & Color',
-      render: (p) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          {p.color?.codigoHex && (
-            <span
-              style={{
-                width: '12px',
-                height: '12px',
-                borderRadius: '50%',
-                backgroundColor: p.color.codigoHex,
-                border: '1px solid rgba(255,255,255,0.3)',
-                flexShrink: 0,
-              }}
-            />
-          )}
-          <span>
-            {p.material?.nombre || '-'} {p.color ? `· ${p.color.nombre}` : ''}
-          </span>
-        </div>
-      ),
-    },
-    {
-      header: 'Precio Unit.',
-      render: (p) => (
-        <div>
-          <strong style={{ color: 'var(--brand-gold)' }}>
-            Bs. {Number(p.precioUnitario).toFixed(2)}
-          </strong>
-          {p.precioCompra && (
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-              Costo: Bs. {Number(p.precioCompra).toFixed(2)}
-            </div>
-          )}
-        </div>
-      ),
-    },
-    {
-      header: 'Stock Actual',
-      render: (p) => {
-        const isLow = p.stockActual <= p.stockMinimo;
-        return (
-          <div>
-            <span
-              style={{
-                fontWeight: 800,
-                fontSize: '1rem',
-                color: isLow ? 'var(--brand-red)' : 'var(--text-white)',
-              }}
-            >
-              {p.stockActual}
-            </span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-              {' '}
-              / min {p.stockMinimo}
-            </span>
-          </div>
-        );
-      },
-    },
-    {
-      header: 'Estado',
-      render: (p) => {
-        const isLow = p.stockActual <= p.stockMinimo;
-        return (
-          <Badge variant={isLow ? 'danger' : 'success'}>
-            {isLow ? 'Stock Crítico' : 'Disponible'}
-          </Badge>
-        );
-      },
-    },
-    {
-      header: 'Acciones',
-      align: 'right',
-      width: '130px',
-      render: (p) => (
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.3rem' }}>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onOpenMovimiento(p)}
-            title="Ajuste de Stock (Kardex)"
-            icon={ArrowUpDown}
-            style={{ color: 'var(--brand-gold)' }}
-          />
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleEdit(p)}
-            title="Editar Producto"
-            icon={Edit}
-          />
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onDeleteProducto(p.idProducto)}
-            title="Eliminar"
-            icon={Trash2}
-            style={{ color: 'var(--brand-red)' }}
-          />
-        </div>
-      ),
-    },
-  ];
+  const columns = getProductoColumns({
+    onOpenMovimiento,
+    onEdit: handleEdit,
+    onDelete: onDeleteProducto,
+  });
 
   return (
     <div className="view-container">
-      <div className="view-header">
-        <div>
-          <h2>Catálogo de Productos & Existencias</h2>
-          <p>Control de stock, precios y atributos vinculados a Los Caseritos</p>
-        </div>
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <Button
-            variant={filterLowStock ? 'danger' : 'secondary'}
-            onClick={() => setFilterLowStock(!filterLowStock)}
-            icon={AlertTriangle}
-          >
-            {filterLowStock ? 'Ver Todos' : 'Filtrar Stock Crítico'}
-          </Button>
-          <Button variant="brand" onClick={handleCreate} icon={Plus}>
-            Nuevo Producto
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title="Catálogo de Productos & Existencias"
+        subtitle="Control de stock, precios y atributos vinculados a Los Caseritos"
+        actions={
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <Button
+              variant={filterLowStock ? 'danger' : 'secondary'}
+              onClick={() => setFilterLowStock(!filterLowStock)}
+              icon={AlertTriangle}
+            >
+              {filterLowStock ? 'Ver Todos' : 'Filtrar Stock Crítico'}
+            </Button>
+            <Button variant="brand" onClick={handleCreate} icon={Plus}>
+              Nuevo Producto
+            </Button>
+          </div>
+        }
+      />
 
       <Card>
         <CardBody>

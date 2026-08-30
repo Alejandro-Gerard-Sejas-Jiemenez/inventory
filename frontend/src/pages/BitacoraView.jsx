@@ -1,5 +1,6 @@
 import React from 'react';
 import { Clock, User, HardDrive, FileText } from 'lucide-react';
+import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardTitle, CardBody } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { DataTable } from '../components/common/DataTable';
@@ -63,12 +64,10 @@ export function BitacoraView({ bitacora = [] }) {
 
   return (
     <div className="view-container">
-      <div className="view-header">
-        <div>
-          <h2>Bitácora & Trazabilidad del Sistema</h2>
-          <p>Auditoría completa de todas las operaciones realizadas sobre las 16 tablas</p>
-        </div>
-      </div>
+      <PageHeader
+        title="Bitácora & Trazabilidad del Sistema"
+        subtitle="Auditoría completa de todas las operaciones realizadas sobre las 16 tablas"
+      />
 
       <Card>
         <CardTitle icon={FileText} subtitle="Registro inmutable de acciones para seguridad y auditoría">
