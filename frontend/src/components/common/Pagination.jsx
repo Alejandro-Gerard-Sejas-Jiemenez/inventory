@@ -7,13 +7,14 @@ export function Pagination({
   totalItems = 0,
   pageSize = 5,
   onPageChange,
-  onPageSizeChange,
-  pageSizeOptions = [5, 10, 20, 50],
   className = '',
 }) {
-  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
-  const startItem = totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1;
-  const endItem = Math.min(currentPage * pageSize, totalItems);
+  const totalPages = Math.ceil(totalItems / pageSize);
+
+  // Si solo hay 1 página o menos, no mostrar controles innecesarios
+  if (totalPages <= 1) {
+    return null;
+  }
 
   // Generar array de números de páginas visibles
   const getPageNumbers = () => {
@@ -36,31 +37,6 @@ export function Pagination({
 
   return (
     <div className={`custom-pagination-container ${className}`}>
-      {/* Resumen de Registros */}
-      <div className="pagination-info">
-        <span>Mostrando <strong>{startItem}</strong> - <strong>{endItem}</strong> de <strong>{totalItems}</strong> registros</span>
-        {onPageSizeChange && (
-          <div className="pagination-page-size-wrapper">
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Filas por pág:</span>
-            <select
-              className="pagination-page-size-select"
-              value={pageSize}
-              onChange={(e) => {
-                onPageSizeChange(parseInt(e.target.value, 10));
-                onPageChange(1);
-              }}
-            >
-              {pageSizeOptions.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-      </div>
-
-      {/* Controles de Navegación de Páginas */}
       <div className="pagination-controls">
         <Button
           variant="ghost"

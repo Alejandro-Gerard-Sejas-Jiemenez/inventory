@@ -17,7 +17,7 @@ export function DataTable({
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(defaultPageSize);
+  const pageSize = defaultPageSize;
 
   // Filtrado interno si showSearch está activo
   const filteredData = useMemo(() => {
@@ -109,7 +109,6 @@ export function DataTable({
           totalItems={filteredData.length}
           pageSize={pageSize}
           onPageChange={setCurrentPage}
-          onPageSizeChange={setPageSize}
         />
       )}
     </div>

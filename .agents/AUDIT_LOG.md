@@ -382,6 +382,38 @@
   - Commit: `style(ui): remove title count badges and set default pagination to 5 rows`
   - Rama: `main` en GitHub.
 
+---
+
+## Bloque 12: Simplificación Minimalista de Paginación
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `UI-5` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Frontend (`components/common/`, `index.css`) |
+| **Skills Aplicadas** | `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Eliminar el texto de resumen de registros (`Mostrando X - Y de Z registros`) del pie de página.
+- Eliminar el selector redundante de filas por página (`Filas por pág: 5`), fijando la vista exactamente a 5 filas por página.
+- Mostrar los botones numéricos de paginación de forma limpia y centrada únicamente cuando los registros excedan las 5 filas (`totalPages > 1`).
+
+### Fase 2: IMPLEMENTACIÓN
+- Actualización de `Pagination.jsx`: retorno `null` cuando `totalPages <= 1`, remoción de elementos informativos y selector.
+- Actualización de `DataTable.jsx`: fijación de `pageSize = 5` estricto sin controles adicionales.
+- Actualización de `index.css`: centrado y espaciado de `.custom-pagination-container`.
+
+### Fase 3: VERIFICACIÓN
+- Linter frontend (`npm run lint` / `oxlint`): **0 errores**.
+- Verificación en navegador mediante subagente:
+  - Tablas con 5 o menos registros muestran pie de tabla limpio sin elementos innecesarios.
+  - Al superar 5 registros, los botones de navegación (`« ‹ [1] [2] › »`) aparecen centrados y operativos.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `style(ui): streamline pagination footer and fix table size strictly to 5 rows`
+  - Rama: `main` en GitHub.
+
+
 
 
 
