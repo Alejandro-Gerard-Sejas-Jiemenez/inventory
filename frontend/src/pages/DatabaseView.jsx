@@ -70,7 +70,7 @@ export function DatabaseView() {
 
       <Card>
         <CardTitle icon={Database} subtitle="Estructura de tablas distribuidas en los 5 módulos funcionales">
-          Tablas del Sistema ({DATABASE_SCHEMA_TABLES.length})
+          Tablas del Sistema
         </CardTitle>
         <CardBody>
           <DataTable

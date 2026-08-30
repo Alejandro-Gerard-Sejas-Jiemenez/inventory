@@ -176,7 +176,7 @@ export function CatalogosView({
           <NuevaCategoriaForm onSubmit={onCreateCategoria} />
           <Card>
             <CardTitle icon={FolderTree} subtitle="Rubros y agrupaciones de productos">
-              Listado de Categorías ({categorias.length})
+              Listado de Categorías
             </CardTitle>
             <CardBody>
               <DataTable
@@ -197,7 +197,7 @@ export function CatalogosView({
           <NuevaMarcaForm onSubmit={onCreateMarca} />
           <Card>
             <CardTitle icon={Award} subtitle="Fabricantes y marcas registradas">
-              Listado de Marcas ({marcas.length})
+              Listado de Marcas
             </CardTitle>
             <CardBody>
               <DataTable
@@ -218,7 +218,7 @@ export function CatalogosView({
           <NuevoModeloForm marcas={marcas} onSubmit={onCreateModelo} />
           <Card>
             <CardTitle icon={Layers} subtitle="Modelos activos vinculados a su marca">
-              Listado de Modelos ({modelos.length})
+              Listado de Modelos
             </CardTitle>
             <CardBody>
               <DataTable
@@ -239,7 +239,7 @@ export function CatalogosView({
           <NuevoMaterialForm onSubmit={onCreateMaterial} />
           <Card>
             <CardTitle icon={Layers} subtitle="Materiales activos en el catálogo">
-              Listado de Materiales ({materiales.length})
+              Listado de Materiales
             </CardTitle>
             <CardBody>
               <DataTable
@@ -260,7 +260,7 @@ export function CatalogosView({
           <NuevoColorForm onSubmit={onCreateColor} />
           <Card>
             <CardTitle icon={Layers} subtitle="Colores disponibles para productos">
-              Listado de Colores ({colores.length})
+              Listado de Colores
             </CardTitle>
             <CardBody>
               <DataTable

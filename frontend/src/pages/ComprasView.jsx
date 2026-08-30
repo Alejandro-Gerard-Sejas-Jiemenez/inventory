@@ -134,7 +134,7 @@ export function ComprasView({
 
           <Card>
             <CardTitle icon={Building} subtitle="Directorio de proveedores registrados">
-              Listado de Proveedores ({proveedores.length})
+              Listado de Proveedores
             </CardTitle>
             <CardBody>
               <DataTable

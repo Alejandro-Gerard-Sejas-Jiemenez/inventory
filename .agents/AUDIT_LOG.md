@@ -347,6 +347,42 @@
   - Commit: `feat(ui): add universal real-time search and responsive pagination across all views`
   - Rama: `main` en GitHub.
 
+---
+
+## Bloque 11: Limpieza de Títulos en Encabezados y Configuración de 5 Filas por Defecto
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `UI-4` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Frontend (`components/common/`, `pages/`) |
+| **Skills Aplicadas** | `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Remover los números de conteo redundantes en paréntesis (`({length})`) de los encabezados y títulos de tablas.
+- Configurar la paginación para mostrar por defecto 5 filas por página en todas las tablas del sistema.
+
+### Fase 2: IMPLEMENTACIÓN
+- Actualización de `defaultPageSize = 5` en `DataTable.jsx` y `pageSize = 5` en `Pagination.jsx`.
+- Limpieza de títulos en:
+  - `CatalogosView.jsx` (Categorías, Marcas, Modelos, Materiales, Colores).
+  - `VentasView.jsx` (Listado de Clientes).
+  - `ComprasView.jsx` (Listado de Proveedores).
+  - `MovimientosView.jsx` (Historial Kardex).
+  - `BitacoraView.jsx` (Registro de Auditoría).
+  - `DatabaseView.jsx` (Tablas del Sistema).
+
+### Fase 3: VERIFICACIÓN
+- Linter frontend (`npm run lint` / `oxlint`): **0 errores**.
+- Verificación en navegador mediante subagente:
+  - Comprobación visual de títulos limpios sin conteos entre paréntesis.
+  - Comprobación de que el selector de filas por página inicia en **5** por defecto.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `style(ui): remove title count badges and set default pagination to 5 rows`
+  - Rama: `main` en GitHub.
+
+
 
 
 

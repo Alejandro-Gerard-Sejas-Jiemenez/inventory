@@ -71,7 +71,7 @@ export function BitacoraView({ bitacora = [] }) {
 
       <Card>
         <CardTitle icon={FileText} subtitle="Registro inmutable de acciones para seguridad y auditoría">
-          Registro de Auditoría ({bitacora.length})
+          Registro de Auditoría
         </CardTitle>
         <CardBody>
           <DataTable

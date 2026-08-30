@@ -5,7 +5,7 @@ import { Button } from './Button';
 export function Pagination({
   currentPage = 1,
   totalItems = 0,
-  pageSize = 10,
+  pageSize = 5,
   onPageChange,
   onPageSizeChange,
   pageSizeOptions = [5, 10, 20, 50],

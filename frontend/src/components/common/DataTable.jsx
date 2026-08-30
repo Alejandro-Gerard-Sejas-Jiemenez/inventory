@@ -10,7 +10,7 @@ export function DataTable({
   loading = false,
   emptyMessage = 'No se encontraron registros',
   showPagination = true,
-  defaultPageSize = 10,
+  defaultPageSize = 5,
   showSearch = false,
   searchPlaceholder = 'Buscar en los registros...',
   className = '',

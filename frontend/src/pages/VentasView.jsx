@@ -134,7 +134,7 @@ export function VentasView({
 
           <Card>
             <CardTitle icon={Users} subtitle="Directorio de clientes registrados">
-              Listado de Clientes ({clientes.length})
+              Listado de Clientes
             </CardTitle>
             <CardBody>
               <DataTable

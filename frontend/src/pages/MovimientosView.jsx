@@ -106,7 +106,7 @@ export function MovimientosView({ movimientos = [] }) {
 
       <Card>
         <CardTitle icon={ArrowLeftRight} subtitle="Registro cronológico de variaciones de stock en tiempo real">
-          Historial Kardex ({movimientos.length})
+          Historial Kardex
         </CardTitle>
         <CardBody>
           <DataTable
