@@ -60,11 +60,25 @@ public class ProductoServiceImpl implements ProductoService {
         return productoRepository.findProductosConBajoStock();
     }
 
+    private String generateUniqueSku() {
+        String code;
+        do {
+            code = "CAS-" + java.util.UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        } while (productoRepository.existsBySkuIgnoreCase(code));
+        return code;
+    }
+
     @Override
     @Transactional
     public Producto create(ProductoRequestDto request) {
-        if (productoRepository.existsBySkuIgnoreCase(request.getSku())) {
-            throw new BadRequestException("Ya existe un producto con el SKU: " + request.getSku());
+        String sku = request.getSku();
+        if (sku == null || sku.trim().isEmpty()) {
+            sku = generateUniqueSku();
+        } else {
+            sku = sku.toUpperCase().trim();
+            if (productoRepository.existsBySkuIgnoreCase(sku)) {
+                throw new BadRequestException("Ya existe un producto con el SKU: " + sku);
+            }
         }
 
         Categoria categoria = null;
@@ -92,10 +106,10 @@ public class ProductoServiceImpl implements ProductoService {
         }
 
         Producto producto = Producto.builder()
-                .sku(request.getSku().toUpperCase().trim())
+                .sku(sku)
                 .nombre(request.getNombre().trim())
                 .descripcion(request.getDescripcion())
-                .precioCompra(request.getPrecioCompra())
+                .precioCompra(request.getPrecioCompra() != null ? request.getPrecioCompra() : java.math.BigDecimal.ZERO)
                 .precioMayoreo(request.getPrecioMayoreo())
                 .precioUnitario(request.getPrecioUnitario())
                 .stockActual(request.getStockActual() != null ? request.getStockActual() : 0)
@@ -129,8 +143,14 @@ public class ProductoServiceImpl implements ProductoService {
     public Producto update(Long id, ProductoRequestDto request) {
         Producto producto = findById(id);
 
-        if (productoRepository.existsBySkuIgnoreCaseAndIdProductoNot(request.getSku(), id)) {
-            throw new BadRequestException("Ya existe otro producto con el SKU: " + request.getSku());
+        String sku = request.getSku();
+        if (sku == null || sku.trim().isEmpty()) {
+            sku = producto.getSku() != null ? producto.getSku() : generateUniqueSku();
+        } else {
+            sku = sku.toUpperCase().trim();
+            if (productoRepository.existsBySkuIgnoreCaseAndIdProductoNot(sku, id)) {
+                throw new BadRequestException("Ya existe otro producto con el SKU: " + sku);
+            }
         }
 
         Categoria categoria = null;
@@ -158,12 +178,12 @@ public class ProductoServiceImpl implements ProductoService {
         }
 
         int stockAnterior = producto.getStockActual();
-        int stockNuevo = request.getStockActual();
+        int stockNuevo = request.getStockActual() != null ? request.getStockActual() : stockAnterior;
 
-        producto.setSku(request.getSku().toUpperCase().trim());
+        producto.setSku(sku);
         producto.setNombre(request.getNombre().trim());
         producto.setDescripcion(request.getDescripcion());
-        producto.setPrecioCompra(request.getPrecioCompra());
+        producto.setPrecioCompra(request.getPrecioCompra() != null ? request.getPrecioCompra() : producto.getPrecioCompra());
         producto.setPrecioMayoreo(request.getPrecioMayoreo());
         producto.setPrecioUnitario(request.getPrecioUnitario());
         producto.setStockActual(stockNuevo);

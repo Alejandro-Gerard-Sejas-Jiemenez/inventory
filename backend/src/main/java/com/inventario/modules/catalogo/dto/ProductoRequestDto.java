@@ -27,7 +27,6 @@ public class ProductoRequestDto {
 
     private String descripcion;
 
-    @NotBlank(message = "El SKU es obligatorio")
     private String sku;
 
     @NotNull(message = "El stock actual es obligatorio")

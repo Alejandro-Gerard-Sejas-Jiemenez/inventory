@@ -48,7 +48,7 @@ export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete }) {
               style={{
                 width: '14px',
                 height: '14px',
-                borderRadius: '50%',
+                borderRadius: '3px',
                 backgroundColor: p.color.codigoHex,
                 border: '1px solid rgba(255,255,255,0.3)',
                 flexShrink: 0,

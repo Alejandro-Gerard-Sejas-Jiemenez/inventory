@@ -300,6 +300,7 @@ export function App() {
         onSave={handleSaveMovimiento}
         producto={selectedProductoForMov}
         usuarios={usuarios}
+        onNavigateTab={setCurrentTab}
       />
     </div>
   );

@@ -413,6 +413,46 @@
   - Commit: `style(ui): streamline pagination footer and fix table size strictly to 5 rows`
   - Rama: `main` en GitHub.
 
+---
+
+## Bloque 13: Autogeneración de SKU, Corrección de Edición, Esquinas Suaves de Color y Modal de Ajuste por Pestañas
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-3` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Backend (`modules/catalogo/`) & Frontend (`components/`, `pages/`) |
+| **Skills Aplicadas** | `spring-modular-backend`, `react-modern-frontend`, `clean-code`, `ui-ux-usability`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Eliminar la obligatoriedad de que el usuario ingrese manualmente el código SKU en el formulario de productos, delegando su generación automática y única al backend (`CAS-XXXXXX`).
+- Corregir el flujo de edición de productos asegurando la propagación de `idProducto` hacia el endpoint de actualización (`PUT /api/productos/{id}`).
+- Suavizar y disminuir el radio de redondeo en las etiquetas y muestras de colores (`var(--radius-sm)` / 4-6px en lugar de círculos completos).
+- Rediseñar el modal de Ajuste Rápido de Stock (`MovimientoModal.jsx`) mediante pestañas claras (➕ Ingreso, ➖ Salida/Merma, ⚖️ Ajuste Físico), cálculo dinámico en vivo y accesos directos hacia los módulos de Ventas (POS) y Compras.
+
+### Fase 2: IMPLEMENTACIÓN
+- **Backend (Spring Boot 3 + Java 21):**
+  - `ProductoRequestDto.java`: SKU opcional sin restricción `@NotBlank`.
+  - `ProductoServiceImpl.java`: Método `generateUniqueSku()` con formato corporativo `CAS-XXXXXX` en altas y soporte de preservación de SKU en actualizaciones.
+- **Frontend (React 19 + Vite):**
+  - `ProductoModal.jsx`: Remoción del campo manual SKU, propagación de `idProducto` en edición, y badges de color con esquinas de redondeo suave.
+  - `NuevoColorForm.jsx` & `ProductoColumns.jsx`: Muestras de color con esquinas suavizadas de 4-6px.
+  - `MovimientoModal.jsx`: Segmentación en 3 pestañas (Ingreso, Salida, Ajuste), indicador de stock proyectado en tiempo real y botones de redirección a Ventas y Compras.
+  - `App.jsx`: Vinculación de `onNavigateTab` para saltos directos de navegación.
+
+### Fase 3: VERIFICACIÓN
+- Backend Tests (`./mvnw test`): **4 tests exitosos, 0 fallos, 0 errores (BUILD SUCCESS)**.
+- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
+- Verificación en navegador mediante subagente:
+  - Registro de producto sin SKU manual ➔ SKU generado exitosamente (`CAS-FA825E`).
+  - Edición de producto ➔ Actualización exitosa de nombre y precio en tiempo real.
+  - Interacción con selectores de color con esquinas suavizadas.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `feat(catalogo): auto-generate SKU, fix product editing, soften color radius, and add tabbed stock adjustment modal`
+  - Rama: `main` en GitHub.
+
+
 
 
 

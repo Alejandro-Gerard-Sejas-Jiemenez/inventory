@@ -87,12 +87,12 @@ export function NuevoColorForm({ onSubmit }) {
                     style={{
                       width: '36px',
                       height: '36px',
-                      borderRadius: '50%',
+                      borderRadius: 'var(--radius-sm)',
                       backgroundColor: preset.hex,
                       border: isSelected ? '3px solid var(--brand-gold)' : '2px solid rgba(255,255,255,0.15)',
                       boxShadow: isSelected ? '0 0 10px var(--brand-gold)' : '0 2px 4px rgba(0,0,0,0.3)',
                       cursor: 'pointer',
-                      transform: isSelected ? 'scale(1.15)' : 'scale(1)',
+                      transform: isSelected ? 'scale(1.1)' : 'scale(1)',
                       transition: 'all 0.15s ease',
                     }}
                   />
@@ -115,7 +115,7 @@ export function NuevoColorForm({ onSubmit }) {
               style={{
                 width: '32px',
                 height: '32px',
-                borderRadius: '50%',
+                borderRadius: 'var(--radius-sm)',
                 backgroundColor: nuevoColor.codigoHex,
                 border: '2px solid rgba(255,255,255,0.3)',
                 flexShrink: 0,

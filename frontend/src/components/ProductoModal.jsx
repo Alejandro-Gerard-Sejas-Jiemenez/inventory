@@ -17,6 +17,7 @@ export function ProductoModal({
   colores = [],
 }) {
   const [formData, setFormData] = useState({
+    idProducto: null,
     sku: '',
     nombre: '',
     descripcion: '',
@@ -37,21 +38,23 @@ export function ProductoModal({
   useEffect(() => {
     if (producto) {
       setFormData({
+        idProducto: producto.idProducto,
         sku: producto.sku || '',
         nombre: producto.nombre || '',
         descripcion: producto.descripcion || '',
-        idCategoria: producto.categoria?.idCategoria || '',
+        idCategoria: producto.categoria?.idCategoria || (categorias.length > 0 ? categorias[0].idCategoria : ''),
         idModelo: producto.modelo?.idModelo || '',
         idMaterial: producto.material?.idMaterial || '',
         idColor: producto.color?.idColor || '',
-        precioCompra: producto.precioCompra || '',
-        precioMayoreo: producto.precioMayoreo || '',
-        precioUnitario: producto.precioUnitario || '',
+        precioCompra: producto.precioCompra ?? '',
+        precioMayoreo: producto.precioMayoreo ?? '',
+        precioUnitario: producto.precioUnitario ?? '',
         stockActual: producto.stockActual ?? 0,
         stockMinimo: producto.stockMinimo ?? 5,
       });
     } else {
       setFormData({
+        idProducto: null,
         sku: '',
         nombre: '',
         descripcion: '',
@@ -71,8 +74,8 @@ export function ProductoModal({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.sku || !formData.nombre || !formData.precioUnitario) {
-      setError('Por favor completa los campos requeridos (*)');
+    if (!formData.nombre || !formData.precioUnitario) {
+      setError('Por favor completa los campos obligatorios: Nombre y Precio de Venta (*)');
       return;
     }
 
@@ -80,7 +83,10 @@ export function ProductoModal({
       setLoading(true);
       setError('');
       await onSave({
-        ...formData,
+        idProducto: formData.idProducto || undefined,
+        sku: formData.sku || undefined, // Backend genera automáticamente si está vacío
+        nombre: formData.nombre.trim(),
+        descripcion: formData.descripcion || '',
         idCategoria: formData.idCategoria ? parseInt(formData.idCategoria, 10) : null,
         idModelo: formData.idModelo ? parseInt(formData.idModelo, 10) : null,
         idMaterial: formData.idMaterial ? parseInt(formData.idMaterial, 10) : null,
@@ -104,9 +110,9 @@ export function ProductoModal({
       isOpen={isOpen}
       onClose={onClose}
       title={producto ? 'Editar Producto' : 'Nuevo Producto'}
-      subtitle="Complete los detalles de categorización, especificaciones y existencias"
+      subtitle={producto ? `Modificando existencias y atributos (ID: #${producto.idProducto})` : 'Registrar nuevo artículo en el catálogo multirubro'}
       icon={Package}
-      maxWidth="720px"
+      maxWidth="680px"
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={loading}>
@@ -118,7 +124,7 @@ export function ProductoModal({
             loading={loading}
             icon={Save}
           >
-            Guardar Producto
+            {producto ? 'Guardar Cambios' : 'Registrar Producto'}
           </Button>
         </>
       }
@@ -139,7 +145,7 @@ export function ProductoModal({
           </div>
         )}
 
-        {/* Categoría y SKU */}
+        {/* Categoría y Nombre del Producto */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
           <SelectField
             label="Categoría del Producto"
@@ -154,22 +160,13 @@ export function ProductoModal({
           />
 
           <InputField
-            label="Código SKU"
-            placeholder="Ej. LAP-MB-M3-GRIS"
-            value={formData.sku}
-            onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+            label="Nombre del Producto"
+            placeholder="Ej. MacBook Pro 14' M3 512GB / Samsung S24"
+            value={formData.nombre}
+            onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
             required
           />
         </div>
-
-        {/* Nombre del Producto */}
-        <InputField
-          label="Nombre del Producto"
-          placeholder="Ej. MacBook Pro 14' M3 512GB / Samsung S24 Ultra"
-          value={formData.nombre}
-          onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-          required
-        />
 
         {/* Modelo y Material */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
@@ -196,14 +193,14 @@ export function ProductoModal({
           />
         </div>
 
-        {/* Selector Visual de Colores con Chips */}
+        {/* Selector Visual de Colores con Muestras Suavemente Redondeadas */}
         <div>
           <label className="form-field-label">Color del Producto</label>
           <div
             style={{
               display: 'flex',
               flexWrap: 'wrap',
-              gap: '0.5rem',
+              gap: '0.45rem',
               padding: '0.6rem',
               backgroundColor: 'var(--bg-secondary)',
               borderRadius: 'var(--radius-md)',
@@ -223,8 +220,8 @@ export function ProductoModal({
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.45rem',
-                    padding: '0.35rem 0.7rem',
-                    borderRadius: 'var(--radius-full)',
+                    padding: '0.35rem 0.65rem',
+                    borderRadius: 'var(--radius-sm)', // Redondeo suave disminuido
                     background: isSelected ? 'var(--brand-gold-bg)' : 'rgba(255,255,255,0.05)',
                     border: isSelected ? '1px solid var(--brand-gold)' : '1px solid rgba(255,255,255,0.1)',
                     color: isSelected ? 'var(--brand-gold)' : 'var(--text-secondary)',
@@ -238,7 +235,7 @@ export function ProductoModal({
                     style={{
                       width: '14px',
                       height: '14px',
-                      borderRadius: '50%',
+                      borderRadius: '3px', // Redondeo suave disminuido
                       backgroundColor: c.codigoHex || '#888',
                       border: '1px solid rgba(255,255,255,0.3)',
                       flexShrink: 0,
