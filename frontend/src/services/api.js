@@ -29,6 +29,18 @@ export const api = {
   // Dashboard
   getDashboardStats: () => fetch(`${API_BASE_URL}/dashboard/stats`).then(handleResponse),
 
+  // Categorías
+  getCategorias: () => fetch(`${API_BASE_URL}/categorias`).then(handleResponse),
+  createCategoria: (data) => fetch(`${API_BASE_URL}/categorias`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
+  updateCategoria: (id, data) => fetch(`${API_BASE_URL}/categorias/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
+  deleteCategoria: (id) => fetch(`${API_BASE_URL}/categorias/${id}`, { method: 'DELETE' }).then(handleResponse),
+
+  // Marcas
+  getMarcas: () => fetch(`${API_BASE_URL}/marcas`).then(handleResponse),
+  createMarca: (data) => fetch(`${API_BASE_URL}/marcas`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
+  updateMarca: (id, data) => fetch(`${API_BASE_URL}/marcas/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
+  deleteMarca: (id) => fetch(`${API_BASE_URL}/marcas/${id}`, { method: 'DELETE' }).then(handleResponse),
+
   // Modelos
   getModelos: () => fetch(`${API_BASE_URL}/modelos`).then(handleResponse),
   createModelo: (data) => fetch(`${API_BASE_URL}/modelos`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
@@ -61,9 +73,10 @@ export const api = {
   getUsuarios: () => fetch(`${API_BASE_URL}/usuarios`).then(handleResponse),
 
   // Productos
-  getProductos: ({ idModelo, search, lowStock } = {}) => {
+  getProductos: ({ idModelo, idCategoria, search, lowStock } = {}) => {
     const params = new URLSearchParams();
     if (idModelo) params.append('idModelo', idModelo);
+    if (idCategoria) params.append('idCategoria', idCategoria);
     if (search) params.append('search', search);
     if (lowStock) params.append('lowStock', 'true');
     const url = `${API_BASE_URL}/productos${params.toString() ? '?' + params.toString() : ''}`;

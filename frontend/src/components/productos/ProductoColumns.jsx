@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit, Trash2, ArrowUpDown } from 'lucide-react';
+import { Edit, Trash2, ArrowUpDown, FolderTree } from 'lucide-react';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
 
@@ -8,7 +8,7 @@ export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete }) {
     {
       header: 'SKU',
       accessor: 'sku',
-      width: '120px',
+      width: '110px',
       render: (p) => <Badge variant="brand">{p.sku}</Badge>,
     },
     {
@@ -17,9 +17,10 @@ export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete }) {
       render: (p) => (
         <div>
           <strong style={{ color: 'var(--text-white)' }}>{p.nombre}</strong>
-          {p.descripcion && (
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-              {p.descripcion.length > 55 ? `${p.descripcion.substring(0, 55)}...` : p.descripcion}
+          {p.categoria?.nombre && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.2rem' }}>
+              <FolderTree size={12} style={{ color: 'var(--brand-gold)' }} />
+              <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>{p.categoria.nombre}</span>
             </div>
           )}
         </div>
@@ -32,8 +33,8 @@ export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete }) {
           <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
             {p.modelo?.nombre || '-'}
           </div>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            {p.modelo?.marca || 'Genérica'}
+          <span style={{ fontSize: '0.75rem', color: 'var(--brand-gold)' }}>
+            {p.modelo?.marca?.nombre || 'Sin Marca'}
           </span>
         </div>
       ),
@@ -45,8 +46,8 @@ export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete }) {
           {p.color?.codigoHex && (
             <span
               style={{
-                width: '12px',
-                height: '12px',
+                width: '14px',
+                height: '14px',
                 borderRadius: '50%',
                 backgroundColor: p.color.codigoHex,
                 border: '1px solid rgba(255,255,255,0.3)',

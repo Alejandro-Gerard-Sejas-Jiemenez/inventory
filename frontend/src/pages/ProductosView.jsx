@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Search, Filter, AlertTriangle } from 'lucide-react';
+import { Plus, Search, Filter, AlertTriangle, FolderTree } from 'lucide-react';
 import { ProductoModal } from '../components/ProductoModal';
 import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardBody } from '../components/common/Card';
@@ -11,6 +11,8 @@ import { getProductoColumns } from '../components/productos/ProductoColumns';
 
 export function ProductosView({
   productos = [],
+  categorias = [],
+  marcas = [],
   modelos = [],
   materiales = [],
   colores = [],
@@ -22,6 +24,8 @@ export function ProductosView({
   setFilterLowStock,
   searchQuery,
   setSearchQuery,
+  selectedCategoria,
+  setSelectedCategoria,
   selectedModelo,
   setSelectedModelo,
 }) {
@@ -47,8 +51,8 @@ export function ProductosView({
   return (
     <div className="view-container">
       <PageHeader
-        title="Catálogo de Productos & Existencias"
-        subtitle="Control de stock, precios y atributos vinculados a Los Caseritos"
+        title="Catálogo Multirubro de Productos"
+        subtitle="Control de stock, precios, marcas y categorización vinculados a Los Caseritos"
         actions={
           <div style={{ display: 'flex', gap: '0.75rem' }}>
             <Button
@@ -67,7 +71,7 @@ export function ProductosView({
 
       <Card>
         <CardBody>
-          <div className="table-controls">
+          <div className="table-controls" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
             <div className="search-bar">
               <InputField
                 placeholder="Buscar por SKU, nombre o descripción..."
@@ -76,18 +80,28 @@ export function ProductosView({
                 icon={Search}
               />
             </div>
-            <div style={{ minWidth: '220px' }}>
-              <SelectField
-                placeholder="Todos los Modelos"
-                value={selectedModelo}
-                onChange={(e) => setSelectedModelo(e.target.value)}
-                options={modelos.map((m) => ({
-                  value: m.idModelo,
-                  label: `${m.nombre} (${m.marca || 'S/M'})`,
-                }))}
-                icon={Filter}
-              />
-            </div>
+
+            <SelectField
+              placeholder="Todas las Categorías"
+              value={selectedCategoria}
+              onChange={(e) => setSelectedCategoria(e.target.value)}
+              options={categorias.map((c) => ({
+                value: c.idCategoria,
+                label: c.nombre,
+              }))}
+              icon={FolderTree}
+            />
+
+            <SelectField
+              placeholder="Todos los Modelos"
+              value={selectedModelo}
+              onChange={(e) => setSelectedModelo(e.target.value)}
+              options={modelos.map((m) => ({
+                value: m.idModelo,
+                label: `${m.nombre} ${m.marca?.nombre ? `(${m.marca.nombre})` : ''}`,
+              }))}
+              icon={Filter}
+            />
           </div>
 
           <DataTable
@@ -105,6 +119,8 @@ export function ProductosView({
         onClose={() => setModalOpen(false)}
         onSave={onSaveProducto}
         producto={editingProducto}
+        categorias={categorias}
+        marcas={marcas}
         modelos={modelos}
         materiales={materiales}
         colores={colores}

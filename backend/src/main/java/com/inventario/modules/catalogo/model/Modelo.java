@@ -24,9 +24,9 @@ public class Modelo {
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    @Size(max = 100)
-    @Column(length = 100)
-    private String marca;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_marca")
+    private Marca marca;
 
     @Size(max = 255)
     @Column(length = 255)

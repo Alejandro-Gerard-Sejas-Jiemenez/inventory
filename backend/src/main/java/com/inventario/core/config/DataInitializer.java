@@ -1,13 +1,8 @@
 package com.inventario.core.config;
 
 import com.inventario.modules.catalogo.dto.ProductoRequestDto;
-import com.inventario.modules.catalogo.model.Color;
-import com.inventario.modules.catalogo.model.Material;
-import com.inventario.modules.catalogo.model.Modelo;
-import com.inventario.modules.catalogo.repository.ColorRepository;
-import com.inventario.modules.catalogo.repository.MaterialRepository;
-import com.inventario.modules.catalogo.repository.ModeloRepository;
-import com.inventario.modules.catalogo.repository.ProductoRepository;
+import com.inventario.modules.catalogo.model.*;
+import com.inventario.modules.catalogo.repository.*;
 import com.inventario.modules.catalogo.service.ProductoService;
 import com.inventario.modules.compras.model.Proveedor;
 import com.inventario.modules.compras.repository.ProveedorRepository;
@@ -31,6 +26,8 @@ import java.math.BigDecimal;
 public class DataInitializer implements CommandLineRunner {
 
     private final UsuarioRepository usuarioRepository;
+    private final MarcaRepository marcaRepository;
+    private final CategoriaRepository categoriaRepository;
     private final ModeloRepository modeloRepository;
     private final ColorRepository colorRepository;
     private final MaterialRepository materialRepository;
@@ -62,29 +59,72 @@ public class DataInitializer implements CommandLineRunner {
                     .activo(true)
                     .build());
 
-            // 2. Modelos
+            // 2. Marcas (Fabricantes / Origen)
+            Marca marcaApple = marcaRepository.save(Marca.builder().nombre("Apple").build());
+            Marca marcaSamsung = marcaRepository.save(Marca.builder().nombre("Samsung").build());
+            Marca marcaDell = marcaRepository.save(Marca.builder().nombre("Dell").build());
+            Marca marcaLenovo = marcaRepository.save(Marca.builder().nombre("Lenovo").build());
+            Marca marcaSony = marcaRepository.save(Marca.builder().nombre("Sony").build());
+            Marca marcaXiaomi = marcaRepository.save(Marca.builder().nombre("Xiaomi").build());
+
+            // 3. Categorías (Multirubro)
+            Categoria catLaptops = categoriaRepository.save(Categoria.builder()
+                    .nombre("Laptops & Computadoras")
+                    .descripcion("Portátiles profesionales, ultrabooks y equipos de escritorio")
+                    .build());
+
+            Categoria catSmartphones = categoriaRepository.save(Categoria.builder()
+                    .nombre("Smartphones & Celulares")
+                    .descripcion("Teléfonos inteligentes y dispositivos móviles de última generación")
+                    .build());
+
+            Categoria catAudio = categoriaRepository.save(Categoria.builder()
+                    .nombre("Audio & Auriculares")
+                    .descripcion("Audífonos bluetooth, parlantes y sistemas de sonido")
+                    .build());
+
+            Categoria catAccesorios = categoriaRepository.save(Categoria.builder()
+                    .nombre("Accesorios & Fundas")
+                    .descripcion("Fundas de protección, protectores y soportes")
+                    .build());
+
+            // 4. Modelos asociados a su Marca
             Modelo modMacbook = modeloRepository.save(Modelo.builder()
                     .nombre("MacBook Pro 14 M3")
-                    .marca("Apple")
+                    .marca(marcaApple)
                     .descripcion("Portátil profesional con procesador M3")
+                    .activo(true)
+                    .build());
+
+            Modelo modIphone = modeloRepository.save(Modelo.builder()
+                    .nombre("iPhone 15 Pro Max")
+                    .marca(marcaApple)
+                    .descripcion("Smartphone titanio chip A17 Pro")
                     .activo(true)
                     .build());
 
             Modelo modXPS = modeloRepository.save(Modelo.builder()
                     .nombre("XPS 15 InfinityEdge")
-                    .marca("Dell")
-                    .descripcion("Portátil para creadores y rendimiento")
+                    .marca(marcaDell)
+                    .descripcion("Portátil para creadores y alto rendimiento")
                     .activo(true)
                     .build());
 
             Modelo modThinkpad = modeloRepository.save(Modelo.builder()
                     .nombre("ThinkPad X1 Carbon")
-                    .marca("Lenovo")
+                    .marca(marcaLenovo)
                     .descripcion("Ultraligero empresarial de alta resistencia")
                     .activo(true)
                     .build());
 
-            // 3. Colores
+            Modelo modGalaxy = modeloRepository.save(Modelo.builder()
+                    .nombre("Galaxy S24 Ultra")
+                    .marca(marcaSamsung)
+                    .descripcion("Smartphone insignia con Galaxy AI")
+                    .activo(true)
+                    .build());
+
+            // 5. Colores
             Color colGris = colorRepository.save(Color.builder()
                     .nombre("Gris Espacial")
                     .codigoHex("#7D7E80")
@@ -92,18 +132,24 @@ public class DataInitializer implements CommandLineRunner {
                     .build());
 
             Color colPlata = colorRepository.save(Color.builder()
-                    .nombre("Plata Estelar")
+                    .nombre("Plata Titanio")
                     .codigoHex("#E3E4E5")
                     .activo(true)
                     .build());
 
             Color colNegro = colorRepository.save(Color.builder()
-                    .nombre("Negro Mate")
-                    .codigoHex("#1A1A1A")
+                    .nombre("Negro Medianoche")
+                    .codigoHex("#111827")
                     .activo(true)
                     .build());
 
-            // 4. Materiales
+            Color colOro = colorRepository.save(Color.builder()
+                    .nombre("Oro Caserito")
+                    .codigoHex("#F59E0B")
+                    .activo(true)
+                    .build());
+
+            // 6. Materiales
             Material matAluminio = materialRepository.save(Material.builder()
                     .nombre("Aluminio Aeroespacial")
                     .descripcion("Aleación ligera de alta disipación térmica")
@@ -116,17 +162,17 @@ public class DataInitializer implements CommandLineRunner {
                     .activo(true)
                     .build());
 
-            Material matMagnesio = materialRepository.save(Material.builder()
-                    .nombre("Aleación de Magnesio")
-                    .descripcion("Carcasa resistente y liviana")
+            Material matTitanio = materialRepository.save(Material.builder()
+                    .nombre("Titanio Grado 5")
+                    .descripcion("Material aeroespacial ultra resistente")
                     .activo(true)
                     .build());
 
-            // 5. Proveedores
+            // 7. Proveedores
             Proveedor provTech = proveedorRepository.save(Proveedor.builder()
                     .nombre("TechDistro Mayorista S.A.")
                     .contacto("Roberto Gómez")
-                    .telefono("+1 555-0192")
+                    .telefono("+591 71234567")
                     .email("ventas@techdistro.com")
                     .direccion("Av. Tecnología 450, Silicon Park")
                     .activo(true)
@@ -135,16 +181,16 @@ public class DataInitializer implements CommandLineRunner {
             Proveedor provGlobal = proveedorRepository.save(Proveedor.builder()
                     .nombre("Global Hardware Imports")
                     .contacto("Mariana Silva")
-                    .telefono("+1 555-0381")
+                    .telefono("+591 78901234")
                     .email("contacto@globalhardware.com")
                     .direccion("Zona Industrial Norte #12")
                     .activo(true)
                     .build());
 
-            // 6. Clientes
+            // 8. Clientes
             clienteRepository.save(Cliente.builder()
                     .nombre("Innovatech Solutions")
-                    .telefono("+1 555-7788")
+                    .telefono("+591 76543210")
                     .email("compras@innovatech.com")
                     .direccion("Edificio Nexus, Piso 4")
                     .activo(true)
@@ -152,17 +198,18 @@ public class DataInitializer implements CommandLineRunner {
 
             clienteRepository.save(Cliente.builder()
                     .nombre("Estudio Creativo Pixel")
-                    .telefono("+1 555-4422")
+                    .telefono("+591 72345678")
                     .email("contacto@pixelestudio.com")
                     .direccion("Calle Los Ilustradores 88")
                     .activo(true)
                     .build());
 
-            // 7. Productos iniciales
+            // 9. Productos iniciales
             productoService.create(ProductoRequestDto.builder()
                     .sku("LAP-MB-M3-GRIS")
                     .nombre("MacBook Pro 14' M3 18GB/512GB")
                     .descripcion("Chip M3 Pro 11-core CPU, 14-core GPU, Pantalla Liquid Retina XDR")
+                    .idCategoria(catLaptops.getIdCategoria())
                     .idModelo(modMacbook.getIdModelo())
                     .idColor(colGris.getIdColor())
                     .idMaterial(matAluminio.getIdMaterial())
@@ -175,13 +222,30 @@ public class DataInitializer implements CommandLineRunner {
                     .build());
 
             productoService.create(ProductoRequestDto.builder()
+                    .sku("CEL-IPHONE15-TIT")
+                    .nombre("iPhone 15 Pro Max 256GB")
+                    .descripcion("Pantalla Super Retina XDR 6.7', Chip A17 Pro, Cámara 48MP")
+                    .idCategoria(catSmartphones.getIdCategoria())
+                    .idModelo(modIphone.getIdModelo())
+                    .idColor(colPlata.getIdColor())
+                    .idMaterial(matTitanio.getIdMaterial())
+                    .stockActual(8)
+                    .stockMinimo(2)
+                    .precioCompra(new BigDecimal("1100.00"))
+                    .precioMayoreo(new BigDecimal("1320.00"))
+                    .precioUnitario(new BigDecimal("1450.00"))
+                    .activo(true)
+                    .build());
+
+            productoService.create(ProductoRequestDto.builder()
                     .sku("LAP-XPS15-PLATA")
                     .nombre("Dell XPS 15 OLED i7 32GB/1TB")
                     .descripcion("Intel Core i7 13700H, GeForce RTX 4060, Pantalla 3.5K OLED Touch")
+                    .idCategoria(catLaptops.getIdCategoria())
                     .idModelo(modXPS.getIdModelo())
                     .idColor(colPlata.getIdColor())
                     .idMaterial(matAluminio.getIdMaterial())
-                    .stockActual(2) // Stock bajo de prueba
+                    .stockActual(2)
                     .stockMinimo(4)
                     .precioCompra(new BigDecimal("1400.00"))
                     .precioMayoreo(new BigDecimal("1650.00"))
@@ -190,36 +254,37 @@ public class DataInitializer implements CommandLineRunner {
                     .build());
 
             productoService.create(ProductoRequestDto.builder()
-                    .sku("LAP-THINK-CARB")
-                    .nombre("Lenovo ThinkPad X1 Carbon Gen 11")
-                    .descripcion("Intel Core i7 vPro, 16GB RAM, 512GB SSD PCIe 4.0")
-                    .idModelo(modThinkpad.getIdModelo())
-                    .idColor(colNegro.getIdColor())
-                    .idMaterial(matCarbono.getIdMaterial())
-                    .stockActual(6)
+                    .sku("CEL-S24-ORO")
+                    .nombre("Samsung Galaxy S24 Ultra 512GB")
+                    .descripcion("Dynamic AMOLED 2X 120Hz, Snapdragon 8 Gen 3, S-Pen integrado")
+                    .idCategoria(catSmartphones.getIdCategoria())
+                    .idModelo(modGalaxy.getIdModelo())
+                    .idColor(colOro.getIdColor())
+                    .idMaterial(matTitanio.getIdMaterial())
+                    .stockActual(5)
                     .stockMinimo(2)
-                    .precioCompra(new BigDecimal("1200.00"))
-                    .precioMayoreo(new BigDecimal("1420.00"))
-                    .precioUnitario(new BigDecimal("1549.00"))
+                    .precioCompra(new BigDecimal("1050.00"))
+                    .precioMayoreo(new BigDecimal("1250.00"))
+                    .precioUnitario(new BigDecimal("1380.00"))
                     .activo(true)
                     .build());
 
-            // 8. Configuración general
+            // 10. Configuración general
             configuracionRepository.save(Configuracion.builder()
                     .clave("EMPRESA_NOMBRE")
-                    .valor("StockMaster Enterprise")
+                    .valor("Los Caseritos")
                     .descripcion("Nombre comercial de la compañía")
                     .build());
 
             configuracionRepository.save(Configuracion.builder()
                     .clave("MONEDA_SIMBOLO")
-                    .valor("$")
+                    .valor("Bs.")
                     .descripcion("Símbolo de moneda principal")
                     .build());
 
             configuracionRepository.save(Configuracion.builder()
                     .clave("IVA_PORCENTAJE")
-                    .valor("16.0")
+                    .valor("13.0")
                     .descripcion("Porcentaje de impuesto general a las ventas")
                     .build());
 

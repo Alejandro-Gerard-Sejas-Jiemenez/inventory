@@ -25,6 +25,10 @@ public class Producto {
     private Long idProducto;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_categoria")
+    private Categoria categoria;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_modelo")
     private Modelo modelo;
 

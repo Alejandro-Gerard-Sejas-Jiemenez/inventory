@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
-import { Trash2, Tag, Palette, Box, Layers } from 'lucide-react';
+import { Trash2, Tag, Palette, Box, Layers, FolderTree, Award } from 'lucide-react';
 import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardTitle, CardBody } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
 import { DataTable } from '../components/common/DataTable';
 import { Tabs } from '../components/common/Tabs';
+import { NuevaCategoriaForm } from '../components/catalogos/NuevaCategoriaForm';
+import { NuevaMarcaForm } from '../components/catalogos/NuevaMarcaForm';
 import { NuevoModeloForm } from '../components/catalogos/NuevoModeloForm';
 import { NuevoMaterialForm } from '../components/catalogos/NuevoMaterialForm';
 import { NuevoColorForm } from '../components/catalogos/NuevoColorForm';
 
 export function CatalogosView({
+  categorias = [],
+  marcas = [],
   modelos = [],
   materiales = [],
   colores = [],
+  onCreateCategoria,
+  onDeleteCategoria,
+  onCreateMarca,
+  onDeleteMarca,
   onCreateModelo,
   onDeleteModelo,
   onCreateColor,
@@ -21,18 +29,64 @@ export function CatalogosView({
   onCreateMaterial,
   onDeleteMaterial,
 }) {
-  const [activeSubTab, setActiveSubTab] = useState('modelos');
+  const [activeSubTab, setActiveSubTab] = useState('categorias');
 
   const tabsConfig = [
+    { id: 'categorias', label: 'Categorías', count: categorias.length, icon: FolderTree },
+    { id: 'marcas', label: 'Marcas', count: marcas.length, icon: Award },
     { id: 'modelos', label: 'Modelos', count: modelos.length, icon: Box },
     { id: 'materiales', label: 'Materiales', count: materiales.length, icon: Tag },
     { id: 'colores', label: 'Colores', count: colores.length, icon: Palette },
   ];
 
+  const categoriaColumns = [
+    { header: 'ID', accessor: 'idCategoria', width: '70px', render: (cat) => <span style={{ color: 'var(--text-muted)' }}>#{cat.idCategoria}</span> },
+    { header: 'Categoría', accessor: 'nombre', render: (cat) => <strong style={{ color: 'var(--text-white)' }}>{cat.nombre}</strong> },
+    { header: 'Descripción', accessor: 'descripcion', render: (cat) => <span style={{ color: 'var(--text-secondary)' }}>{cat.descripcion || '-'}</span> },
+    {
+      header: 'Acción',
+      align: 'right',
+      width: '80px',
+      render: (cat) => (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onDeleteCategoria(cat.idCategoria)}
+          style={{ color: 'var(--brand-red)' }}
+          icon={Trash2}
+          aria-label="Eliminar categoría"
+        />
+      ),
+    },
+  ];
+
+  const marcaColumns = [
+    { header: 'ID', accessor: 'idMarca', width: '70px', render: (m) => <span style={{ color: 'var(--text-muted)' }}>#{m.idMarca}</span> },
+    { header: 'Marca / Fabricante', accessor: 'nombre', render: (m) => <strong style={{ color: 'var(--text-white)' }}>{m.nombre}</strong> },
+    {
+      header: 'Acción',
+      align: 'right',
+      width: '80px',
+      render: (m) => (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onDeleteMarca(m.idMarca)}
+          style={{ color: 'var(--brand-red)' }}
+          icon={Trash2}
+          aria-label="Eliminar marca"
+        />
+      ),
+    },
+  ];
+
   const modeloColumns = [
     { header: 'ID', accessor: 'idModelo', width: '70px', render: (m) => <span style={{ color: 'var(--text-muted)' }}>#{m.idModelo}</span> },
     { header: 'Modelo', accessor: 'nombre', render: (m) => <strong style={{ color: 'var(--text-white)' }}>{m.nombre}</strong> },
-    { header: 'Marca', accessor: 'marca', render: (m) => <Badge variant="brand">{m.marca || 'Genérica'}</Badge> },
+    {
+      header: 'Marca Fabricante',
+      render: (m) => <Badge variant="brand">{m.marca?.nombre || 'Genérica'}</Badge>,
+    },
     { header: 'Descripción', accessor: 'descripcion', render: (m) => <span style={{ color: 'var(--text-secondary)' }}>{m.descripcion || '-'}</span> },
     {
       header: 'Acción',
@@ -113,15 +167,53 @@ export function CatalogosView({
     <div className="view-container">
       <PageHeader
         title="Catálogos & Atributos del Sistema"
-        subtitle="Gestión modular de Modelos, Materiales y Colores para el inventario de Los Caseritos"
+        subtitle="Gestión multirubro de Categorías, Marcas, Modelos, Materiales y Colores para Los Caseritos"
         actions={<Tabs tabs={tabsConfig} activeTab={activeSubTab} onChange={setActiveSubTab} />}
       />
 
+      {activeSubTab === 'categorias' && (
+        <div className="grid-split-form">
+          <NuevaCategoriaForm onSubmit={onCreateCategoria} />
+          <Card>
+            <CardTitle icon={FolderTree} subtitle="Rubros y agrupaciones de productos">
+              Listado de Categorías ({categorias.length})
+            </CardTitle>
+            <CardBody>
+              <DataTable
+                columns={categoriaColumns}
+                data={categorias}
+                keyExtractor={(cat) => cat.idCategoria}
+                emptyMessage="No hay categorías registradas aún."
+              />
+            </CardBody>
+          </Card>
+        </div>
+      )}
+
+      {activeSubTab === 'marcas' && (
+        <div className="grid-split-form">
+          <NuevaMarcaForm onSubmit={onCreateMarca} />
+          <Card>
+            <CardTitle icon={Award} subtitle="Fabricantes y marcas registradas">
+              Listado de Marcas ({marcas.length})
+            </CardTitle>
+            <CardBody>
+              <DataTable
+                columns={marcaColumns}
+                data={marcas}
+                keyExtractor={(m) => m.idMarca}
+                emptyMessage="No hay marcas registradas aún."
+              />
+            </CardBody>
+          </Card>
+        </div>
+      )}
+
       {activeSubTab === 'modelos' && (
         <div className="grid-split-form">
-          <NuevoModeloForm onSubmit={onCreateModelo} />
+          <NuevoModeloForm marcas={marcas} onSubmit={onCreateModelo} />
           <Card>
-            <CardTitle icon={Layers} subtitle="Modelos activos en el catálogo">
+            <CardTitle icon={Layers} subtitle="Modelos activos vinculados a su marca">
               Listado de Modelos ({modelos.length})
             </CardTitle>
             <CardBody>

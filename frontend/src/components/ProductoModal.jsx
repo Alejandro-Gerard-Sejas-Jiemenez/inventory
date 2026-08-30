@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Save } from 'lucide-react';
+import { Package, Save, Check } from 'lucide-react';
 import { Modal } from './common/Modal';
 import { InputField } from './common/InputField';
 import { SelectField } from './common/SelectField';
@@ -11,6 +11,7 @@ export function ProductoModal({
   onClose,
   onSave,
   producto,
+  categorias = [],
   modelos = [],
   materiales = [],
   colores = [],
@@ -19,6 +20,7 @@ export function ProductoModal({
     sku: '',
     nombre: '',
     descripcion: '',
+    idCategoria: '',
     idModelo: '',
     idMaterial: '',
     idColor: '',
@@ -38,6 +40,7 @@ export function ProductoModal({
         sku: producto.sku || '',
         nombre: producto.nombre || '',
         descripcion: producto.descripcion || '',
+        idCategoria: producto.categoria?.idCategoria || '',
         idModelo: producto.modelo?.idModelo || '',
         idMaterial: producto.material?.idMaterial || '',
         idColor: producto.color?.idColor || '',
@@ -52,6 +55,7 @@ export function ProductoModal({
         sku: '',
         nombre: '',
         descripcion: '',
+        idCategoria: categorias.length > 0 ? categorias[0].idCategoria : '',
         idModelo: modelos.length > 0 ? modelos[0].idModelo : '',
         idMaterial: materiales.length > 0 ? materiales[0].idMaterial : '',
         idColor: colores.length > 0 ? colores[0].idColor : '',
@@ -63,7 +67,7 @@ export function ProductoModal({
       });
     }
     setError('');
-  }, [producto, modelos, materiales, colores, isOpen]);
+  }, [producto, categorias, modelos, materiales, colores, isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -77,6 +81,7 @@ export function ProductoModal({
       setError('');
       await onSave({
         ...formData,
+        idCategoria: formData.idCategoria ? parseInt(formData.idCategoria, 10) : null,
         idModelo: formData.idModelo ? parseInt(formData.idModelo, 10) : null,
         idMaterial: formData.idMaterial ? parseInt(formData.idMaterial, 10) : null,
         idColor: formData.idColor ? parseInt(formData.idColor, 10) : null,
@@ -99,9 +104,9 @@ export function ProductoModal({
       isOpen={isOpen}
       onClose={onClose}
       title={producto ? 'Editar Producto' : 'Nuevo Producto'}
-      subtitle="Complete los detalles técnicos y niveles de existencias"
+      subtitle="Complete los detalles de categorización, especificaciones y existencias"
       icon={Package}
-      maxWidth="680px"
+      maxWidth="720px"
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={loading}>
@@ -134,7 +139,20 @@ export function ProductoModal({
           </div>
         )}
 
+        {/* Categoría y SKU */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+          <SelectField
+            label="Categoría del Producto"
+            value={formData.idCategoria}
+            onChange={(e) => setFormData({ ...formData, idCategoria: e.target.value })}
+            placeholder="(Seleccionar Categoría...)"
+            options={categorias.map((c) => ({
+              value: c.idCategoria,
+              label: c.nombre,
+            }))}
+            required
+          />
+
           <InputField
             label="Código SKU"
             placeholder="Ej. LAP-MB-M3-GRIS"
@@ -142,28 +160,30 @@ export function ProductoModal({
             onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
             required
           />
-
-          <SelectField
-            label="Modelo"
-            value={formData.idModelo}
-            onChange={(e) => setFormData({ ...formData, idModelo: e.target.value })}
-            placeholder="(Sin modelo específico)"
-            options={modelos.map((m) => ({
-              value: m.idModelo,
-              label: `${m.nombre} ${m.marca ? `(${m.marca})` : ''}`,
-            }))}
-          />
         </div>
 
+        {/* Nombre del Producto */}
         <InputField
           label="Nombre del Producto"
-          placeholder="Ej. MacBook Pro 14' M3 512GB"
+          placeholder="Ej. MacBook Pro 14' M3 512GB / Samsung S24 Ultra"
           value={formData.nombre}
           onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
           required
         />
 
+        {/* Modelo y Material */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+          <SelectField
+            label="Modelo & Marca"
+            value={formData.idModelo}
+            onChange={(e) => setFormData({ ...formData, idModelo: e.target.value })}
+            placeholder="(Sin modelo específico)"
+            options={modelos.map((m) => ({
+              value: m.idModelo,
+              label: `${m.nombre} ${m.marca?.nombre ? `(${m.marca.nombre})` : ''}`,
+            }))}
+          />
+
           <SelectField
             label="Material"
             value={formData.idMaterial}
@@ -174,17 +194,62 @@ export function ProductoModal({
               label: mat.nombre,
             }))}
           />
+        </div>
 
-          <SelectField
-            label="Color"
-            value={formData.idColor}
-            onChange={(e) => setFormData({ ...formData, idColor: e.target.value })}
-            placeholder="(Sin color)"
-            options={colores.map((c) => ({
-              value: c.idColor,
-              label: `${c.nombre} ${c.codigoHex ? `(${c.codigoHex})` : ''}`,
-            }))}
-          />
+        {/* Selector Visual de Colores con Chips */}
+        <div>
+          <label className="form-field-label">Color del Producto</label>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '0.5rem',
+              padding: '0.6rem',
+              backgroundColor: 'var(--bg-secondary)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border-color)',
+              maxHeight: '120px',
+              overflowY: 'auto',
+            }}
+          >
+            {colores.map((c) => {
+              const isSelected = String(formData.idColor) === String(c.idColor);
+              return (
+                <button
+                  key={c.idColor}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, idColor: c.idColor })}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    padding: '0.35rem 0.7rem',
+                    borderRadius: 'var(--radius-full)',
+                    background: isSelected ? 'var(--brand-gold-bg)' : 'rgba(255,255,255,0.05)',
+                    border: isSelected ? '1px solid var(--brand-gold)' : '1px solid rgba(255,255,255,0.1)',
+                    color: isSelected ? 'var(--brand-gold)' : 'var(--text-secondary)',
+                    cursor: 'pointer',
+                    fontSize: '0.82rem',
+                    fontWeight: isSelected ? 700 : 500,
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <span
+                    style={{
+                      width: '14px',
+                      height: '14px',
+                      borderRadius: '50%',
+                      backgroundColor: c.codigoHex || '#888',
+                      border: '1px solid rgba(255,255,255,0.3)',
+                      flexShrink: 0,
+                    }}
+                  />
+                  <span>{c.nombre}</span>
+                  {isSelected && <Check size={13} />}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <TextAreaField
@@ -195,6 +260,7 @@ export function ProductoModal({
           onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
         />
 
+        {/* Precios */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
           <InputField
             label="Precio Compra (Bs.)"
@@ -228,6 +294,7 @@ export function ProductoModal({
           />
         </div>
 
+        {/* Stocks */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
           <InputField
             label={producto ? 'Stock Actual' : 'Stock Inicial'}

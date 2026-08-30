@@ -1,14 +1,8 @@
 package com.inventario.modules.catalogo;
 
 import com.inventario.modules.catalogo.dto.ProductoRequestDto;
-import com.inventario.modules.catalogo.model.Color;
-import com.inventario.modules.catalogo.model.Material;
-import com.inventario.modules.catalogo.model.Modelo;
-import com.inventario.modules.catalogo.model.Producto;
-import com.inventario.modules.catalogo.repository.ColorRepository;
-import com.inventario.modules.catalogo.repository.MaterialRepository;
-import com.inventario.modules.catalogo.repository.ModeloRepository;
-import com.inventario.modules.catalogo.repository.ProductoRepository;
+import com.inventario.modules.catalogo.model.*;
+import com.inventario.modules.catalogo.repository.*;
 import com.inventario.modules.catalogo.service.ProductoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +27,12 @@ class ProductoServiceTest {
     private ProductoRepository productoRepository;
 
     @Autowired
+    private MarcaRepository marcaRepository;
+
+    @Autowired
+    private CategoriaRepository categoriaRepository;
+
+    @Autowired
     private ModeloRepository modeloRepository;
 
     @Autowired
@@ -41,15 +41,26 @@ class ProductoServiceTest {
     @Autowired
     private ColorRepository colorRepository;
 
+    private Marca marcaTest;
+    private Categoria categoriaTest;
     private Modelo modeloTest;
     private Material materialTest;
     private Color colorTest;
 
     @BeforeEach
     void setUp() {
+        marcaTest = marcaRepository.save(Marca.builder()
+                .nombre("Marca Test")
+                .build());
+
+        categoriaTest = categoriaRepository.save(Categoria.builder()
+                .nombre("Categoria Test")
+                .descripcion("Categoria de prueba")
+                .build());
+
         modeloTest = modeloRepository.save(Modelo.builder()
                 .nombre("Modelo Test")
-                .marca("Marca Test")
+                .marca(marcaTest)
                 .activo(true)
                 .build());
 
@@ -72,6 +83,7 @@ class ProductoServiceTest {
                 .sku("TEST-SKU-001")
                 .nombre("Producto de Prueba")
                 .descripcion("Descripción de prueba")
+                .idCategoria(categoriaTest.getIdCategoria())
                 .idModelo(modeloTest.getIdModelo())
                 .idMaterial(materialTest.getIdMaterial())
                 .idColor(colorTest.getIdColor())
@@ -87,7 +99,10 @@ class ProductoServiceTest {
         assertNotNull(creado.getIdProducto());
         assertEquals("TEST-SKU-001", creado.getSku());
         assertEquals(15, creado.getStockActual());
+        assertNotNull(creado.getCategoria());
+        assertEquals("Categoria Test", creado.getCategoria().getNombre());
         assertEquals("Modelo Test", creado.getModelo().getNombre());
+        assertEquals("Marca Test", creado.getModelo().getMarca().getNombre());
         assertEquals("Material Test", creado.getMaterial().getNombre());
         assertEquals("Color Test", creado.getColor().getNombre());
     }

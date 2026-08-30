@@ -3,14 +3,8 @@ package com.inventario.modules.catalogo.service.impl;
 import com.inventario.core.exception.BadRequestException;
 import com.inventario.core.exception.ResourceNotFoundException;
 import com.inventario.modules.catalogo.dto.ProductoRequestDto;
-import com.inventario.modules.catalogo.model.Color;
-import com.inventario.modules.catalogo.model.Material;
-import com.inventario.modules.catalogo.model.Modelo;
-import com.inventario.modules.catalogo.model.Producto;
-import com.inventario.modules.catalogo.repository.ColorRepository;
-import com.inventario.modules.catalogo.repository.MaterialRepository;
-import com.inventario.modules.catalogo.repository.ModeloRepository;
-import com.inventario.modules.catalogo.repository.ProductoRepository;
+import com.inventario.modules.catalogo.model.*;
+import com.inventario.modules.catalogo.repository.*;
 import com.inventario.modules.catalogo.service.ProductoService;
 import com.inventario.modules.inventario.model.MovimientoStock;
 import com.inventario.modules.inventario.model.TipoMovimiento;
@@ -26,6 +20,7 @@ import java.util.List;
 public class ProductoServiceImpl implements ProductoService {
 
     private final ProductoRepository productoRepository;
+    private final CategoriaRepository categoriaRepository;
     private final ModeloRepository modeloRepository;
     private final MaterialRepository materialRepository;
     private final ColorRepository colorRepository;
@@ -72,6 +67,12 @@ public class ProductoServiceImpl implements ProductoService {
             throw new BadRequestException("Ya existe un producto con el SKU: " + request.getSku());
         }
 
+        Categoria categoria = null;
+        if (request.getIdCategoria() != null) {
+            categoria = categoriaRepository.findById(request.getIdCategoria())
+                    .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada"));
+        }
+
         Modelo modelo = null;
         if (request.getIdModelo() != null) {
             modelo = modeloRepository.findById(request.getIdModelo())
@@ -99,6 +100,7 @@ public class ProductoServiceImpl implements ProductoService {
                 .precioUnitario(request.getPrecioUnitario())
                 .stockActual(request.getStockActual() != null ? request.getStockActual() : 0)
                 .stockMinimo(request.getStockMinimo() != null ? request.getStockMinimo() : 5)
+                .categoria(categoria)
                 .modelo(modelo)
                 .material(material)
                 .color(color)
@@ -107,7 +109,6 @@ public class ProductoServiceImpl implements ProductoService {
 
         Producto saved = productoRepository.save(producto);
 
-        // Registro de auditoría si se ingresa con stock > 0
         if (saved.getStockActual() > 0) {
             MovimientoStock movimiento = MovimientoStock.builder()
                     .producto(saved)
@@ -130,6 +131,12 @@ public class ProductoServiceImpl implements ProductoService {
 
         if (productoRepository.existsBySkuIgnoreCaseAndIdProductoNot(request.getSku(), id)) {
             throw new BadRequestException("Ya existe otro producto con el SKU: " + request.getSku());
+        }
+
+        Categoria categoria = null;
+        if (request.getIdCategoria() != null) {
+            categoria = categoriaRepository.findById(request.getIdCategoria())
+                    .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada"));
         }
 
         Modelo modelo = null;
@@ -161,6 +168,7 @@ public class ProductoServiceImpl implements ProductoService {
         producto.setPrecioUnitario(request.getPrecioUnitario());
         producto.setStockActual(stockNuevo);
         producto.setStockMinimo(request.getStockMinimo() != null ? request.getStockMinimo() : 5);
+        producto.setCategoria(categoria);
         producto.setModelo(modelo);
         producto.setMaterial(material);
         producto.setColor(color);
@@ -190,7 +198,7 @@ public class ProductoServiceImpl implements ProductoService {
     @Transactional
     public void delete(Long id) {
         Producto producto = findById(id);
-        producto.setActivo(false); // Eliminación lógica segura
+        producto.setActivo(false);
         productoRepository.save(producto);
     }
 }

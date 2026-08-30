@@ -44,35 +44,45 @@ backend/
     │       │
     │       └── modules/                         ← 5 Módulos de Dominio (16 Tablas)
     │           │
-    │           ├── catalogo/                    ← Módulo 1: Catálogo y Productos (6 tablas)
+    │           ├── catalogo/                    ← Módulo 1: Catálogo y Productos (8 tablas)
     │           │   ├── controller/
+    │           │   │   ├── CategoriaController.java
     │           │   │   ├── ColorController.java
+    │           │   │   ├── MarcaController.java
     │           │   │   ├── MaterialController.java
     │           │   │   ├── ModeloController.java
     │           │   │   └── ProductoController.java
     │           │   ├── dto/
     │           │   │   └── ProductoRequestDto.java
     │           │   ├── model/
+    │           │   │   ├── Categoria.java
     │           │   │   ├── Color.java
     │           │   │   ├── DescuentoPorCantidad.java
     │           │   │   ├── ImagenProducto.java
+    │           │   │   ├── Marca.java
     │           │   │   ├── Material.java
     │           │   │   ├── Modelo.java
     │           │   │   └── Producto.java
     │           │   ├── repository/
+    │           │   │   ├── CategoriaRepository.java
     │           │   │   ├── ColorRepository.java
     │           │   │   ├── DescuentoPorCantidadRepository.java
     │           │   │   ├── ImagenProductoRepository.java
+    │           │   │   ├── MarcaRepository.java
     │           │   │   ├── MaterialRepository.java
     │           │   │   ├── ModeloRepository.java
     │           │   │   └── ProductoRepository.java
     │           │   └── service/
+    │           │       ├── CategoriaService.java
     │           │       ├── ColorService.java
+    │           │       ├── MarcaService.java
     │           │       ├── MaterialService.java
     │           │       ├── ModeloService.java
     │           │       ├── ProductoService.java
     │           │       └── impl/
+    │           │           ├── CategoriaServiceImpl.java
     │           │           ├── ColorServiceImpl.java
+    │           │           ├── MarcaServiceImpl.java
     │           │           ├── MaterialServiceImpl.java
     │           │           ├── ModeloServiceImpl.java
     │           │           └── ProductoServiceImpl.java
@@ -209,9 +219,11 @@ frontend/
     │   │   └── index.js                         ← Exportador unificado de common
     │   │
     │   ├── catalogos/                           ← Sub-componentes específicos de Catálogos
-    │   │   ├── NuevoModeloForm.jsx              ← Formulario aislado para alta de modelos
+    │   │   ├── NuevaCategoriaForm.jsx           ← Formulario aislado para alta de categorías
+    │   │   ├── NuevaMarcaForm.jsx               ← Formulario aislado para alta de marcas
+    │   │   ├── NuevoModeloForm.jsx              ← Formulario aislado para alta de modelos con selector de marca
     │   │   ├── NuevoMaterialForm.jsx            ← Formulario aislado para alta de materiales
-    │   │   └── NuevoColorForm.jsx               ← Formulario aislado para alta de colores
+    │   │   └── NuevoColorForm.jsx               ← Formulario con galería comercial de presets de 1 clic
     │   │
     │   ├── compras/                             ← Sub-componentes específicos de Compras
     │   │   ├── NuevaCompraForm.jsx              ← Formulario dinámico de órdenes de compra
@@ -225,27 +237,27 @@ frontend/
     │   │   └── ProductoColumns.jsx              ← Definición desacoplada de columnas de tabla
     │   │
     │   ├── Sidebar.jsx                          ← Menú lateral con logo oficial de Los Caseritos
-    │   ├── ProductoModal.jsx                    ← Modal para crear/editar productos
+    │   ├── ProductoModal.jsx                    ← Modal para crear/editar productos (con chips de color)
     │   ├── MovimientoModal.jsx                  ← Modal para registrar entradas/salidas de stock
     │   ├── StockModal.jsx                       ← Modal para ajuste rápido de inventario
     │   └── CategoriaModal.jsx                   ← Modal para gestión de catálogos auxiliares
     │
     ├── pages/                                   ← Vistas principales del sistema
     │   ├── DashboardView.jsx                    ← Panel de métricas e indicadores en tiempo real
-    │   ├── ProductosView.jsx                    ← Listado, búsqueda, filtros y CRUD de productos
+    │   ├── ProductosView.jsx                    ← Listado multirubro con filtros de categoría y marca
     │   ├── MovimientosView.jsx                  ← Historial de movimientos de stock (Kardex)
     │   ├── ComprasView.jsx                      ← Registro y consulta de compras a proveedores
     │   ├── VentasView.jsx                       ← Punto de venta, facturación y gestión de pedidos
-    │   ├── CatalogosView.jsx                    ← Gestión de Modelos, Materiales y Colores
-    │   ├── CategoriasView.jsx                   ← Vista unificada de categorías y atributos
-    │   ├── DatabaseView.jsx                     ← Explorador y visor del esquema de BD
+    │   ├── CatalogosView.jsx                    ← Gestión de 5 catálogos (Categorías, Marcas, Modelos, Materiales, Colores)
+    │   ├── DatabaseView.jsx                     ← Explorador y visor del esquema de BD (18 tablas)
     │   └── BitacoraView.jsx                     ← Auditoría del sistema y registro de actividad
     │
     ├── assets/
     │   └── logo.png                             ← Logo oficial de Los Caseritos
     │
     ├── data/                                    ← Datasets, metadatos y mocks aislados
-    │   ├── databaseSchema.js                    ← Esquema y metadatos de las 16 tablas
+    │   ├── colorPresets.js                      ← Galería de 24 colores comerciales predefinidos
+    │   ├── databaseSchema.js                    ← Esquema y metadatos de las 18 tablas
     │   ├── menuItems.js                         ← Configuración de rutas de navegación
     │   ├── paymentMethods.js                    ← Métodos de pago y estados
     │   ├── movementTypes.js                     ← Tipos de operación Kardex

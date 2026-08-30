@@ -266,6 +266,48 @@
   - Commit: `refactor(frontend): decompose page responsibilities into modular subcomponents`
   - Rama: `main` sincronizada en GitHub.
 
+---
+
+## Bloque 09: Separación Relacional de Marcas y Modelos, Catálogo de Categorías y Selector de Colores Comerciales
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `CAT-1` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Backend (`com.inventario.modules.catalogo`) & Frontend (`src/pages/`, `src/components/`, `src/data/`) |
+| **Skills Aplicadas** | `spring-modular-backend`, `clean-code`, `react-modern-frontend`, `ui-ux-usability`, `spec-driven-development` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Separar la entidad `Marca` de `Modelo` (relación relacional `@ManyToOne` entre Modelo y Marca).
+- Incorporar catálogo de `Categoria` para soportar inventario multirubro.
+- Diseñar sistema visual de presets de colores comerciales de 1 clic para usuarios no técnicos.
+
+### Fase 2: IMPLEMENTACIÓN
+- **Backend (Spring Boot 3 + Java 21):**
+  - Entidad, Repositorio, Servicio y Controlador de `Marca` (`/api/marcas`).
+  - Entidad, Repositorio, Servicio y Controlador de `Categoria` (`/api/categorias`).
+  - Actualización de `Modelo` con `@ManyToOne Marca marca`.
+  - Actualización de `Producto` con `@ManyToOne Categoria categoria`.
+  - Actualización de `DataInitializer` y tests unitarios.
+- **Frontend (React 19 + Vite):**
+  - Creación de `data/colorPresets.js` con 24 colores comerciales predefinidos.
+  - Sub-formularios `NuevaMarcaForm.jsx` y `NuevaCategoriaForm.jsx`.
+  - Actualización de `NuevoModeloForm.jsx` con selector de Marca.
+  - Actualización de `NuevoColorForm.jsx` con selector de muestras cromáticas de 1 clic.
+  - Actualización de `CatalogosView.jsx` con 5 pestañas completas.
+  - Actualización de `ProductoModal.jsx` con chips circulares de color y selector de categoría.
+  - Actualización de `ProductosView.jsx` con filtros dinámicos.
+
+### Fase 3: VERIFICACIÓN
+- Compilación y pruebas unitarias de backend (`./mvnw test`): **4 tests exitosos, 0 fallos**.
+- Linter frontend (`npm run lint` / `oxlint`): **0 errores**.
+- Verificación en navegador mediante subagente: navegación, carga de 5 pestañas y cambio dinámico de presets de color.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `feat(catalogo): separate brands and models, add categories and visual color presets`
+  - Rama: `main` en GitHub.
+
+
 
 
 

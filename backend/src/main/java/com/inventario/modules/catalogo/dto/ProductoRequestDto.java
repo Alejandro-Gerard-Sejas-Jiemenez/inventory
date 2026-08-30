@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 @Builder
 public class ProductoRequestDto {
 
+    private Long idCategoria;
     private Long idModelo;
     private Long idMaterial;
     private Long idColor;

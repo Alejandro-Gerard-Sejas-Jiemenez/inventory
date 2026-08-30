@@ -42,7 +42,7 @@ export function Sidebar({ currentTab, onSelectTab, stats }) {
       <div className="sidebar-footer">
         <div className="system-badge">
           <span className="status-dot"></span>
-          <span>API REST :8088 / H2 Conectada</span>
+          <span>By Alejandro Gerard Sejas</span>
         </div>
       </div>
     </aside>

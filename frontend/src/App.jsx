@@ -15,6 +15,8 @@ export function App() {
   const [currentTab, setCurrentTab] = useState('dashboard');
   const [stats, setStats] = useState(null);
   const [productos, setProductos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [marcas, setMarcas] = useState([]);
   const [modelos, setModelos] = useState([]);
   const [materiales, setMateriales] = useState([]);
   const [colores, setColores] = useState([]);
@@ -29,6 +31,7 @@ export function App() {
 
   // Filtros productos
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategoria, setSelectedCategoria] = useState('');
   const [selectedModelo, setSelectedModelo] = useState('');
   const [filterLowStock, setFilterLowStock] = useState(false);
 
@@ -41,6 +44,8 @@ export function App() {
       setLoading(true);
       const [
         statsData,
+        categoriasData,
+        marcasData,
         modelosData,
         materialesData,
         coloresData,
@@ -53,6 +58,8 @@ export function App() {
         bitacoraData,
       ] = await Promise.all([
         api.getDashboardStats().catch(() => null),
+        api.getCategorias().catch(() => []),
+        api.getMarcas().catch(() => []),
         api.getModelos().catch(() => []),
         api.getMateriales().catch(() => []),
         api.getColores().catch(() => []),
@@ -66,6 +73,8 @@ export function App() {
       ]);
 
       setStats(statsData);
+      setCategorias(categoriasData);
+      setMarcas(marcasData);
       setModelos(modelosData);
       setMateriales(materialesData);
       setColores(coloresData);
@@ -77,7 +86,7 @@ export function App() {
       setMovimientos(movsData);
       setBitacora(bitacoraData);
     } catch (err) {
-      console.error('Error cargando datos maestos:', err);
+      console.error('Error cargando datos maestros:', err);
     } finally {
       setLoading(false);
     }
@@ -86,6 +95,7 @@ export function App() {
   const loadProductos = useCallback(async () => {
     try {
       const data = await api.getProductos({
+        idCategoria: selectedCategoria || undefined,
         idModelo: selectedModelo || undefined,
         search: searchQuery || undefined,
         lowStock: filterLowStock,
@@ -94,7 +104,7 @@ export function App() {
     } catch (err) {
       console.error('Error cargando productos:', err);
     }
-  }, [selectedModelo, searchQuery, filterLowStock]);
+  }, [selectedCategoria, selectedModelo, searchQuery, filterLowStock]);
 
   useEffect(() => {
     loadData();
@@ -124,6 +134,24 @@ export function App() {
   };
 
   // Handlers Catálogos
+  const handleCreateCategoria = async (data) => {
+    await api.createCategoria(data);
+    await loadData();
+  };
+  const handleDeleteCategoria = async (id) => {
+    await api.deleteCategoria(id);
+    await loadData();
+  };
+
+  const handleCreateMarca = async (data) => {
+    await api.createMarca(data);
+    await loadData();
+  };
+  const handleDeleteMarca = async (id) => {
+    await api.deleteMarca(id);
+    await loadData();
+  };
+
   const handleCreateModelo = async (data) => {
     await api.createModelo(data);
     await loadData();
@@ -197,6 +225,8 @@ export function App() {
         {currentTab === 'productos' && (
           <ProductosView
             productos={productos}
+            categorias={categorias}
+            marcas={marcas}
             modelos={modelos}
             materiales={materiales}
             colores={colores}
@@ -208,6 +238,8 @@ export function App() {
             setFilterLowStock={setFilterLowStock}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
+            selectedCategoria={selectedCategoria}
+            setSelectedCategoria={setSelectedCategoria}
             selectedModelo={selectedModelo}
             setSelectedModelo={setSelectedModelo}
           />
@@ -237,9 +269,15 @@ export function App() {
 
         {currentTab === 'catalogos' && (
           <CatalogosView
+            categorias={categorias}
+            marcas={marcas}
             modelos={modelos}
             materiales={materiales}
             colores={colores}
+            onCreateCategoria={handleCreateCategoria}
+            onDeleteCategoria={handleDeleteCategoria}
+            onCreateMarca={handleCreateMarca}
+            onDeleteMarca={handleDeleteMarca}
             onCreateModelo={handleCreateModelo}
             onDeleteModelo={handleDeleteModelo}
             onCreateColor={handleCreateColor}
@@ -266,4 +304,5 @@ export function App() {
     </div>
   );
 }
+
 export default App;
