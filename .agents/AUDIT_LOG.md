@@ -189,6 +189,11 @@
   - Comprobación de navegación fluida entre todas las 8 vistas.
   - Apertura y cierre de modales y formularios (Nuevo Producto, POS, Nueva Compra, Nuevo Modelo).
   - Verificación de renderizado de la marca, contraste cromático y adaptabilidad responsiva.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `feat(system): setup modular architecture, brand identity and ui kit` (`51ea574`)
+  - Remoto: `https://github.com/Alejandro-Gerard-Sejas-Jiemenez/inventory.git` (rama `main`)
+  - Exclusiones de `.gitignore` respetadas al 100% (sin PDFs, sin binarios `.db`, sin `target/` ni `node_modules/`).
+
 
 
 
