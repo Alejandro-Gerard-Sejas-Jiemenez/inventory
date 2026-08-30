@@ -78,6 +78,8 @@ export function BitacoraView({ bitacora = [] }) {
             columns={columns}
             data={bitacora}
             keyExtractor={(b) => b.idBitacora}
+            showSearch={true}
+            searchPlaceholder="Buscar por acción, usuario, tabla o IP..."
             emptyMessage="No hay registros de bitácora todavía."
           />
         </CardBody>

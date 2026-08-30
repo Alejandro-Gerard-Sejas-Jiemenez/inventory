@@ -183,6 +183,8 @@ export function CatalogosView({
                 columns={categoriaColumns}
                 data={categorias}
                 keyExtractor={(cat) => cat.idCategoria}
+                showSearch={true}
+                searchPlaceholder="Buscar categoría..."
                 emptyMessage="No hay categorías registradas aún."
               />
             </CardBody>
@@ -202,6 +204,8 @@ export function CatalogosView({
                 columns={marcaColumns}
                 data={marcas}
                 keyExtractor={(m) => m.idMarca}
+                showSearch={true}
+                searchPlaceholder="Buscar marca..."
                 emptyMessage="No hay marcas registradas aún."
               />
             </CardBody>
@@ -221,6 +225,8 @@ export function CatalogosView({
                 columns={modeloColumns}
                 data={modelos}
                 keyExtractor={(m) => m.idModelo}
+                showSearch={true}
+                searchPlaceholder="Buscar modelo o marca..."
                 emptyMessage="No hay modelos registrados aún."
               />
             </CardBody>
@@ -240,6 +246,8 @@ export function CatalogosView({
                 columns={materialColumns}
                 data={materiales}
                 keyExtractor={(m) => m.idMaterial}
+                showSearch={true}
+                searchPlaceholder="Buscar material..."
                 emptyMessage="No hay materiales registrados aún."
               />
             </CardBody>
@@ -259,6 +267,8 @@ export function CatalogosView({
                 columns={colorColumns}
                 data={colores}
                 keyExtractor={(c) => c.idColor}
+                showSearch={true}
+                searchPlaceholder="Buscar color o código..."
                 emptyMessage="No hay colores registrados aún."
               />
             </CardBody>

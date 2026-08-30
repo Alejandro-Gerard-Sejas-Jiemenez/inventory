@@ -114,6 +114,8 @@ export function ComprasView({
                 columns={comprasColumns}
                 data={compras}
                 keyExtractor={(c) => c.idCompra}
+                showSearch={true}
+                searchPlaceholder="Buscar por proveedor, orden, total..."
                 emptyMessage="No se han registrado órdenes de compra todavía."
               />
             </CardBody>
@@ -139,6 +141,8 @@ export function ComprasView({
                 columns={proveedoresColumns}
                 data={proveedores}
                 keyExtractor={(pr) => pr.idProveedor}
+                showSearch={true}
+                searchPlaceholder="Buscar proveedor por empresa, contacto, teléfono..."
                 emptyMessage="No hay proveedores registrados aún."
               />
             </CardBody>

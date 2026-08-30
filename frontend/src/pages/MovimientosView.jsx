@@ -113,6 +113,8 @@ export function MovimientosView({ movimientos = [] }) {
             columns={columns}
             data={movimientos}
             keyExtractor={(m) => m.idMovimiento}
+            showSearch={true}
+            searchPlaceholder="Buscar por producto, SKU, tipo de movimiento o motivo..."
             emptyMessage="No se han registrado movimientos de inventario todavía."
           />
         </CardBody>

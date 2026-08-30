@@ -46,7 +46,7 @@ export function DatabaseView() {
     <div className="view-container">
       <PageHeader
         title="Esquema de Base de Datos Relacional"
-        subtitle="16 Tablas Normalizadas en H2 Database y Mapeadas en Spring Data JPA"
+        subtitle="18 Tablas Normalizadas en H2 Database y Mapeadas en Spring Data JPA"
         actions={
           <a
             href="http://localhost:8088/h2-console"
@@ -77,6 +77,8 @@ export function DatabaseView() {
             columns={columns}
             data={DATABASE_SCHEMA_TABLES}
             keyExtractor={(t) => t.name}
+            showSearch={true}
+            searchPlaceholder="Buscar tabla, clave o propósito..."
           />
         </CardBody>
       </Card>

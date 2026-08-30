@@ -212,7 +212,8 @@ frontend/
     │   │   ├── TextAreaField.jsx                ← Área de texto auto-ajustable
     │   │   ├── Button.jsx                       ← Botón accesible con variantes y estados loading
     │   │   ├── Badge.jsx                        ← Etiquetas de estado
-    │   │   ├── DataTable.jsx                    ← Tabla responsiva y vacía
+    │   │   ├── DataTable.jsx                    ← Tabla responsiva con paginación integrada y búsqueda en tiempo real
+    │   │   ├── Pagination.jsx                   ← Paginador numérico con selector de filas por página
     │   │   ├── StatCard.jsx                     ← Tarjeta de métricas e indicadores
     │   │   ├── Tabs.jsx                         ← Pestañas accesibles con conteo
     │   │   ├── Modal.jsx                        ← Modal accesible con tecla Escape y backdrop

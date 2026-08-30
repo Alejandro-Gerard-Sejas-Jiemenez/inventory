@@ -307,6 +307,47 @@
   - Commit: `feat(catalogo): separate brands and models, add categories and visual color presets`
   - Rama: `main` en GitHub.
 
+---
+
+## Bloque 10: Sistema Universal de Paginación y Búsqueda en Tiempo Real para Todas las Vistas
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `UI-3` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Frontend (`components/common/`, `pages/`, `index.css`) |
+| **Skills Aplicadas** | `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Añadir paginación responsiva y selector dinámico de filas por página a todas las tablas del sistema.
+- Incorporar barra de búsqueda universal y reactiva en todas las vistas y subpestañas (Ventas, Clientes, Compras, Proveedores, Categorías, Marcas, Modelos, Materiales, Colores, Kardex, Bitácora y Esquema BD).
+
+### Fase 2: IMPLEMENTACIÓN
+- **Componentes Creados / Modificados:**
+  - `components/common/Pagination.jsx`: Componente modular de paginación con selector de filas (5, 10, 20, 50), botones « Primera / Anterior / Siguiente / Última » y páginas numeradas.
+  - `components/common/DataTable.jsx`: Integración automática de paginación y búsqueda reactiva universal (`showSearch`, `showPagination`, `searchPlaceholder`).
+  - `components/common/index.js`: Exportador de `Pagination`.
+  - `index.css`: Tokens de diseño y estilos visuales para `.custom-pagination-container`, botones y selectores.
+- **Páginas Equipadas con Buscadores:**
+  - `VentasView.jsx`: Búsqueda en Ventas y Clientes.
+  - `ComprasView.jsx`: Búsqueda en Compras y Proveedores.
+  - `CatalogosView.jsx`: Búsqueda en Categorías, Marcas, Modelos, Materiales y Colores.
+  - `MovimientosView.jsx`: Búsqueda en Kardex por SKU, producto o motivo.
+  - `BitacoraView.jsx`: Búsqueda en logs por acción, IP o usuario.
+  - `DatabaseView.jsx`: Búsqueda en tablas y claves del esquema relacional.
+  - `ProductosView.jsx`: Filtros combinados de backend + paginación.
+
+### Fase 3: VERIFICACIÓN
+- Linter frontend (`npm run lint` / `oxlint`): **0 errores**.
+- Verificación en navegador mediante subagente:
+  - Búsqueda en tiempo real probada en Ventas, Modelos (filtro 'MacBook'), Proveedores, Kardex, Bitácora y Esquema BD (filtro 'categorias').
+  - Paginación y conteo de filas verificado visualmente.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `feat(ui): add universal real-time search and responsive pagination across all views`
+  - Rama: `main` en GitHub.
+
+
 
 
 

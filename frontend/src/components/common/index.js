@@ -5,6 +5,7 @@ export * from './TextAreaField';
 export * from './Button';
 export * from './Badge';
 export * from './DataTable';
+export * from './Pagination';
 export * from './Modal';
 export * from './Tabs';
 export * from './StatCard';

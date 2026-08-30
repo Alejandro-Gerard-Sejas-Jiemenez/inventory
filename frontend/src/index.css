@@ -713,6 +713,99 @@ body {
 }
 
 /* ========================================================================= */
+/* COMPONENTE: PAGINATION                                                   */
+/* ========================================================================= */
+.custom-pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-card);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.pagination-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--text-secondary);
+}
+
+.pagination-info strong {
+  color: var(--text-white);
+}
+
+.pagination-page-size-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.pagination-page-size-select {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 0.2rem 0.45rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.pagination-page-size-select:focus {
+  border-color: var(--brand-gold);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pagination-pages-list {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0 0.35rem;
+}
+
+.pagination-page-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.pagination-page-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-white);
+}
+
+.pagination-page-btn.active {
+  background: var(--brand-gold-bg);
+  color: var(--brand-gold);
+  border-color: var(--brand-gold);
+}
+
+.pagination-nav-btn {
+  padding: 0.35rem !important;
+  min-width: 32px !important;
+  height: 32px !important;
+}
+
+/* ========================================================================= */
 /* COMPONENTE: STAT CARDS                                                   */
 /* ========================================================================= */
 .stats-grid {

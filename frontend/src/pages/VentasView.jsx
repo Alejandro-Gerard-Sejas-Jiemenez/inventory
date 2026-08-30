@@ -114,6 +114,8 @@ export function VentasView({
                 columns={ventasColumns}
                 data={ventas}
                 keyExtractor={(v) => v.idVenta}
+                showSearch={true}
+                searchPlaceholder="Buscar por cliente, método de pago, total..."
                 emptyMessage="No se han registrado ventas todavía."
               />
             </CardBody>
@@ -139,6 +141,8 @@ export function VentasView({
                 columns={clientesColumns}
                 data={clientes}
                 keyExtractor={(cl) => cl.idCliente}
+                showSearch={true}
+                searchPlaceholder="Buscar cliente por nombre, teléfono o email..."
                 emptyMessage="No hay clientes registrados aún."
               />
             </CardBody>
