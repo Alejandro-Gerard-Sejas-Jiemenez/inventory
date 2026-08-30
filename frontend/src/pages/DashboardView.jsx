@@ -1,0 +1,294 @@
+import React from 'react';
+import {
+  Package,
+  AlertTriangle,
+  DollarSign,
+  ShoppingCart,
+  Truck,
+  Users,
+  ArrowUpDown,
+  Layers,
+  ArrowRight,
+} from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardBody } from '../components/common/Card';
+import { StatCard } from '../components/common/StatCard';
+import { Badge } from '../components/common/Badge';
+import { Button } from '../components/common/Button';
+import { DataTable } from '../components/common/DataTable';
+
+export function DashboardView({ stats, productos, onSelectTab }) {
+  const lowStockProducts = productos.filter((p) => p.stockActual <= p.stockMinimo);
+
+  const alertColumns = [
+    {
+      header: 'SKU',
+      accessor: 'sku',
+      width: '120px',
+      render: (p) => <Badge variant="brand">{p.sku}</Badge>,
+    },
+    {
+      header: 'Producto',
+      accessor: 'nombre',
+      render: (p) => <strong style={{ color: 'var(--text-white)' }}>{p.nombre}</strong>,
+    },
+    {
+      header: 'Modelo',
+      render: (p) => p.modelo?.nombre || '-',
+    },
+    {
+      header: 'Stock Actual',
+      render: (p) => (
+        <strong style={{ color: 'var(--brand-red)' }}>{p.stockActual} unid.</strong>
+      ),
+    },
+    {
+      header: 'Stock Mínimo',
+      render: (p) => `${p.stockMinimo} unid.`,
+    },
+    {
+      header: 'Estado',
+      render: () => <Badge variant="danger">Reponer Stock</Badge>,
+    },
+  ];
+
+  return (
+    <div className="view-container">
+      <div className="view-header">
+        <div>
+          <h2>Panel de Control General</h2>
+          <p>Resumen integral y métricas en tiempo real de Los Caseritos</p>
+        </div>
+        <Button variant="brand" onClick={() => onSelectTab('productos')} icon={Package}>
+          Gestionar Productos
+        </Button>
+      </div>
+
+      {/* Métricas Principales */}
+      <div className="stats-grid">
+        <StatCard
+          title="Total Productos"
+          value={stats?.totalProductos ?? 0}
+          subtitle="Ítems activos en catálogo"
+          icon={Package}
+          color="brand"
+          onClick={() => onSelectTab('productos')}
+        />
+        <StatCard
+          title="Alertas de Stock Crítico"
+          value={stats?.productosBajoStock ?? 0}
+          subtitle={
+            (stats?.productosBajoStock ?? 0) > 0
+              ? 'Requieren reabastecimiento'
+              : 'Niveles óptimos'
+          }
+          icon={AlertTriangle}
+          color={(stats?.productosBajoStock ?? 0) > 0 ? 'danger' : 'neutral'}
+          onClick={() => onSelectTab('productos')}
+        />
+        <StatCard
+          title="Ventas Totales"
+          value={`Bs. ${Number(stats?.totalVentasMonto ?? 0).toLocaleString('es-BO', {
+            minimumFractionDigits: 2,
+          })}`}
+          subtitle="Ingresos brutos acumulados"
+          icon={DollarSign}
+          color="brand"
+          onClick={() => onSelectTab('ventas')}
+        />
+        <StatCard
+          title="Órdenes de Venta"
+          value={stats?.totalVentas ?? 0}
+          subtitle="Transacciones completadas"
+          icon={ShoppingCart}
+          color="brand"
+          onClick={() => onSelectTab('ventas')}
+        />
+      </div>
+
+      {/* Indicadores Secundarios */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: '1.25rem',
+        }}
+      >
+        <Card
+          style={{ cursor: 'pointer' }}
+          onClick={() => onSelectTab('catalogos')}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div
+              style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--brand-gold-bg)',
+                color: 'var(--brand-gold)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Layers size={22} />
+            </div>
+            <div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                Modelos Registrados
+              </div>
+              <div
+                style={{
+                  fontSize: '1.3rem',
+                  fontWeight: 800,
+                  color: 'var(--text-white)',
+                }}
+              >
+                {stats?.totalModelos ?? 0}
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <Card
+          style={{ cursor: 'pointer' }}
+          onClick={() => onSelectTab('compras')}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div
+              style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: 'var(--radius-md)',
+                background: 'rgba(255, 255, 255, 0.08)',
+                color: 'var(--text-white)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Truck size={22} />
+            </div>
+            <div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                Proveedores Aliados
+              </div>
+              <div
+                style={{
+                  fontSize: '1.3rem',
+                  fontWeight: 800,
+                  color: 'var(--text-white)',
+                }}
+              >
+                {stats?.totalProveedores ?? 0}
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <Card
+          style={{ cursor: 'pointer' }}
+          onClick={() => onSelectTab('ventas')}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div
+              style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: 'var(--radius-md)',
+                background: 'rgba(16, 185, 129, 0.15)',
+                color: '#10B981',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Users size={22} />
+            </div>
+            <div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                Clientes Registrados
+              </div>
+              <div
+                style={{
+                  fontSize: '1.3rem',
+                  fontWeight: 800,
+                  color: 'var(--text-white)',
+                }}
+              >
+                {stats?.totalClientes ?? 0}
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <Card
+          style={{ cursor: 'pointer' }}
+          onClick={() => onSelectTab('movimientos')}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div
+              style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--brand-red-bg)',
+                color: 'var(--brand-red)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <ArrowUpDown size={22} />
+            </div>
+            <div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                Movimientos Kardex
+              </div>
+              <div
+                style={{
+                  fontSize: '1.3rem',
+                  fontWeight: 800,
+                  color: 'var(--text-white)',
+                }}
+              >
+                {stats?.totalMovimientos ?? 0}
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Tabla de Alertas de Stock Bajo */}
+      <Card>
+        <CardHeader
+          action={
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => onSelectTab('productos')}
+              icon={ArrowRight}
+            >
+              Ver Todo el Catálogo
+            </Button>
+          }
+        >
+          <CardTitle
+            icon={AlertTriangle}
+            subtitle="Productos que se encuentran en o por debajo de su umbral mínimo de seguridad"
+          >
+            Alertas de Reabastecimiento
+          </CardTitle>
+        </CardHeader>
+
+        <CardBody>
+          <DataTable
+            columns={alertColumns}
+            data={lowStockProducts}
+            keyExtractor={(p) => p.idProducto}
+            emptyMessage="🎉 ¡Excelente! Todos los productos cuentan con niveles de stock adecuados."
+          />
+        </CardBody>
+      </Card>
+    </div>
+  );
+}

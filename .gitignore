@@ -1,0 +1,48 @@
+# Archivos y Documentos del Proyecto (Excluidos por requerimiento)
+diseno_logico_inventario*
+.agents/skills/libros/
+libros/
+*.pdf
+
+# Base de datos local H2 y almacenamiento persistente
+data/
+backend/data/
+*.mv.db
+*.trace.db
+*.lock.db
+
+# Backend (Maven & Java)
+backend/target/
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+HELP.md
+
+# Frontend (Node & Vite)
+frontend/node_modules/
+node_modules/
+frontend/dist/
+dist/
+dist-ssr
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDEs y Editores
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
