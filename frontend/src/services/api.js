@@ -106,5 +106,13 @@ export const api = {
   getBitacora: () => fetch(`${API_BASE_URL}/bitacora`).then(handleResponse),
 
   // Configuración
-  getConfiguracion: () => fetch(`${API_BASE_URL}/configuracion`).then(handleResponse)
+  getConfiguracion: () => fetch(`${API_BASE_URL}/configuracion`).then(handleResponse),
+
+  // Autenticación
+  login: (credentials) =>
+    fetch(`${API_BASE_URL}/usuarios/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials),
+    }).then(handleResponse),
 };

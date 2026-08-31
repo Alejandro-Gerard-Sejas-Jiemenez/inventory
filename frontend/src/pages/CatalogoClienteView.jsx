@@ -286,7 +286,7 @@ export function CatalogoClienteView({
               )}
             </button>
 
-            {/* Enlace al Panel Administrador */}
+            {/* Enlace al Panel Administrador con Candado si no está autenticado */}
             <button
               type="button"
               onClick={onGoToAdmin}
@@ -304,7 +304,7 @@ export function CatalogoClienteView({
                 cursor: 'pointer',
                 transition: 'var(--transition)',
               }}
-              title="Ir al Panel de Administración y Gestión"
+              title="Acceso restringido para administradores"
             >
               <LayoutDashboard size={16} />
               <span>Panel Admin</span>

@@ -38,6 +38,11 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.update(id, usuario));
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<Usuario> login(@Valid @RequestBody com.inventario.modules.sistema.dto.LoginRequestDto request) {
+        return ResponseEntity.ok(usuarioService.login(request));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         usuarioService.delete(id);

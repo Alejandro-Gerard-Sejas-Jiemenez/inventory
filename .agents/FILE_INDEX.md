@@ -156,7 +156,8 @@ backend/
     │               │   ├── DashboardController.java
     │               │   └── UsuarioController.java
     │               ├── dto/
-    │               │   └── DashboardStatsDto.java
+    │               │   ├── DashboardStatsDto.java
+    │               │   └── LoginRequestDto.java
     │               ├── model/
     │               │   ├── Bitacora.java
     │               │   ├── Configuracion.java
@@ -243,6 +244,7 @@ frontend/
     │   │   └── ProductoColumns.jsx              ← Definición desacoplada de columnas de tabla
     │   │
     │   ├── Sidebar.jsx                          ← Menú lateral con logo oficial y botón a Tienda
+    │   ├── AdminLoginModal.jsx                  ← Modal de autenticación y acceso protegido al panel admin
     │   ├── ProductoModal.jsx                    ← Modal para crear/editar productos (con chips de color e imagen)
     │   ├── MovimientoModal.jsx                  ← Modal para registrar entradas/salidas de stock
     │   ├── StockModal.jsx                       ← Modal para ajuste rápido de inventario

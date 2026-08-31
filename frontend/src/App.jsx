@@ -10,12 +10,24 @@ import { BitacoraView } from './pages/BitacoraView';
 import { DatabaseView } from './pages/DatabaseView';
 import { CatalogoClienteView } from './pages/CatalogoClienteView';
 import { MovimientoModal } from './components/MovimientoModal';
+import { AdminLoginModal } from './components/AdminLoginModal';
 import { api } from './services/api';
 
 export function App() {
-  // Modo de aplicación: 'admin' (panel de gestión) o 'tienda' (catálogo de clientes)
+  // Modo de aplicación: 'tienda' (catálogo clientes) o 'admin' (panel protegido)
   const [appMode, setAppMode] = useState('tienda');
   const [currentTab, setCurrentTab] = useState('dashboard');
+
+  // Estado de autenticación del administrador
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('inventario_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   // Carrito de compras global
   const [cartItems, setCartItems] = useState([]);
@@ -34,13 +46,13 @@ export function App() {
   const [compras, setCompras] = useState([]);
   const [movimientos, setMovimientos] = useState([]);
   const [bitacora, setBitacora] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
 
   // Filtros productos
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoria, setSelectedCategoria] = useState('');
   const [selectedModelo, setSelectedModelo] = useState('');
-  const [filterLowStock, setFilterLowStock] = useState(false);
+  const [_filterLowStock, _setFilterLowStock] = useState(false);
 
   // Modal ajuste rápido
   const [movimientoModalOpen, setMovimientoModalOpen] = useState(false);
@@ -105,13 +117,13 @@ export function App() {
         idCategoria: selectedCategoria || undefined,
         idModelo: selectedModelo || undefined,
         search: searchQuery || undefined,
-        lowStock: filterLowStock || undefined,
+        lowStock: _filterLowStock || undefined,
       });
       setProductos(data);
     } catch (err) {
       console.error('Error cargando productos:', err);
     }
-  }, [selectedCategoria, selectedModelo, searchQuery, filterLowStock]);
+  }, [selectedCategoria, selectedModelo, searchQuery, _filterLowStock]);
 
   useEffect(() => {
     loadData();
@@ -120,6 +132,35 @@ export function App() {
   useEffect(() => {
     loadProductos();
   }, [loadProductos]);
+
+  // Manejo de Acceso y Autenticación Admin
+  const handleGoToAdmin = () => {
+    if (currentUser) {
+      setAppMode('admin');
+    } else {
+      setIsLoginModalOpen(true);
+    }
+  };
+
+  const handleLoginSuccess = (user) => {
+    setCurrentUser(user);
+    try {
+      sessionStorage.setItem('inventario_user', JSON.stringify(user));
+    } catch {
+      // Ignorar storage error
+    }
+    setAppMode('admin');
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    try {
+      sessionStorage.removeItem('inventario_user');
+    } catch {
+      // Ignorar storage error
+    }
+    setAppMode('tienda');
+  };
 
   // Manejadores del Carrito de Compras
   const handleAddToCart = (producto) => {
@@ -275,24 +316,43 @@ export function App() {
     }
   };
 
-  // Si el modo es 'tienda', renderiza la Tienda Pública sin sidebar administrativo
+  // Si el modo es 'tienda', renderiza la Tienda Pública
   if (appMode === 'tienda') {
     return (
-      <CatalogoClienteView
-        productos={productos}
-        categorias={categorias}
-        marcas={marcas}
-        cartItems={cartItems}
-        onAddToCart={handleAddToCart}
-        onUpdateCartQuantity={handleUpdateCartQuantity}
-        onRemoveCartItem={handleRemoveCartItem}
-        onClearCart={handleClearCart}
-        onGoToAdmin={() => setAppMode('admin')}
+      <>
+        <CatalogoClienteView
+          productos={productos}
+          categorias={categorias}
+          marcas={marcas}
+          cartItems={cartItems}
+          onAddToCart={handleAddToCart}
+          onUpdateCartQuantity={handleUpdateCartQuantity}
+          onRemoveCartItem={handleRemoveCartItem}
+          onClearCart={handleClearCart}
+          onGoToAdmin={handleGoToAdmin}
+        />
+
+        <AdminLoginModal
+          isOpen={isLoginModalOpen}
+          onClose={() => setIsLoginModalOpen(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      </>
+    );
+  }
+
+  // Si el modo es 'admin' y el usuario no está autenticado, redirigir
+  if (appMode === 'admin' && !currentUser) {
+    return (
+      <AdminLoginModal
+        isOpen={true}
+        onClose={() => setAppMode('tienda')}
+        onLoginSuccess={handleLoginSuccess}
       />
     );
   }
 
-  // Si el modo es 'admin', renderiza el Panel de Control con Sidebar
+  // Panel de Control Administrador Protegido
   return (
     <div className="app-layout">
       <Sidebar
@@ -300,6 +360,8 @@ export function App() {
         onSelectTab={setCurrentTab}
         stats={stats}
         onSwitchToTienda={() => setAppMode('tienda')}
+        currentUser={currentUser}
+        onLogout={handleLogout}
       />
 
       <main className="main-content">

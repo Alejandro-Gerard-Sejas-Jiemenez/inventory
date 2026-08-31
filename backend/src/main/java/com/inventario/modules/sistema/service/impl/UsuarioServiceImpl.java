@@ -63,4 +63,21 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = findById(id);
         usuarioRepository.delete(usuario);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Usuario login(com.inventario.modules.sistema.dto.LoginRequestDto request) {
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(request.getEmail().trim())
+                .orElseThrow(() -> new BadRequestException("Credenciales inválidas. Usuario no encontrado."));
+
+        if (!usuario.getActivo()) {
+            throw new BadRequestException("El usuario se encuentra inactivo. Contacte al administrador.");
+        }
+
+        if (!usuario.getPassword().equals(request.getPassword())) {
+            throw new BadRequestException("Contraseña incorrecta.");
+        }
+
+        return usuario;
+    }
 }

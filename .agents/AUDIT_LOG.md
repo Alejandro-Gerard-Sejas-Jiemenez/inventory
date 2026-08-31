@@ -582,6 +582,44 @@
   - Commit: `feat(tienda): add public client store with stock validation, shopping cart drawer, and WhatsApp checkout`
   - Rama: `main` en GitHub.
 
+---
+
+## Bloque 18: Autenticación de Administrador, Ocultación de Stock en Tarjetas y Tipografía Refinada
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-7` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Backend (`modules/sistema/`) & Frontend (`components/`, `pages/`, `index.html`, `index.css`) |
+| **Skills Aplicadas** | `spring-modular-backend`, `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Ocultar la cantidad exacta de existencias en las tarjetas de producto del catálogo para clientes (solo informar "Agotado" si `stock <= 0` para una presentación limpia).
+- Proteger el acceso al Panel Administrador mediante un modal de autenticación con credenciales autorizadas (email y contraseña).
+- Integrar tipografía fina y de alta gama (*Plus Jakarta Sans*, *Inter*, *Outfit*) y bordes minimalistas basados en tiendas online modernas (Shein / Importadora Miranda).
+
+### Fase 2: IMPLEMENTACIÓN
+- **Backend (Spring Boot 3 + JPA):**
+  - `LoginRequestDto.java`: DTO con validaciones `@NotBlank` para email y password.
+  - `UsuarioService` & `UsuarioServiceImpl`: Método `login` con verificación de existencia, estado activo y coincidencia de clave.
+  - `UsuarioController`: Endpoint `POST /api/usuarios/login`.
+- **Frontend (React 19 + Lucide React + CSS):**
+  - `AdminLoginModal.jsx`: Modal de login con manejo de errores, inputs estilizados y confirmación de sesión.
+  - `Sidebar.jsx`: Tarjeta de usuario autenticado con avatar y botón de cierre de sesión (`LogOut`).
+  - `ProductoCard.jsx`: Ocultado el stock numérico; tarjetas refinadas con bordes ultrafinos y badges discretos.
+  - `index.html`: Google Fonts para *Plus Jakarta Sans*, *Inter* y *Outfit*.
+  - `App.jsx`: Control de estado de autenticación `currentUser` y protección de rutas del panel.
+
+### Fase 3: VERIFICACIÓN
+- Backend Tests (`./mvnw test`): **4 tests exitosos, 0 fallos, 0 errores (BUILD SUCCESS)**.
+- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
+- Subagente de Navegador: Verificada la ocultación de stock en catálogo, el modal de autenticación, el inicio de sesión con `admin@inventario.com` / `admin123` y el retorno fluido a la tienda.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `feat(auth): add admin login authentication gate, hide public stock count, and refine boutique typography`
+  - Rama: `main` en GitHub.
+
+
 
 
 
