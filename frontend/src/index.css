@@ -23,6 +23,12 @@
 
   --bg-primary: #070A12;
   --bg-secondary: #0E1424;
+  --bg-nav: rgba(9, 13, 22, 0.82);
+  --bg-search: rgba(255, 255, 255, 0.06);
+  --border-nav: rgba(255, 255, 255, 0.08);
+  --input-text: #FFFFFF;
+  --input-placeholder: rgba(255, 255, 255, 0.45);
+
   --bg-card: rgba(18, 24, 38, 0.65);
   --bg-card-solid: #131A2B;
   --bg-glass: rgba(18, 24, 38, 0.75);
@@ -46,20 +52,26 @@
 [data-theme='light'] {
   --text-white: #0F172A;
   --text-primary: #1E293B;
-  --text-secondary: #475569;
+  --text-secondary: #334155;
   --text-muted: #64748B;
 
-  --bg-primary: #F4F6F9;
+  --bg-primary: #F1F5F9;
   --bg-secondary: #FFFFFF;
-  --bg-card: rgba(255, 255, 255, 0.88);
-  --bg-card-solid: #FFFFFF;
-  --bg-glass: rgba(255, 255, 255, 0.85);
-  --border-color: rgba(15, 23, 42, 0.09);
-  --border-light: rgba(15, 23, 42, 0.05);
-  --border-specular: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --bg-nav: rgba(255, 255, 255, 0.95);
+  --bg-search: #F8FAFC;
+  --border-nav: rgba(203, 213, 225, 0.85);
+  --input-text: #0F172A;
+  --input-placeholder: #64748B;
 
-  --shadow-card: 0 8px 24px rgba(15, 23, 42, 0.07);
-  --shadow-bento: 0 12px 32px rgba(15, 23, 42, 0.09);
+  --bg-card: #FFFFFF;
+  --bg-card-solid: #FFFFFF;
+  --bg-glass: rgba(255, 255, 255, 0.92);
+  --border-color: rgba(203, 213, 225, 0.7);
+  --border-light: rgba(226, 232, 240, 0.8);
+  --border-specular: inset 0 1px 0 rgba(255, 255, 255, 1);
+
+  --shadow-card: 0 4px 16px rgba(15, 23, 42, 0.06);
+  --shadow-bento: 0 10px 28px rgba(15, 23, 42, 0.08);
 }
 
 * {
@@ -1110,27 +1122,28 @@ body {
 
 /* 2. Apple Materials & Translucent Layers (WWDC Materials & Depth) */
 .apple-glass-nav {
-  background: rgba(9, 13, 22, 0.76);
+  background: var(--bg-nav);
   backdrop-filter: blur(28px) saturate(200%);
   -webkit-backdrop-filter: blur(28px) saturate(200%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--border-nav);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05), var(--border-specular);
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .apple-glass-card {
-  background: rgba(18, 24, 38, 0.62);
+  background: var(--bg-card);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card), var(--border-specular);
   transition: transform 0.32s var(--apple-spring-default), box-shadow 0.32s var(--apple-spring-default), border-color 0.25s ease;
 }
 
 .apple-glass-card:hover {
   transform: translateY(-6px);
   border-color: rgba(245, 158, 11, 0.4);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.48), 0 0 24px rgba(245, 158, 11, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  box-shadow: var(--shadow-bento), 0 0 24px rgba(245, 158, 11, 0.18), var(--border-specular);
 }
 
 /* 3. Tactile Spring Active States (Kill Latency on Pointer-Down) */
@@ -1153,15 +1166,22 @@ body {
 
 /* 4. Apple Search Bar (Subtle Specular Border & Ambient Glow) */
 .apple-search-bar {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: var(--bg-search);
+  border: 1px solid var(--border-color);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
   transition: all 0.28s var(--apple-spring-default);
 }
 .apple-search-bar:focus-within {
-  background: rgba(255, 255, 255, 0.09);
+  background: var(--bg-secondary);
   border-color: rgba(245, 158, 11, 0.7);
-  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2), inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2), inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.apple-search-input {
+  color: var(--input-text);
+}
+.apple-search-input::placeholder {
+  color: var(--input-placeholder);
 }
 
 /* 5. Apple Optical Typography (Tracking & Leading Hierarchy) */

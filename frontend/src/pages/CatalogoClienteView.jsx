@@ -247,6 +247,7 @@ export function CatalogoClienteView({
             />
             <input
               type="text"
+              className="apple-search-input"
               placeholder="Buscar productos, modelos, marcas o colores..."
               value={search}
               onChange={(e) => {
@@ -258,7 +259,7 @@ export function CatalogoClienteView({
                 padding: '0.45rem 0.75rem',
                 backgroundColor: 'transparent',
                 border: 'none',
-                color: 'var(--text-white)',
+                color: 'var(--input-text)',
                 fontSize: '0.84rem',
                 outline: 'none',
               }}
@@ -345,14 +346,15 @@ export function CatalogoClienteView({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.35rem',
-                padding: '0.52rem 0.85rem',
+                padding: '0.52rem 0.9rem',
                 borderRadius: '999px',
                 backgroundColor: 'var(--bg-card)',
-                color: 'var(--text-secondary)',
+                color: 'var(--text-white)',
                 border: '1px solid var(--border-color)',
-                fontSize: '0.76rem',
-                fontWeight: 600,
+                fontSize: '0.78rem',
+                fontWeight: 700,
                 cursor: 'pointer',
+                boxShadow: 'var(--shadow-card)',
               }}
               title="Acceso restringido para administradores"
             >
