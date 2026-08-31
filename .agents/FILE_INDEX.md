@@ -201,7 +201,10 @@ frontend/
     ├── main.jsx                                 ← Renderizado raíz de React
     ├── App.jsx                                  ← Componente principal y enrutador de vistas
     ├── App.css                                  ← Estilos de layout principal y barra de navegación
-    ├── index.css                                ← Design System global (variables, componentes, tablas, botones)
+    ├── hooks/                                   ← Custom Hooks desacoplados por responsabilidad (SRP)
+    │   ├── useAuth.js                           ← Gestión de sesión y autenticación de administradores
+    │   ├── useCart.js                           ← Estado del carrito de compras, tope de stock y subtotales
+    │   └── useInventoryData.js                  ← Sincronización y mutaciones CRUD de datos maestros de inventario
     │
     ├── components/                              ← Componentes de UI
     │   ├── common/                              ← Kit de componentes UI reutilizables

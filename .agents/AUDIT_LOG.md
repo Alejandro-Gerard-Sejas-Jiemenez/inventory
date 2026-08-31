@@ -847,11 +847,41 @@
 - `CatalogoClienteView.jsx`: Reincorporados los segmentos de Marca y Orden a la cápsula de búsqueda con tipografía de alto contraste.
 
 ### Fase 3: VERIFICACIÓN
-- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
-- Subagente de Navegador: Verificado en vivo en Tema Oscuro y Tema Claro que los selectores de Marca y Orden son 100% legibles y funcionales, sin el filtro de stock.
 - **Git Commit & Push (Conventional Commits):**
   - Commit: `feat(tienda): restore brand and price sorting filters with high contrast in dark mode and without stock filter`
   - Rama: `main` en GitHub.
+
+---
+
+## Bloque 27: Refactorización de Arquitectura Frontend & Principio de Responsabilidad Única (SRP)
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `REFACTOR-2` |
+| **Fecha** | 2026-08-31 |
+| **Módulos Afectados** | Frontend (`App.jsx`, `hooks/useAuth.js`, `hooks/useCart.js`, `hooks/useInventoryData.js`, `FILE_INDEX.md`) |
+| **Skills Aplicadas** | `clean-code`, `react-modern-frontend`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Auditar la arquitectura del frontend bajo el **Principio de Responsabilidad Única (SRP)** de *Clean Code*.
+- `App.jsx` acumulaba 5 responsabilidades divergentes (autenticación, carrito de compras, mutaciones CRUD de 14 entidades, consultas filtradas y enrutamiento raíz).
+- Diseñar y desacoplar estas funciones en **Custom Hooks modulares y reutilizables** bajo `frontend/src/hooks/`.
+
+### Fase 2: IMPLEMENTACIÓN
+- `hooks/useAuth.js`: Encapsula estado de sesión, sincronización con `sessionStorage` y control del modal de inicio de sesión.
+- `hooks/useCart.js`: Encapsula estado de la bolsa, validación de stock disponible, cantidades y cálculo de unidades.
+- `hooks/useInventoryData.js`: Centraliza el estado de las 14 entidades maestras, carga inicial en paralelo (`Promise.all`), filtros y 16 operaciones CRUD.
+- `App.jsx`: Refactorizado a un orquestador limpio y conciso de menos de 190 líneas que delega a los hooks especializados.
+- `FILE_INDEX.md`: Actualizado con la nueva capa de `hooks/`.
+
+### Fase 3: VERIFICACIÓN
+- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
+- Verificación en navegador: Funcionamiento íntegro de la tienda, carrito, login de administrador, catálogo y paneles de gestión.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `refactor(frontend): decouple App.jsx using SRP custom hooks (useAuth, useCart, useInventoryData)`
+  - Rama: `main` en GitHub.
+
 
 
 
