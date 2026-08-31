@@ -735,11 +735,39 @@
 - `CatalogoClienteView.jsx`: Removido banner pesado; unificada la barra de categorías y filtros secundarios; fondo ambiental en degradé radial suave en modo claro y modo oscuro.
 
 ### Fase 3: VERIFICACIÓN
-- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
-- Subagente de Navegador: Verificado el catálogo limpio y directo, la barra unificada y los círculos de color en ambos temas.
 - **Git Commit & Push (Conventional Commits):**
   - Commit: `feat(tienda): unify filter toolbar, enlarge color circles, and apply subtle ambient brand mesh gradient`
   - Rama: `main` en GitHub.
+
+---
+
+## Bloque 23: Arquitectura Híbrida Airbnb + Apple Design y Swatches Puros de Color
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-12` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Frontend (`pages/CatalogoClienteView.jsx`, `components/tienda/ProductoCard.jsx`, `index.css`) |
+| **Skills Aplicadas** | `apple-design`, `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Reemplazar la barra de filtros previa por la **Cápsula de Búsqueda Icónica de Airbnb** (`.airbnb-capsule-bar`) con 3 segmentos interactivos: "¿Qué buscas?", "Marca" y "Filtros/Orden", junto al botón de acción circular en rojo carmesí.
+- Implementar la **Fila de Categorías estilo Airbnb** (`.airbnb-category-nav`) con iconos superiores, texto y subrayado activo de alta precisión.
+- En `ProductoCard.jsx`, eliminar cualquier borde o anillo blanco en los círculos de color, dejando círculos de color sólidos y puros.
+
+### Fase 2: IMPLEMENTACIÓN
+- `index.css`: Clases `.airbnb-category-nav`, `.airbnb-category-item`, `.airbnb-capsule-bar`, `.airbnb-capsule-segment`, `.airbnb-search-btn`.
+- `CatalogoClienteView.jsx`: Integrada la barra de categorías con iconos (`Layers`, `Laptop`, `Smartphone`, `Shield`, `Headphones`, etc.) y la cápsula flotante de 3 segmentos con botón de búsqueda circular.
+- `ProductoCard.jsx`: Swatches de color completamente limpios sin bordes blancos (`border: none`, `outline: none`, `boxShadow: 0 2px 5px rgba(0,0,0,0.25)`).
+
+### Fase 3: VERIFICACIÓN
+- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
+- Subagente de Navegador: Verificado en vivo el renderizado de la cápsula Airbnb, los iconos de categoría y los círculos puros de color tanto en Tema Claro como en Tema Oscuro.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `feat(tienda): implement Airbnb-inspired category nav and floating search capsule bar with pure color swatches`
+  - Rama: `main` en GitHub.
+
 
 
 

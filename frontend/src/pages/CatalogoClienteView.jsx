@@ -10,6 +10,12 @@ import {
   SlidersHorizontal,
   Sun,
   Moon,
+  Laptop,
+  Smartphone,
+  Shield,
+  Headphones,
+  Sparkles,
+  Layers,
 } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 import { ProductoCard } from '../components/tienda/ProductoCard';
@@ -144,6 +150,16 @@ export function CatalogoClienteView({
     setTimeout(() => setOrderSuccessMessage(''), 8000);
   };
 
+  // Helper para asignar icono contextual a la categoría
+  const getCategoryIcon = (nombre) => {
+    const n = (nombre || '').toLowerCase();
+    if (n.includes('laptop') || n.includes('portat') || n.includes('comput')) return <Laptop size={18} />;
+    if (n.includes('smart') || n.includes('celular') || n.includes('telef')) return <Smartphone size={18} />;
+    if (n.includes('funda') || n.includes('case') || n.includes('protec')) return <Shield size={18} />;
+    if (n.includes('audio') || n.includes('auricular') || n.includes('head')) return <Headphones size={18} />;
+    return <Sparkles size={18} />;
+  };
+
   return (
     <div
       data-theme={theme}
@@ -180,7 +196,7 @@ export function CatalogoClienteView({
             gap: '1.2rem',
           }}
         >
-          {/* Emblema Oficial de la Empresa Resaltado */}
+          {/* Emblema Oficial de la Empresa */}
           <div
             style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', cursor: 'pointer', flexShrink: 0 }}
             onClick={() => {
@@ -224,68 +240,6 @@ export function CatalogoClienteView({
             </div>
           </div>
 
-          {/* Buscador Central Apple */}
-          <div
-            className="apple-search-bar"
-            style={{
-              flex: 1,
-              maxWidth: '520px',
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              borderRadius: '999px',
-              padding: '0.2rem 0.5rem',
-            }}
-          >
-            <Search
-              size={16}
-              style={{
-                marginLeft: '0.6rem',
-                color: 'var(--text-muted)',
-                pointerEvents: 'none',
-              }}
-            />
-            <input
-              type="text"
-              className="apple-search-input"
-              placeholder="Buscar productos, modelos, marcas o colores..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setCurrentPage(1);
-              }}
-              style={{
-                width: '100%',
-                padding: '0.45rem 0.75rem',
-                backgroundColor: 'transparent',
-                border: 'none',
-                color: 'var(--input-text)',
-                fontSize: '0.84rem',
-                outline: 'none',
-              }}
-            />
-            {search && (
-              <button
-                type="button"
-                onClick={() => setSearch('')}
-                className="apple-btn-tactile"
-                style={{
-                  marginRight: '0.4rem',
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: 'none',
-                  color: 'var(--text-secondary)',
-                  fontSize: '0.72rem',
-                  padding: '0.2rem 0.5rem',
-                  borderRadius: '999px',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                }}
-              >
-                Limpiar
-              </button>
-            )}
-          </div>
-
           {/* Acciones: Toggle de Tema, Bolsa y Acceso Admin */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexShrink: 0 }}>
             {/* Toggle de Tema Claro / Oscuro */}
@@ -307,7 +261,7 @@ export function CatalogoClienteView({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.45rem',
-                padding: '0.55rem 1rem',
+                padding: '0.55rem 1.1rem',
                 borderRadius: '999px',
                 backgroundColor: 'var(--brand-gold)',
                 color: '#111',
@@ -389,172 +343,178 @@ export function CatalogoClienteView({
         </div>
       )}
 
-      {/* Barra de Filtros y Categorías Unificada (Apple Unified Glass Toolbar) */}
-      <section style={{ maxWidth: '1280px', margin: '1.4rem auto 0', padding: '0 1.4rem', width: '100%' }}>
-        <div
-          style={{
-            backgroundColor: 'var(--bg-card)',
-            backdropFilter: 'blur(24px)',
-            WebkitBackdropFilter: 'blur(24px)',
-            border: '1px solid var(--border-color)',
-            borderRadius: 'var(--radius-lg)',
-            boxShadow: 'var(--shadow-card)',
-            padding: '0.75rem 1rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.75rem',
-          }}
-        >
-          {/* Fila Superior: Píldoras de Categorías */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              overflowX: 'auto',
-              scrollbarWidth: 'none',
-              paddingBottom: '0.2rem',
+      {/* 1. Barra de Navegación por Categorías Estilo Airbnb */}
+      <section style={{ maxWidth: '1280px', margin: '0.6rem auto 0', padding: '0 1.4rem', width: '100%' }}>
+        <div className="airbnb-category-nav">
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedCategoria('ALL');
+              setCurrentPage(1);
             }}
+            className={`airbnb-category-item ${selectedCategoria === 'ALL' ? 'active' : ''}`}
           >
-            <button
-              type="button"
-              onClick={() => {
-                setSelectedCategoria('ALL');
+            <Layers size={20} />
+            <span>Todo</span>
+          </button>
+
+          {categorias.map((c) => {
+            const isSelected = String(selectedCategoria) === String(c.idCategoria);
+            return (
+              <button
+                key={c.idCategoria}
+                type="button"
+                onClick={() => {
+                  setSelectedCategoria(c.idCategoria);
+                  setCurrentPage(1);
+                }}
+                className={`airbnb-category-item ${isSelected ? 'active' : ''}`}
+              >
+                {getCategoryIcon(c.nombre)}
+                <span>{c.nombre}</span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 2. Cápsula de Búsqueda y Filtros Unificada Estilo Airbnb */}
+      <section style={{ maxWidth: '1280px', margin: '1.2rem auto 0', padding: '0 1.4rem', width: '100%' }}>
+        <div className="airbnb-capsule-bar">
+          {/* Segmento 1: ¿Qué buscas? (Búsqueda de Texto) */}
+          <div className="airbnb-capsule-segment" style={{ flex: 1.4 }}>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-white)', letterSpacing: '0.02em' }}>
+              ¿Qué buscas?
+            </span>
+            <input
+              type="text"
+              className="apple-search-input"
+              placeholder="Nombre, modelo, material..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              className="apple-pill-tab"
               style={{
-                padding: '0.45rem 1.1rem',
-                borderRadius: '999px',
-                border: selectedCategoria === 'ALL' ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid var(--border-color)',
-                backgroundColor: selectedCategoria === 'ALL' ? 'rgba(245, 158, 11, 0.18)' : 'var(--bg-primary)',
-                color: selectedCategoria === 'ALL' ? 'var(--brand-gold)' : 'var(--text-secondary)',
-                fontWeight: selectedCategoria === 'ALL' ? 700 : 500,
+                width: '100%',
+                backgroundColor: 'transparent',
+                border: 'none',
+                outline: 'none',
+                fontSize: '0.82rem',
+                fontWeight: 500,
+                padding: '0.1rem 0',
+              }}
+            />
+          </div>
+
+          {/* Segmento 2: Marca */}
+          <div className="airbnb-capsule-segment">
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-white)', letterSpacing: '0.02em' }}>
+              Marca
+            </span>
+            <select
+              value={selectedMarca}
+              onChange={(e) => {
+                setSelectedMarca(e.target.value);
+                setCurrentPage(1);
+              }}
+              style={{
+                backgroundColor: 'transparent',
+                border: 'none',
+                outline: 'none',
+                color: 'var(--text-secondary)',
                 fontSize: '0.8rem',
+                fontWeight: 500,
+                padding: '0.1rem 0',
                 cursor: 'pointer',
-                whiteSpace: 'nowrap',
               }}
             >
-              Todas las Categorías
-            </button>
-
-            {categorias.map((c) => {
-              const isSelected = String(selectedCategoria) === String(c.idCategoria);
-              return (
-                <button
-                  key={c.idCategoria}
-                  type="button"
-                  onClick={() => {
-                    setSelectedCategoria(c.idCategoria);
-                    setCurrentPage(1);
-                  }}
-                  className="apple-pill-tab"
-                  style={{
-                    padding: '0.45rem 1.1rem',
-                    borderRadius: '999px',
-                    border: isSelected ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid var(--border-color)',
-                    backgroundColor: isSelected ? 'rgba(245, 158, 11, 0.18)' : 'var(--bg-primary)',
-                    color: isSelected ? 'var(--brand-gold)' : 'var(--text-secondary)',
-                    fontWeight: isSelected ? 700 : 500,
-                    fontSize: '0.8rem',
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {c.nombre}
-                </button>
-              );
-            })}
+              <option value="ALL">Todas las marcas</option>
+              {marcas.map((m) => (
+                <option key={m.idMarca} value={m.idMarca}>
+                  {m.nombre}
+                </option>
+              ))}
+            </select>
           </div>
 
-          {/* Fila Inferior: Filtros de Marca, Disponibilidad y Ordenamiento */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: '0.75rem',
-              paddingTop: '0.55rem',
-              borderTop: '1px solid var(--border-light)',
-              fontSize: '0.8rem',
+          {/* Segmento 3: Disponibilidad y Orden */}
+          <div className="airbnb-capsule-segment" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.8rem' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '0.78rem' }}>
+              <input
+                type="checkbox"
+                checked={onlyInStock}
+                onChange={(e) => {
+                  setOnlyInStock(e.target.checked);
+                  setCurrentPage(1);
+                }}
+                style={{ accentColor: 'var(--brand-gold)' }}
+              />
+              <span style={{ fontWeight: 600 }}>En stock</span>
+            </label>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              <SlidersHorizontal size={13} style={{ color: 'var(--text-muted)' }} />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                style={{
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  outline: 'none',
+                  color: 'var(--text-secondary)',
+                  fontSize: '0.78rem',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                }}
+              >
+                <option value="featured">Destacados</option>
+                <option value="price-asc">Menor precio</option>
+                <option value="price-desc">Mayor precio</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Botón Circular de Acción Airbnb (Rojo Carmesí) */}
+          <button
+            type="button"
+            className="airbnb-search-btn"
+            title="Buscar en el catálogo"
+            onClick={() => {
+              const gridEl = document.getElementById('productos-grid');
+              if (gridEl) gridEl.scrollIntoView({ behavior: 'smooth' });
             }}
           >
-            {/* Conteo de Resultados */}
-            <div style={{ color: 'var(--text-secondary)' }}>
-              Mostrando <strong style={{ color: 'var(--text-white)' }}>{filteredProductos.length}</strong> productos
-              {selectedCategoria !== 'ALL' && (
-                <span> en <strong style={{ color: 'var(--brand-gold)' }}>{categorias.find((c) => String(c.idCategoria) === String(selectedCategoria))?.nombre}</strong></span>
-              )}
-            </div>
+            <Search size={18} />
+          </button>
+        </div>
+      </section>
 
-            {/* Controles de Filtrado */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', flexWrap: 'wrap' }}>
-              {marcas.length > 0 && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <span style={{ color: 'var(--text-muted)', fontSize: '0.76rem' }}>Marca:</span>
-                  <select
-                    value={selectedMarca}
-                    onChange={(e) => {
-                      setSelectedMarca(e.target.value);
-                      setCurrentPage(1);
-                    }}
-                    style={{
-                      backgroundColor: 'var(--bg-primary)',
-                      border: '1px solid var(--border-color)',
-                      borderRadius: 'var(--radius-sm)',
-                      color: 'var(--text-primary)',
-                      padding: '0.3rem 0.6rem',
-                      fontSize: '0.76rem',
-                      outline: 'none',
-                    }}
-                  >
-                    <option value="ALL">Todas las marcas</option>
-                    {marcas.map((m) => (
-                      <option key={m.idMarca} value={m.idMarca}>
-                        {m.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '0.78rem' }}>
-                <input
-                  type="checkbox"
-                  checked={onlyInStock}
-                  onChange={(e) => {
-                    setOnlyInStock(e.target.checked);
-                    setCurrentPage(1);
-                  }}
-                  style={{ accentColor: 'var(--brand-gold)' }}
-                />
-                <span>Solo disponibles</span>
-              </label>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <SlidersHorizontal size={13} style={{ color: 'var(--text-muted)' }} />
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.76rem' }}>Ordenar:</span>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  style={{
-                    backgroundColor: 'var(--bg-primary)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 'var(--radius-sm)',
-                    color: 'var(--text-primary)',
-                    padding: '0.3rem 0.6rem',
-                    fontSize: '0.76rem',
-                    outline: 'none',
-                  }}
-                >
-                  <option value="featured">Destacados</option>
-                  <option value="price-asc">Menor precio</option>
-                  <option value="price-desc">Mayor precio</option>
-                </select>
-              </div>
-            </div>
+      {/* Barra de Conteo Sutil */}
+      <section style={{ maxWidth: '1280px', margin: '0.9rem auto 0', padding: '0 1.4rem', width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+          <div>
+            Mostrando <strong style={{ color: 'var(--text-white)' }}>{filteredProductos.length}</strong> productos
+            {selectedCategoria !== 'ALL' && (
+              <span> en <strong style={{ color: 'var(--brand-gold)' }}>{categorias.find((c) => String(c.idCategoria) === String(selectedCategoria))?.nombre}</strong></span>
+            )}
           </div>
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch('')}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--brand-red)',
+                fontSize: '0.76rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              Borrar filtro de búsqueda
+            </button>
+          )}
         </div>
       </section>
 

@@ -197,7 +197,7 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
           {producto.nombre}
         </h4>
 
-        {/* Atributos: Color (Círculo Agrandado) y Material */}
+        {/* Atributos: Color (Círculo sin bordes blancos) y Material */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
           {producto.color && (
             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -208,10 +208,10 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
                   height: '18px',
                   borderRadius: '50%',
                   backgroundColor: producto.color.codigoHex || '#888',
-                  border: '2px solid var(--bg-card)',
-                  outline: '1.5px solid var(--border-color)',
+                  border: 'none',
+                  outline: 'none',
                   display: 'inline-block',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.25)',
                   cursor: 'pointer',
                   flexShrink: 0,
                 }}
