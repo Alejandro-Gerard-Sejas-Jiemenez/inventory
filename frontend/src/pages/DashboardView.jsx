@@ -286,7 +286,7 @@ export function DashboardView({ stats, productos = [], onSelectTab }) {
             columns={alertColumns}
             data={lowStockProducts}
             keyExtractor={(p) => p.idProducto}
-            emptyMessage="🎉 ¡Excelente! Todos los productos cuentan con niveles de stock adecuados."
+            emptyMessage="Todos los productos cuentan con niveles de stock adecuados."
           />
         </CardBody>
       </Card>

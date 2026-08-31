@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ArrowDownCircle,
-  ArrowUpCircle,
+  PlusCircle,
+  MinusCircle,
   Scale,
   Check,
   ShoppingCart,
@@ -187,8 +187,8 @@ export function MovimientoModal({
                 transition: 'var(--transition)',
               }}
             >
-              <ArrowDownCircle size={18} style={{ color: tipoOperacion === 'ENTRADA' ? 'var(--brand-gold)' : 'var(--text-muted)' }} />
-              <span>➕ Ingreso</span>
+              <PlusCircle size={18} style={{ color: tipoOperacion === 'ENTRADA' ? 'var(--brand-gold)' : 'var(--text-muted)' }} />
+              <span>Ingreso</span>
             </button>
 
             <button
@@ -213,8 +213,8 @@ export function MovimientoModal({
                 transition: 'var(--transition)',
               }}
             >
-              <ArrowUpCircle size={18} style={{ color: tipoOperacion === 'SALIDA' ? 'var(--brand-red)' : 'var(--text-muted)' }} />
-              <span>➖ Salida / Merma</span>
+              <MinusCircle size={18} style={{ color: tipoOperacion === 'SALIDA' ? 'var(--brand-red)' : 'var(--text-muted)' }} />
+              <span>Salida / Merma</span>
             </button>
 
             <button
@@ -240,7 +240,7 @@ export function MovimientoModal({
               }}
             >
               <Scale size={18} style={{ color: tipoOperacion === 'AJUSTE' ? 'var(--text-white)' : 'var(--text-muted)' }} />
-              <span>⚖️ Ajuste Físico</span>
+              <span>Ajuste Físico</span>
             </button>
           </div>
         </div>

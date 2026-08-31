@@ -452,6 +452,36 @@
   - Commit: `feat(catalogo): auto-generate SKU, fix product editing, soften color radius, and add tabbed stock adjustment modal`
   - Rama: `main` en GitHub.
 
+---
+
+## Bloque 14: Eliminación Total de Emojis y Sustitución por Iconografía Profesional Lucide React
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `UI-6` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Frontend (`components/`, `pages/`) |
+| **Skills Aplicadas** | `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Prohibición estricta y eliminación de todo emoji o símbolo decorativo informal en la interfaz de usuario.
+- Estandarización 100% con la librería de iconos SVG profesionales `lucide-react`.
+
+### Fase 2: IMPLEMENTACIÓN
+- `MovimientoModal.jsx`: Sustitución de emojis en pestañas por iconos nativos `PlusCircle`, `MinusCircle`, `Scale` y etiquetas de texto puras.
+- `DashboardView.jsx`: Remoción de caracteres emoji en banners de estado vacío.
+- Verificación exhaustiva con expresiones regulares de Unicode en todo el directorio `frontend/src`.
+
+### Fase 3: VERIFICACIÓN
+- Búsqueda de expresiones regulares Unicode en `frontend/src`: **0 emojis encontrados**.
+- Linter frontend (`npm run lint` / `oxlint`): **0 errores**.
+- Verificación en navegador mediante subagente: comprobación de interfaz profesional limpia y libre de emojis en modales, tarjetas y tablas.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `style(ui): remove all emojis and replace with Lucide React icons`
+  - Rama: `main` en GitHub.
+
+
 
 
 
