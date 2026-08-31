@@ -515,6 +515,42 @@
   - Commit: `feat(catalogo): add product image support with live preview and table thumbnails`
   - Rama: `main` en GitHub.
 
+---
+
+## Bloque 16: Selección de Imágenes Directamente desde el Dispositivo Local con Compresión Automática
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-5` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Backend (`modules/catalogo/`) & Frontend (`components/`) |
+| **Skills Aplicadas** | `spring-modular-backend`, `react-modern-frontend`, `clean-code`, `ui-ux-usability`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Permitir al usuario seleccionar archivos de fotos directamente desde el almacenamiento de su dispositivo (computadora, teléfono, galería).
+- Incorporar compresión y redimensionamiento en el navegador (HTML5 Canvas) para reducir imágenes de alta resolución a Base64 ligero y ultrarrápido (~40-80KB) sin degradar la nitidez visual.
+- Ampliar el campo `imagen_url` en base de datos a `CLOB` (`@Lob`) para admitir Base64 o URLs sin límites de caracteres.
+
+### Fase 2: IMPLEMENTACIÓN
+- **Backend (Spring Boot 3 + JPA):**
+  - `Producto.java`: Configuración de `@Lob @Column(name = "imagen_url", columnDefinition = "CLOB")` para persistencia ilimitada de Data URLs.
+- **Frontend (React 19 + Lucide React):**
+  - `ProductoModal.jsx`: 
+    - Input de archivo (`<input type="file" accept="image/*" />`).
+    - Botón prominente *"Seleccionar desde Dispositivo"* con icono `<Upload />`.
+    - Función `processDeviceImage` con compresión dinámica en cliente (máx 800px, calidad 0.82 JPEG).
+    - Selector alternativo para ingreso por URL o carga desde dispositivo.
+    - Caja interactiva clickeable para reemplazo o eliminación rápida de fotos.
+
+### Fase 3: VERIFICACIÓN
+- Backend Tests (`./mvnw test`): **4 tests exitosos, 0 fallos, 0 errores (BUILD SUCCESS)**.
+- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `feat(catalogo): support direct device image upload with automatic client compression`
+  - Rama: `main` en GitHub.
+
+
 
 
 
