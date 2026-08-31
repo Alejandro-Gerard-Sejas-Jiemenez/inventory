@@ -712,6 +712,36 @@
   - Commit: `feat(tienda): implement Bento Grid architecture, dynamic light/dark theme switcher, and enhanced company logo emblem`
   - Rama: `main` en GitHub.
 
+---
+
+## Bloque 22: Unificación de Barra de Filtros, Círculos de Color Agrandados y Fondo Ambiental
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-11` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Frontend (`pages/CatalogoClienteView.jsx`, `components/tienda/ProductoCard.jsx`, `index.css`) |
+| **Skills Aplicadas** | `apple-design`, `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Remover el banner promocional pesado para llevar los productos al frente y centro de la pantalla.
+- En `ProductoCard.jsx`, agrandar los círculos de muestra de color (18px con relieve satinado) y omitir el texto de nombre para una estética más limpia.
+- Unificar la barra de categorías y la barra de filtros secundarios en una sola barra integrada con cristal esmerilado translúcido.
+- Aplicar fondo suave con degradado ambiental carmesí suave y ámbar inspirado en la marca Los Caseritos.
+
+### Fase 2: IMPLEMENTACIÓN
+- `ProductoCard.jsx`: Círculo de color agrandado a 18px con `title` flotante y sin texto adyacente.
+- `CatalogoClienteView.jsx`: Removido banner pesado; unificada la barra de categorías y filtros secundarios; fondo ambiental en degradé radial suave en modo claro y modo oscuro.
+
+### Fase 3: VERIFICACIÓN
+- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
+- Subagente de Navegador: Verificado el catálogo limpio y directo, la barra unificada y los círculos de color en ambos temas.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `feat(tienda): unify filter toolbar, enlarge color circles, and apply subtle ambient brand mesh gradient`
+  - Rama: `main` en GitHub.
+
+
 
 
 

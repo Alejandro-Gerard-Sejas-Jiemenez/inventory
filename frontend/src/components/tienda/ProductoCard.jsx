@@ -197,25 +197,29 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
           {producto.nombre}
         </h4>
 
-        {/* Atributos: Color y Material */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.73rem', color: 'var(--text-muted)', marginTop: '0.1rem' }}>
+        {/* Atributos: Color (Círculo Agrandado) y Material */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
           {producto.color && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
               <span
+                title={`Color: ${producto.color.nombre}`}
                 style={{
-                  width: '10px',
-                  height: '10px',
+                  width: '18px',
+                  height: '18px',
                   borderRadius: '50%',
                   backgroundColor: producto.color.codigoHex || '#888',
-                  border: '1px solid var(--border-color)',
+                  border: '2px solid var(--bg-card)',
+                  outline: '1.5px solid var(--border-color)',
                   display: 'inline-block',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  cursor: 'pointer',
+                  flexShrink: 0,
                 }}
               />
-              <span>{producto.color.nombre}</span>
             </div>
           )}
           {producto.material?.nombre && (
-            <span>· {producto.material.nombre}</span>
+            <span style={{ fontWeight: 500 }}>{producto.material.nombre}</span>
           )}
         </div>
 

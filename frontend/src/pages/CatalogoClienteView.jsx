@@ -2,9 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
   Search,
   ShoppingBag,
-  Sparkles,
   ShieldCheck,
-  Truck,
   LayoutDashboard,
   ChevronLeft,
   ChevronRight,
@@ -12,8 +10,6 @@ import {
   SlidersHorizontal,
   Sun,
   Moon,
-  ArrowRight,
-  Zap,
 } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 import { ProductoCard } from '../components/tienda/ProductoCard';
@@ -154,10 +150,14 @@ export function CatalogoClienteView({
       style={{
         minHeight: '100vh',
         backgroundColor: 'var(--bg-primary)',
+        backgroundImage:
+          theme === 'light'
+            ? 'radial-gradient(ellipse 60% 40% at 15% 0%, rgba(239, 68, 68, 0.05) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 85% 0%, rgba(245, 158, 11, 0.05) 0%, transparent 60%), radial-gradient(ellipse 80% 50% at 50% 100%, rgba(239, 68, 68, 0.03) 0%, transparent 70%)'
+            : 'radial-gradient(ellipse 60% 40% at 15% 0%, rgba(220, 38, 38, 0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 85% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 60%)',
         color: 'var(--text-primary)',
         display: 'flex',
         flexDirection: 'column',
-        transition: 'background-color 0.3s ease, color 0.3s ease',
+        transition: 'background 0.3s ease, color 0.3s ease',
       }}
     >
       {/* Header Translúcido Estilo Apple Liquid Glass */}
@@ -224,7 +224,7 @@ export function CatalogoClienteView({
             </div>
           </div>
 
-          {/* Buscador Central Apple con Borde Especular */}
+          {/* Buscador Central Apple */}
           <div
             className="apple-search-bar"
             style={{
@@ -389,246 +389,155 @@ export function CatalogoClienteView({
         </div>
       )}
 
-      {/* Bento Grid Showcase Arquitectura Espacial (Liquid Glass + Spatial UI) */}
-      <section style={{ maxWidth: '1280px', margin: '1.4rem auto 0', padding: '0 1.4rem', width: '100%' }}>
-        <div className="bento-grid">
-          {/* Tarjeta Principal Bento Hero */}
-          <div className="bento-card-main">
-            <div
-              className="apple-label-small"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                fontSize: '0.7rem',
-                color: 'var(--brand-gold)',
-                marginBottom: '0.6rem',
-              }}
-            >
-              <Sparkles size={14} />
-              <span>Experiencia de Compra Digital · Los Caseritos</span>
-            </div>
-            <h2
-              className="apple-hero-title"
-              style={{
-                margin: '0 0 0.6rem 0',
-                fontSize: '1.85rem',
-                color: 'var(--text-white)',
-              }}
-            >
-              Elige tus productos y pide directamente por WhatsApp
-            </h2>
-            <p style={{ margin: '0 0 1.2rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5, maxWidth: '520px' }}>
-              Catálogo multirubro con stock disponible en tiempo real. Agrega a tu bolsa y coordinamos tu despacho de inmediato.
-            </p>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                onClick={() => {
-                  const gridEl = document.getElementById('productos-grid');
-                  if (gridEl) gridEl.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="apple-btn-tactile"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.65rem 1.2rem',
-                  borderRadius: '999px',
-                  backgroundColor: 'var(--brand-gold)',
-                  color: '#111',
-                  border: 'none',
-                  fontWeight: 800,
-                  fontSize: '0.84rem',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 16px var(--brand-gold-glow)',
-                }}
-              >
-                <span>Explorar Catálogo</span>
-                <ArrowRight size={15} />
-              </button>
-
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  fontSize: '0.78rem',
-                  color: 'var(--text-muted)',
-                  fontWeight: 600,
-                }}
-              >
-                <Zap size={14} style={{ color: 'var(--brand-gold)' }} />
-                <span>Respuesta Inmediata</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Sub-Tarjetas Bento en Columna */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            {/* Tile 1: Despachos y Cobertura */}
-            <div className="bento-card-sub">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div
-                  style={{
-                    width: '38px',
-                    height: '38px',
-                    borderRadius: '12px',
-                    backgroundColor: 'rgba(245, 158, 11, 0.15)',
-                    border: '1px solid rgba(245, 158, 11, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--brand-gold)',
-                  }}
-                >
-                  <Truck size={18} />
-                </div>
-                <div>
-                  <h4 style={{ margin: 0, fontSize: '0.92rem', color: 'var(--text-white)', fontWeight: 700 }}>
-                    Envíos Garantizados
-                  </h4>
-                  <span style={{ fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
-                    Despachos rápidos y seguros a nivel nacional
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Tile 2: Garantía Oficial Caseritos */}
-            <div className="bento-card-sub">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div
-                  style={{
-                    width: '38px',
-                    height: '38px',
-                    borderRadius: '12px',
-                    backgroundColor: 'rgba(239, 68, 68, 0.12)',
-                    border: '1px solid rgba(239, 68, 68, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--brand-red)',
-                  }}
-                >
-                  <ShieldCheck size={18} />
-                </div>
-                <div>
-                  <h4 style={{ margin: 0, fontSize: '0.92rem', color: 'var(--text-white)', fontWeight: 700 }}>
-                    Garantía Los Caseritos
-                  </h4>
-                  <span style={{ fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
-                    Atención personalizada 1 a 1 en cada compra
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Navegación Segmentada de Categorías Apple Segmented Control */}
+      {/* Barra de Filtros y Categorías Unificada (Apple Unified Glass Toolbar) */}
       <section style={{ maxWidth: '1280px', margin: '1.4rem auto 0', padding: '0 1.4rem', width: '100%' }}>
         <div
-          className="apple-segmented-container"
           style={{
+            backgroundColor: 'var(--bg-card)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
+            border: '1px solid var(--border-color)',
+            borderRadius: 'var(--radius-lg)',
+            boxShadow: 'var(--shadow-card)',
+            padding: '0.75rem 1rem',
             display: 'flex',
-            gap: '0.4rem',
-            overflowX: 'auto',
-            scrollbarWidth: 'none',
-            width: 'fit-content',
-            maxWidth: '100%',
+            flexDirection: 'column',
+            gap: '0.75rem',
           }}
         >
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedCategoria('ALL');
-              setCurrentPage(1);
-            }}
-            className="apple-pill-tab"
+          {/* Fila Superior: Píldoras de Categorías */}
+          <div
             style={{
-              padding: '0.45rem 1.1rem',
-              borderRadius: '999px',
-              border: selectedCategoria === 'ALL' ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid transparent',
-              backgroundColor: selectedCategoria === 'ALL' ? 'rgba(245, 158, 11, 0.18)' : 'transparent',
-              color: selectedCategoria === 'ALL' ? 'var(--brand-gold)' : 'var(--text-secondary)',
-              fontWeight: selectedCategoria === 'ALL' ? 700 : 500,
-              fontSize: '0.8rem',
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              overflowX: 'auto',
+              scrollbarWidth: 'none',
+              paddingBottom: '0.2rem',
             }}
           >
-            Todas las Categorías
-          </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedCategoria('ALL');
+                setCurrentPage(1);
+              }}
+              className="apple-pill-tab"
+              style={{
+                padding: '0.45rem 1.1rem',
+                borderRadius: '999px',
+                border: selectedCategoria === 'ALL' ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid var(--border-color)',
+                backgroundColor: selectedCategoria === 'ALL' ? 'rgba(245, 158, 11, 0.18)' : 'var(--bg-primary)',
+                color: selectedCategoria === 'ALL' ? 'var(--brand-gold)' : 'var(--text-secondary)',
+                fontWeight: selectedCategoria === 'ALL' ? 700 : 500,
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Todas las Categorías
+            </button>
 
-          {categorias.map((c) => {
-            const isSelected = String(selectedCategoria) === String(c.idCategoria);
-            return (
-              <button
-                key={c.idCategoria}
-                type="button"
-                onClick={() => {
-                  setSelectedCategoria(c.idCategoria);
-                  setCurrentPage(1);
-                }}
-                className="apple-pill-tab"
-                style={{
-                  padding: '0.45rem 1.1rem',
-                  borderRadius: '999px',
-                  border: isSelected ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid transparent',
-                  backgroundColor: isSelected ? 'rgba(245, 158, 11, 0.18)' : 'transparent',
-                  color: isSelected ? 'var(--brand-gold)' : 'var(--text-secondary)',
-                  fontWeight: isSelected ? 700 : 500,
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {c.nombre}
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Barra de Filtros Secundarios y Conteo de Resultados */}
-      <section style={{ maxWidth: '1280px', margin: '0.9rem auto 0', padding: '0 1.4rem', width: '100%' }}>
-        <div
-          style={{
-            padding: '0.65rem 1rem',
-            backgroundColor: 'var(--bg-card)',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--border-color)',
-            boxShadow: 'var(--shadow-card)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '0.75rem',
-            fontSize: '0.8rem',
-          }}
-        >
-          {/* Conteo de Resultados */}
-          <div style={{ color: 'var(--text-secondary)' }}>
-            Mostrando <strong style={{ color: 'var(--text-white)' }}>{filteredProductos.length}</strong> productos
-            {selectedCategoria !== 'ALL' && (
-              <span> en <strong style={{ color: 'var(--brand-gold)' }}>{categorias.find((c) => String(c.idCategoria) === String(selectedCategoria))?.nombre}</strong></span>
-            )}
-          </div>
-
-          {/* Selectores de Marca y Orden */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', flexWrap: 'wrap' }}>
-            {marcas.length > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.76rem' }}>Marca:</span>
-                <select
-                  value={selectedMarca}
-                  onChange={(e) => {
-                    setSelectedMarca(e.target.value);
+            {categorias.map((c) => {
+              const isSelected = String(selectedCategoria) === String(c.idCategoria);
+              return (
+                <button
+                  key={c.idCategoria}
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategoria(c.idCategoria);
                     setCurrentPage(1);
                   }}
+                  className="apple-pill-tab"
+                  style={{
+                    padding: '0.45rem 1.1rem',
+                    borderRadius: '999px',
+                    border: isSelected ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid var(--border-color)',
+                    backgroundColor: isSelected ? 'rgba(245, 158, 11, 0.18)' : 'var(--bg-primary)',
+                    color: isSelected ? 'var(--brand-gold)' : 'var(--text-secondary)',
+                    fontWeight: isSelected ? 700 : 500,
+                    fontSize: '0.8rem',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {c.nombre}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Fila Inferior: Filtros de Marca, Disponibilidad y Ordenamiento */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '0.75rem',
+              paddingTop: '0.55rem',
+              borderTop: '1px solid var(--border-light)',
+              fontSize: '0.8rem',
+            }}
+          >
+            {/* Conteo de Resultados */}
+            <div style={{ color: 'var(--text-secondary)' }}>
+              Mostrando <strong style={{ color: 'var(--text-white)' }}>{filteredProductos.length}</strong> productos
+              {selectedCategoria !== 'ALL' && (
+                <span> en <strong style={{ color: 'var(--brand-gold)' }}>{categorias.find((c) => String(c.idCategoria) === String(selectedCategoria))?.nombre}</strong></span>
+              )}
+            </div>
+
+            {/* Controles de Filtrado */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', flexWrap: 'wrap' }}>
+              {marcas.length > 0 && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.76rem' }}>Marca:</span>
+                  <select
+                    value={selectedMarca}
+                    onChange={(e) => {
+                      setSelectedMarca(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    style={{
+                      backgroundColor: 'var(--bg-primary)',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: 'var(--radius-sm)',
+                      color: 'var(--text-primary)',
+                      padding: '0.3rem 0.6rem',
+                      fontSize: '0.76rem',
+                      outline: 'none',
+                    }}
+                  >
+                    <option value="ALL">Todas las marcas</option>
+                    {marcas.map((m) => (
+                      <option key={m.idMarca} value={m.idMarca}>
+                        {m.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '0.78rem' }}>
+                <input
+                  type="checkbox"
+                  checked={onlyInStock}
+                  onChange={(e) => {
+                    setOnlyInStock(e.target.checked);
+                    setCurrentPage(1);
+                  }}
+                  style={{ accentColor: 'var(--brand-gold)' }}
+                />
+                <span>Solo disponibles</span>
+              </label>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <SlidersHorizontal size={13} style={{ color: 'var(--text-muted)' }} />
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.76rem' }}>Ordenar:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
                   style={{
                     backgroundColor: 'var(--bg-primary)',
                     border: '1px solid var(--border-color)',
@@ -639,55 +548,17 @@ export function CatalogoClienteView({
                     outline: 'none',
                   }}
                 >
-                  <option value="ALL">Todas las marcas</option>
-                  {marcas.map((m) => (
-                    <option key={m.idMarca} value={m.idMarca}>
-                      {m.nombre}
-                    </option>
-                  ))}
+                  <option value="featured">Destacados</option>
+                  <option value="price-asc">Menor precio</option>
+                  <option value="price-desc">Mayor precio</option>
                 </select>
               </div>
-            )}
-
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '0.78rem' }}>
-              <input
-                type="checkbox"
-                checked={onlyInStock}
-                onChange={(e) => {
-                  setOnlyInStock(e.target.checked);
-                  setCurrentPage(1);
-                }}
-                style={{ accentColor: 'var(--brand-gold)' }}
-              />
-              <span>Solo disponibles</span>
-            </label>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <SlidersHorizontal size={13} style={{ color: 'var(--text-muted)' }} />
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.76rem' }}>Ordenar:</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                style={{
-                  backgroundColor: 'var(--bg-primary)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--radius-sm)',
-                  color: 'var(--text-primary)',
-                  padding: '0.3rem 0.6rem',
-                  fontSize: '0.76rem',
-                  outline: 'none',
-                }}
-              >
-                <option value="featured">Destacados</option>
-                <option value="price-asc">Menor precio</option>
-                <option value="price-desc">Mayor precio</option>
-              </select>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Grid de Productos con Tarjetas Apple Liquid Glass */}
+      {/* Grid de Productos Limpio y Directo */}
       <main id="productos-grid" style={{ maxWidth: '1280px', margin: '1.2rem auto', padding: '0 1.4rem', width: '100%', flex: 1 }}>
         {filteredProductos.length === 0 ? (
           <div
