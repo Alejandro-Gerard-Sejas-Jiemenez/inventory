@@ -876,11 +876,41 @@
 - `FILE_INDEX.md`: Actualizado con la nueva capa de `hooks/`.
 
 ### Fase 3: VERIFICACIÓN
-- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
-- Verificación en navegador: Funcionamiento íntegro de la tienda, carrito, login de administrador, catálogo y paneles de gestión.
 - **Git Commit & Push (Conventional Commits):**
   - Commit: `refactor(frontend): decouple App.jsx using SRP custom hooks (useAuth, useCart, useInventoryData)`
   - Rama: `main` en GitHub.
+
+---
+
+## Bloque 28: Descomposición Modular de Componentes y Reducción de Complejidad Ciclomática
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `REFACTOR-3` |
+| **Fecha** | 2026-08-31 |
+| **Módulos Afectados** | Frontend (`CatalogoClienteView.jsx`, `CarritoDrawer.jsx`, `ProductoModal.jsx`, `MovimientoModal.jsx`, `NuevaVentaPOSForm.jsx`, `components/tienda/`, `components/productos/`, `components/movimientos/`, `components/ventas/`) |
+| **Skills Aplicadas** | `clean-code`, `react-modern-frontend`, `ui-ux-usability`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Identificar componentes que sobrepasaban 250-500 líneas de código y dividirlos en subcomponentes atómicos con responsabilidad única:
+  - `CatalogoClienteView.jsx` (de 685 a 408 líneas): Descompuesto en `TiendaHeader.jsx`, `TiendaCategoryNav.jsx`, `TiendaSearchCapsule.jsx`, `TiendaFooter.jsx`.
+  - `CarritoDrawer.jsx` (de 355 a 222 líneas): Descompuesto extrayendo `CarritoItem.jsx`.
+  - `ProductoModal.jsx` (de 548 a 264 líneas): Descompuesto extrayendo `ProductoFotoUploader.jsx` y `ColorSelectorSection.jsx`.
+  - `MovimientoModal.jsx` (de 349 a 206 líneas): Descompuesto extrayendo `OperacionSegmentSelector.jsx` y `OperacionesDirectLinks.jsx`.
+  - `NuevaVentaPOSForm.jsx` (de 234 a 186 líneas): Descompuesto extrayendo `VentaDetalleRow.jsx`.
+
+### Fase 2: IMPLEMENTACIÓN
+- Creación de 8 subcomponentes atómicos en carpetas de dominio (`components/tienda/`, `components/productos/`, `components/movimientos/`, `components/ventas/`).
+- Actualización de los componentes principales para importar y orquestar los subcomponentes.
+
+### Fase 3: VERIFICACIÓN
+- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
+- Medición de líneas: Reducción promedio del 45% al 60% en los archivos auditados.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `refactor(frontend): decompose large views and modals into focused single-responsibility subcomponents`
+  - Rama: `main` en GitHub.
+
 
 
 

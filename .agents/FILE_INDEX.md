@@ -224,8 +224,13 @@ frontend/
     │   │   └── index.js                         ← Exportador unificado de common
     │   │
     │   ├── tienda/                              ← Componentes de la Tienda de Clientes (E-commerce)
-    │   │   ├── ProductoCard.jsx                 ← Tarjeta e-commerce con badges de stock y botón de compra
+    │   │   ├── TiendaHeader.jsx                 ← Encabezado con branding, toggle de tema y accesos
+    │   │   ├── TiendaCategoryNav.jsx            ← Pestañas de categorías estilo Airbnb
+    │   │   ├── TiendaSearchCapsule.jsx          ← Cápsula de búsqueda segmentada y filtros de marca/orden
+    │   │   ├── TiendaFooter.jsx                 ← Pie de página minimalista
+    │   │   ├── ProductoCard.jsx                 ← Tarjeta e-commerce con física táctil y discos puros de color
     │   │   ├── CarritoDrawer.jsx                ← Drawer lateral deslizante de carrito con tope de stock
+    │   │   ├── CarritoItem.jsx                  ← Fila individual de producto en la bolsa de pedidos
     │   │   └── CheckoutWhatsAppModal.jsx        ← Formulario de entrega y enlace universal a WhatsApp
     │   │
     │   ├── catalogos/                           ← Sub-componentes específicos de Catálogos

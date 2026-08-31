@@ -1,26 +1,17 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import {
-  Search,
-  ShoppingBag,
-  ShieldCheck,
-  LayoutDashboard,
-  ChevronLeft,
-  ChevronRight,
-  RotateCcw,
-  Sun,
-  Moon,
-  Laptop,
-  Smartphone,
-  Shield,
-  Headphones,
-  Sparkles,
-  Layers,
-} from 'lucide-react';
-import logoImg from '../assets/logo.png';
+import { ShieldCheck, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
+import { TiendaHeader } from '../components/tienda/TiendaHeader';
+import { TiendaCategoryNav } from '../components/tienda/TiendaCategoryNav';
+import { TiendaSearchCapsule } from '../components/tienda/TiendaSearchCapsule';
+import { TiendaFooter } from '../components/tienda/TiendaFooter';
 import { ProductoCard } from '../components/tienda/ProductoCard';
 import { CarritoDrawer } from '../components/tienda/CarritoDrawer';
 import { CheckoutWhatsAppModal } from '../components/tienda/CheckoutWhatsAppModal';
 
+/**
+ * Vista Principal del Catálogo de Clientes (E-commerce).
+ * Responsabilidad: Orquestación del catálogo, filtrado reactivo de productos y paginación.
+ */
 export function CatalogoClienteView({
   productos = [],
   categorias = [],
@@ -69,25 +60,18 @@ export function CatalogoClienteView({
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 8;
 
-  // Filtrado reactivo de productos (por Categoría, Marca, Búsqueda y Orden)
+  // Filtrado reactivo de productos
   const filteredProductos = useMemo(() => {
     let list = [...productos].filter((p) => p.activo !== false);
 
-    // Filtro por categoría
     if (selectedCategoria !== 'ALL') {
-      list = list.filter(
-        (p) => String(p.categoria?.idCategoria) === String(selectedCategoria)
-      );
+      list = list.filter((p) => String(p.categoria?.idCategoria) === String(selectedCategoria));
     }
 
-    // Filtro por marca
     if (selectedMarca !== 'ALL') {
-      list = list.filter(
-        (p) => String(p.modelo?.marca?.idMarca) === String(selectedMarca)
-      );
+      list = list.filter((p) => String(p.modelo?.marca?.idMarca) === String(selectedMarca));
     }
 
-    // Búsqueda por texto (nombre, modelo, marca, color, material)
     if (search.trim()) {
       const q = search.toLowerCase().trim();
       list = list.filter((p) => {
@@ -108,7 +92,6 @@ export function CatalogoClienteView({
       });
     }
 
-    // Ordenamiento comercial por precio o destacados
     if (sortBy === 'price-asc') {
       list.sort((a, b) => Number(a.precioUnitario) - Number(b.precioUnitario));
     } else if (sortBy === 'price-desc') {
@@ -118,7 +101,6 @@ export function CatalogoClienteView({
     return list;
   }, [productos, selectedCategoria, selectedMarca, search, sortBy]);
 
-  // Paginación calculada
   const totalPages = Math.max(1, Math.ceil(filteredProductos.length / PAGE_SIZE));
   const paginatedProductos = useMemo(() => {
     const startIndex = (currentPage - 1) * PAGE_SIZE;
@@ -129,30 +111,18 @@ export function CatalogoClienteView({
     return cartItems.reduce((acc, item) => acc + item.cantidad, 0);
   }, [cartItems]);
 
-  const handleOpenCheckout = () => {
-    setIsCartOpen(false);
-    setIsCheckoutOpen(true);
-  };
-
-  const handleBackToCart = () => {
-    setIsCheckoutOpen(false);
-    setIsCartOpen(true);
+  const handleResetCatalog = () => {
+    setSelectedCategoria('ALL');
+    setSelectedMarca('ALL');
+    setSearch('');
+    setSortBy('featured');
+    setCurrentPage(1);
   };
 
   const handleOrderSuccess = () => {
     onClearCart();
     setOrderSuccessMessage('¡Tu pedido ha sido enviado con éxito por WhatsApp! Nos contactaremos de inmediato para coordinar la entrega.');
     setTimeout(() => setOrderSuccessMessage(''), 8000);
-  };
-
-  // Helper para asignar icono contextual a la categoría
-  const getCategoryIcon = (nombre) => {
-    const n = (nombre || '').toLowerCase();
-    if (n.includes('laptop') || n.includes('portat') || n.includes('comput')) return <Laptop size={18} />;
-    if (n.includes('smart') || n.includes('celular') || n.includes('telef')) return <Smartphone size={18} />;
-    if (n.includes('funda') || n.includes('case') || n.includes('protec')) return <Shield size={18} />;
-    if (n.includes('audio') || n.includes('auricular') || n.includes('head')) return <Headphones size={18} />;
-    return <Sparkles size={18} />;
   };
 
   return (
@@ -171,150 +141,15 @@ export function CatalogoClienteView({
         transition: 'background 0.3s ease, color 0.3s ease',
       }}
     >
-      {/* Header Translúcido Estilo Apple Liquid Glass */}
-      <header
-        className="apple-glass-nav"
-        style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-        }}
-      >
-        <div
-          className="tienda-header-container"
-          style={{
-            maxWidth: '1280px',
-            margin: '0 auto',
-            padding: '0.85rem 1.4rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1.2rem',
-            flexWrap: 'wrap',
-          }}
-        >
-          {/* Emblema Oficial de la Empresa */}
-          <div
-            style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', cursor: 'pointer', flexShrink: 0 }}
-            onClick={() => {
-              setSelectedCategoria('ALL');
-              setSelectedMarca('ALL');
-              setSearch('');
-              setCurrentPage(1);
-            }}
-            className="apple-btn-tactile"
-          >
-            <div className="brand-logo-badge">
-              <img
-                src={logoImg}
-                alt="Los Caseritos Logo"
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-              />
-            </div>
-            <div>
-              <h1
-                className="apple-display-heading"
-                style={{
-                  margin: 0,
-                  fontSize: '1.2rem',
-                  color: 'var(--text-white)',
-                  letterSpacing: '0.04em',
-                }}
-              >
-                LOS CASERITOS
-              </h1>
-              <span
-                className="apple-label-small"
-                style={{
-                  fontSize: '0.66rem',
-                  color: 'var(--brand-gold)',
-                  display: 'block',
-                  marginTop: '-1px',
-                }}
-              >
-                Catálogo Oficial & Tienda
-              </span>
-            </div>
-          </div>
-
-          {/* Acciones: Toggle de Tema, Bolsa y Acceso Admin */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexShrink: 0 }}>
-            {/* Toggle de Tema Claro / Oscuro */}
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="theme-toggle-btn apple-btn-tactile"
-              title={theme === 'dark' ? 'Cambiar a Tema Claro' : 'Cambiar a Tema Oscuro'}
-            >
-              {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
-            </button>
-
-            {/* Botón Mi Bolsa */}
-            <button
-              type="button"
-              onClick={() => setIsCartOpen(true)}
-              className="apple-btn-tactile"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.45rem',
-                padding: '0.55rem 1.1rem',
-                borderRadius: '999px',
-                backgroundColor: 'var(--brand-gold)',
-                color: '#111',
-                border: 'none',
-                fontWeight: 800,
-                fontSize: '0.82rem',
-                cursor: 'pointer',
-                boxShadow: '0 2px 14px var(--brand-gold-glow)',
-              }}
-            >
-              <ShoppingBag size={16} />
-              <span>Mi Bolsa</span>
-              {totalCartUnits > 0 && (
-                <span
-                  style={{
-                    backgroundColor: 'var(--brand-red)',
-                    color: '#fff',
-                    fontSize: '0.68rem',
-                    fontWeight: 900,
-                    padding: '0.1rem 0.42rem',
-                    borderRadius: '999px',
-                    marginLeft: '0.1rem',
-                  }}
-                >
-                  {totalCartUnits}
-                </span>
-              )}
-            </button>
-
-            {/* Enlace al Panel Admin */}
-            <button
-              type="button"
-              onClick={onGoToAdmin}
-              className="apple-btn-tactile"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                padding: '0.52rem 0.9rem',
-                borderRadius: '999px',
-                backgroundColor: 'var(--bg-card)',
-                color: 'var(--text-white)',
-                border: '1px solid var(--border-color)',
-                fontSize: '0.78rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                boxShadow: 'var(--shadow-card)',
-              }}
-              title="Acceso restringido para administradores"
-            >
-              <LayoutDashboard size={14} />
-              <span>Panel Admin</span>
-            </button>
-          </div>
-        </div>
-      </header>
+      {/* 1. Header Translúcido Apple Liquid Glass */}
+      <TiendaHeader
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        totalCartUnits={totalCartUnits}
+        onOpenCart={() => setIsCartOpen(true)}
+        onGoToAdmin={onGoToAdmin}
+        onResetCatalog={handleResetCatalog}
+      />
 
       {/* Alerta de Pedido Exitoso */}
       {orderSuccessMessage && (
@@ -340,127 +175,39 @@ export function CatalogoClienteView({
         </div>
       )}
 
-      {/* 1. Barra de Navegación por Categorías Estilo Airbnb */}
-      <section style={{ maxWidth: '1280px', margin: '0.6rem auto 0', padding: '0 1.4rem', width: '100%' }}>
-        <div className="airbnb-category-nav">
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedCategoria('ALL');
-              setCurrentPage(1);
-            }}
-            className={`airbnb-category-item ${selectedCategoria === 'ALL' ? 'active' : ''}`}
-          >
-            <Layers size={20} />
-            <span>Todo</span>
-          </button>
+      {/* 2. Barra de Navegación por Categorías Estilo Airbnb */}
+      <TiendaCategoryNav
+        categorias={categorias}
+        selectedCategoria={selectedCategoria}
+        onSelectCategoria={(catId) => {
+          setSelectedCategoria(catId);
+          setCurrentPage(1);
+        }}
+      />
 
-          {categorias.map((c) => {
-            const isSelected = String(selectedCategoria) === String(c.idCategoria);
-            return (
-              <button
-                key={c.idCategoria}
-                type="button"
-                onClick={() => {
-                  setSelectedCategoria(c.idCategoria);
-                  setCurrentPage(1);
-                }}
-                className={`airbnb-category-item ${isSelected ? 'active' : ''}`}
-              >
-                {getCategoryIcon(c.nombre)}
-                <span>{c.nombre}</span>
-              </button>
-            );
-          })}
-        </div>
-      </section>
+      {/* 3. Cápsula de Búsqueda y Filtros de Marca/Orden */}
+      <TiendaSearchCapsule
+        search={search}
+        onSearchChange={(q) => {
+          setSearch(q);
+          setCurrentPage(1);
+        }}
+        onClearSearch={() => setSearch('')}
+        marcas={marcas}
+        selectedMarca={selectedMarca}
+        onSelectMarca={(mId) => {
+          setSelectedMarca(mId);
+          setCurrentPage(1);
+        }}
+        sortBy={sortBy}
+        onSelectSortBy={(s) => setSortBy(s)}
+        onTriggerSearch={() => {
+          const gridEl = document.getElementById('productos-grid');
+          if (gridEl) gridEl.scrollIntoView({ behavior: 'smooth' });
+        }}
+      />
 
-      {/* 2. Cápsula de Búsqueda y Filtros de Marca/Orden Estilo Airbnb */}
-      <section style={{ maxWidth: '1280px', margin: '1.2rem auto 0', padding: '0 1.4rem', width: '100%' }}>
-        <div className="airbnb-capsule-bar" style={{ maxWidth: '820px' }}>
-          {/* Segmento 1: ¿Qué buscas? (Búsqueda de Texto) */}
-          <div className="airbnb-capsule-segment" style={{ flex: 1.4 }}>
-            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-white)', letterSpacing: '0.02em', display: 'block', marginBottom: '2px' }}>
-              ¿Qué buscas?
-            </span>
-            <input
-              type="text"
-              className="apple-search-input"
-              placeholder="Buscar producto, modelo, color..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setCurrentPage(1);
-              }}
-              style={{
-                width: '100%',
-                backgroundColor: 'transparent',
-                border: 'none',
-                outline: 'none',
-                fontSize: '0.84rem',
-                fontWeight: 500,
-                color: 'var(--input-text)',
-                padding: '0.1rem 0',
-              }}
-            />
-          </div>
-
-          {/* Segmento 2: Filtro por Marca */}
-          {marcas.length > 0 && (
-            <div className="airbnb-capsule-segment" style={{ flex: 0.9 }}>
-              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-white)', letterSpacing: '0.02em', display: 'block', marginBottom: '2px' }}>
-                Marca
-              </span>
-              <select
-                value={selectedMarca}
-                onChange={(e) => {
-                  setSelectedMarca(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="airbnb-capsule-select"
-              >
-                <option value="ALL">Todas las marcas</option>
-                {marcas.map((m) => (
-                  <option key={m.idMarca} value={m.idMarca}>
-                    {m.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Segmento 3: Filtro por Orden */}
-          <div className="airbnb-capsule-segment" style={{ flex: 0.9 }}>
-            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-white)', letterSpacing: '0.02em', display: 'block', marginBottom: '2px' }}>
-              Ordenar
-            </span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="airbnb-capsule-select"
-            >
-              <option value="featured">Destacados</option>
-              <option value="price-asc">Menor precio</option>
-              <option value="price-desc">Mayor precio</option>
-            </select>
-          </div>
-
-          {/* Botón Circular de Acción Airbnb (Rojo Carmesí) */}
-          <button
-            type="button"
-            className="airbnb-search-btn"
-            title="Buscar en el catálogo"
-            onClick={() => {
-              const gridEl = document.getElementById('productos-grid');
-              if (gridEl) gridEl.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            <Search size={18} />
-          </button>
-        </div>
-      </section>
-
-      {/* Barra de Conteo Sutil */}
+      {/* 4. Barra de Conteo y Restablecimiento */}
       <section style={{ maxWidth: '1280px', margin: '0.9rem auto 0', padding: '0 1.4rem', width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
           <div>
@@ -475,13 +222,7 @@ export function CatalogoClienteView({
           {(search || selectedMarca !== 'ALL' || selectedCategoria !== 'ALL' || sortBy !== 'featured') && (
             <button
               type="button"
-              onClick={() => {
-                setSearch('');
-                setSelectedMarca('ALL');
-                setSelectedCategoria('ALL');
-                setSortBy('featured');
-                setCurrentPage(1);
-              }}
+              onClick={handleResetCatalog}
               style={{
                 background: 'transparent',
                 border: 'none',
@@ -497,7 +238,7 @@ export function CatalogoClienteView({
         </div>
       </section>
 
-      {/* Grid de Productos Limpio y Directo */}
+      {/* 5. Grid de Productos */}
       <main id="productos-grid" style={{ maxWidth: '1280px', margin: '1.2rem auto', padding: '0 1.4rem', width: '100%', flex: 1 }}>
         {filteredProductos.length === 0 ? (
           <div
@@ -522,12 +263,7 @@ export function CatalogoClienteView({
             </p>
             <button
               type="button"
-              onClick={() => {
-                setSearch('');
-                setSelectedCategoria('ALL');
-                setSelectedMarca('ALL');
-                setSortBy('featured');
-              }}
+              onClick={handleResetCatalog}
               className="apple-btn-tactile"
               style={{
                 marginTop: '0.5rem',
@@ -560,7 +296,7 @@ export function CatalogoClienteView({
               })}
             </div>
 
-            {/* Paginación Segmentada */}
+            {/* Paginación */}
             {totalPages > 1 && (
               <div
                 style={{
@@ -639,29 +375,10 @@ export function CatalogoClienteView({
         )}
       </main>
 
-      {/* Footer Minimalista Apple */}
-      <footer
-        style={{
-          marginTop: 'auto',
-          borderTop: '1px solid var(--border-color)',
-          backgroundColor: 'var(--bg-card)',
-          padding: '1.5rem 1.4rem',
-        }}
-      >
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <img src={logoImg} alt="Logo" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
-            <span style={{ fontSize: '0.82rem', color: 'var(--text-white)', fontWeight: 700 }}>
-              Los Caseritos · Catálogo Digital
-            </span>
-          </div>
-          <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-            © {new Date().getFullYear()} Los Caseritos. Todos los derechos reservados. Desarrollado por Alejandro Gerard Sejas.
-          </div>
-        </div>
-      </footer>
+      {/* 6. Footer Minimalista */}
+      <TiendaFooter />
 
-      {/* Drawer Lateral del Carrito de Compras */}
+      {/* 7. Drawer de Carrito */}
       <CarritoDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
@@ -669,14 +386,20 @@ export function CatalogoClienteView({
         onUpdateQuantity={onUpdateCartQuantity}
         onRemoveItem={onRemoveCartItem}
         onClearCart={onClearCart}
-        onCheckout={handleOpenCheckout}
+        onCheckout={() => {
+          setIsCartOpen(false);
+          setIsCheckoutOpen(true);
+        }}
       />
 
-      {/* Modal de Checkout y Envío a WhatsApp */}
+      {/* 8. Modal de Checkout WhatsApp */}
       <CheckoutWhatsAppModal
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
-        onBackToCart={handleBackToCart}
+        onBackToCart={() => {
+          setIsCheckoutOpen(false);
+          setIsCartOpen(true);
+        }}
         cartItems={cartItems}
         onOrderSuccess={handleOrderSuccess}
       />

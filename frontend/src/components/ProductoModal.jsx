@@ -1,62 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  Package,
-  Save,
-  Check,
-  Image as ImageIcon,
-  X,
-  Upload,
-  Link,
-  Trash2,
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Package, Save } from 'lucide-react';
 import { Modal } from './common/Modal';
 import { InputField } from './common/InputField';
 import { SelectField } from './common/SelectField';
 import { TextAreaField } from './common/TextAreaField';
 import { Button } from './common/Button';
+import { ProductoFotoUploader } from './productos/ProductoFotoUploader';
+import { ColorSelectorSection } from './productos/ColorSelectorSection';
 
-// Función para comprimir y convertir imágenes locales a Base64 ligero (máx 800px)
-const processDeviceImage = (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 800;
-        const MAX_HEIGHT = 800;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-
-        // Convertir a JPEG optimizado
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
-        resolve(dataUrl);
-      };
-      img.onerror = () => reject(new Error('No se pudo procesar la imagen del dispositivo'));
-      img.src = e.target.result;
-    };
-    reader.onerror = () => reject(new Error('Error al leer el archivo del dispositivo'));
-    reader.readAsDataURL(file);
-  });
-};
-
+/**
+ * Modal de Creación y Edición de Productos.
+ * Responsabilidad: Orquestación del formulario de producto y validación básica.
+ */
 export function ProductoModal({
   isOpen,
   onClose,
@@ -84,11 +39,7 @@ export function ProductoModal({
     stockMinimo: 5,
   });
 
-  const [useUrlMode, setUseUrlMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [error, setError] = useState('');
-  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (producto) {
@@ -98,17 +49,16 @@ export function ProductoModal({
         nombre: producto.nombre || '',
         descripcion: producto.descripcion || '',
         imagenUrl: producto.imagenUrl || '',
-        idCategoria: producto.categoria?.idCategoria || (categorias.length > 0 ? categorias[0].idCategoria : ''),
+        idCategoria: producto.categoria?.idCategoria || '',
         idModelo: producto.modelo?.idModelo || '',
         idMaterial: producto.material?.idMaterial || '',
         idColor: producto.color?.idColor || '',
-        precioCompra: producto.precioCompra ?? '',
-        precioMayoreo: producto.precioMayoreo ?? '',
-        precioUnitario: producto.precioUnitario ?? '',
-        stockActual: producto.stockActual ?? 0,
-        stockMinimo: producto.stockMinimo ?? 5,
+        precioCompra: producto.precioCompra != null ? producto.precioCompra : '',
+        precioMayoreo: producto.precioMayoreo != null ? producto.precioMayoreo : '',
+        precioUnitario: producto.precioUnitario != null ? producto.precioUnitario : '',
+        stockActual: producto.stockActual != null ? producto.stockActual : 0,
+        stockMinimo: producto.stockMinimo != null ? producto.stockMinimo : 5,
       });
-      setUseUrlMode(producto.imagenUrl ? !producto.imagenUrl.startsWith('data:') : false);
     } else {
       setFormData({
         idProducto: null,
@@ -116,81 +66,43 @@ export function ProductoModal({
         nombre: '',
         descripcion: '',
         imagenUrl: '',
-        idCategoria: categorias.length > 0 ? categorias[0].idCategoria : '',
-        idModelo: modelos.length > 0 ? modelos[0].idModelo : '',
-        idMaterial: materiales.length > 0 ? materiales[0].idMaterial : '',
-        idColor: colores.length > 0 ? colores[0].idColor : '',
+        idCategoria: categorias[0]?.idCategoria || '',
+        idModelo: '',
+        idMaterial: '',
+        idColor: '',
         precioCompra: '',
         precioMayoreo: '',
         precioUnitario: '',
         stockActual: 0,
         stockMinimo: 5,
       });
-      setUseUrlMode(false);
     }
-    setError('');
-  }, [producto, categorias, modelos, materiales, colores, isOpen]);
-
-  const handleDeviceFileSelect = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      setError('Por favor selecciona un archivo de imagen válido (JPG, PNG, WebP)');
-      return;
-    }
-
-    try {
-      setUploadingImage(true);
-      setError('');
-      const compressedDataUrl = await processDeviceImage(file);
-      setFormData((prev) => ({ ...prev, imagenUrl: compressedDataUrl }));
-    } catch (err) {
-      setError(err.message || 'Error al procesar la imagen del dispositivo');
-    } finally {
-      setUploadingImage(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
-  };
-
-  const handleRemoveImage = () => {
-    setFormData((prev) => ({ ...prev, imagenUrl: '' }));
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
+  }, [producto, categorias, isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.nombre || !formData.precioUnitario) {
-      setError('Por favor completa los campos obligatorios: Nombre y Precio de Venta (*)');
-      return;
-    }
-
     try {
       setLoading(true);
-      setError('');
-      await onSave({
-        idProducto: formData.idProducto || undefined,
-        sku: formData.sku || undefined,
+      const payload = {
+        idProducto: formData.idProducto,
+        sku: formData.sku?.trim() || null,
         nombre: formData.nombre.trim(),
-        descripcion: formData.descripcion || '',
+        descripcion: formData.descripcion?.trim() || null,
         imagenUrl: formData.imagenUrl?.trim() || null,
-        idCategoria: formData.idCategoria ? parseInt(formData.idCategoria, 10) : null,
-        idModelo: formData.idModelo ? parseInt(formData.idModelo, 10) : null,
-        idMaterial: formData.idMaterial ? parseInt(formData.idMaterial, 10) : null,
-        idColor: formData.idColor ? parseInt(formData.idColor, 10) : null,
-        precioCompra: formData.precioCompra ? parseFloat(formData.precioCompra) : 0,
-        precioMayoreo: formData.precioMayoreo ? parseFloat(formData.precioMayoreo) : null,
-        precioUnitario: parseFloat(formData.precioUnitario),
-        stockActual: parseInt(formData.stockActual, 10) || 0,
-        stockMinimo: parseInt(formData.stockMinimo, 10) || 5,
-      });
+        idCategoria: Number(formData.idCategoria),
+        idModelo: formData.idModelo ? Number(formData.idModelo) : null,
+        idMaterial: formData.idMaterial ? Number(formData.idMaterial) : null,
+        idColor: formData.idColor ? Number(formData.idColor) : null,
+        precioCompra: formData.precioCompra !== '' ? Number(formData.precioCompra) : null,
+        precioMayoreo: formData.precioMayoreo !== '' ? Number(formData.precioMayoreo) : null,
+        precioUnitario: Number(formData.precioUnitario),
+        stockActual: Number(formData.stockActual),
+        stockMinimo: Number(formData.stockMinimo),
+      };
+      await onSave(payload);
       onClose();
     } catch (err) {
-      setError(err.message || 'Error al guardar el producto');
+      console.error('Error guardando producto:', err);
     } finally {
       setLoading(false);
     }
@@ -200,183 +112,36 @@ export function ProductoModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={producto ? 'Editar Producto' : 'Nuevo Producto'}
-      subtitle={producto ? `Modificando existencias y atributos (ID: #${producto.idProducto})` : 'Registrar nuevo artículo en el catálogo multirubro'}
+      title={producto ? 'Editar Producto' : 'Nuevo Producto en Catálogo'}
+      subtitle={producto ? `SKU: ${producto.sku || 'Sin SKU'}` : 'Complete la información para registrar el producto'}
       icon={Package}
-      maxWidth="720px"
+      maxWidth="780px"
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={loading}>
             Cancelar
           </Button>
           <Button
+            type="submit"
+            form="producto-form"
             variant="brand"
-            onClick={handleSubmit}
-            loading={loading}
             icon={Save}
+            loading={loading}
           >
             {producto ? 'Guardar Cambios' : 'Registrar Producto'}
           </Button>
         </>
       }
     >
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {error && (
-          <div
-            style={{
-              padding: '0.75rem 1rem',
-              borderRadius: 'var(--radius-md)',
-              background: 'var(--brand-red-bg)',
-              color: 'var(--brand-red)',
-              fontSize: '0.85rem',
-              fontWeight: 600,
-            }}
-          >
-            {error}
-          </div>
-        )}
-
-        {/* Input Oculto de Archivos del Dispositivo */}
-        <input
-          type="file"
-          ref={fileInputRef}
-          accept="image/png, image/jpeg, image/webp, image/gif"
-          style={{ display: 'none' }}
-          onChange={handleDeviceFileSelect}
+      <form id="producto-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+        {/* 1. Subida y Vista Previa de Fotografía */}
+        <ProductoFotoUploader
+          imagenUrl={formData.imagenUrl}
+          onImageChange={(newUrl) => setFormData({ ...formData, imagenUrl: newUrl })}
+          onRemoveImage={() => setFormData({ ...formData, imagenUrl: '' })}
         />
 
-        {/* Sección de Imagen del Producto desde el Dispositivo */}
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '1rem',
-            padding: '1rem',
-            backgroundColor: 'var(--bg-secondary)',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--border-color)',
-            alignItems: 'center',
-          }}
-        >
-          {/* Vista Previa / Caja Clickeable para Elegir del Dispositivo */}
-          <div
-            onClick={() => fileInputRef.current?.click()}
-            title="Haz clic para seleccionar imagen de tu dispositivo"
-            style={{
-              width: '90px',
-              height: '90px',
-              borderRadius: 'var(--radius-md)',
-              border: formData.imagenUrl ? '2px solid var(--brand-gold)' : '2px dashed var(--border-color)',
-              backgroundColor: 'var(--bg-primary)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-              flexShrink: 0,
-              cursor: 'pointer',
-              position: 'relative',
-              transition: 'var(--transition)',
-            }}
-          >
-            {formData.imagenUrl ? (
-              <img
-                src={formData.imagenUrl}
-                alt="Vista previa"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-            ) : (
-              <>
-                <ImageIcon size={26} style={{ color: 'var(--text-muted)', marginBottom: '0.2rem' }} />
-                <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.1 }}>
-                  {uploadingImage ? 'Cargando...' : 'Elegir Foto'}
-                </span>
-              </>
-            )}
-          </div>
-
-          <div style={{ flex: 1, minWidth: '220px', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <label className="form-field-label" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <ImageIcon size={15} style={{ color: 'var(--brand-gold)' }} />
-                Fotografía del Producto
-              </label>
-              <button
-                type="button"
-                onClick={() => setUseUrlMode(!useUrlMode)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--brand-gold)',
-                  fontSize: '0.76rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.25rem',
-                  fontWeight: 600,
-                }}
-              >
-                <Link size={12} />
-                {useUrlMode ? 'Subir desde Dispositivo' : 'Ingresar URL Web'}
-              </button>
-            </div>
-
-            {!useUrlMode ? (
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                <Button
-                  type="button"
-                  variant="brand"
-                  size="sm"
-                  icon={Upload}
-                  loading={uploadingImage}
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  Seleccionar desde Dispositivo
-                </Button>
-                {formData.imagenUrl && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    icon={Trash2}
-                    style={{ color: 'var(--brand-red)' }}
-                    onClick={handleRemoveImage}
-                  >
-                    Quitar Foto
-                  </Button>
-                )}
-              </div>
-            ) : (
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                <div style={{ flex: 1 }}>
-                  <InputField
-                    placeholder="https://ejemplo.com/foto-producto.jpg"
-                    value={formData.imagenUrl}
-                    onChange={(e) => setFormData({ ...formData, imagenUrl: e.target.value })}
-                  />
-                </div>
-                {formData.imagenUrl && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleRemoveImage}
-                    icon={X}
-                    title="Limpiar"
-                  />
-                )}
-              </div>
-            )}
-
-            <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-              {formData.imagenUrl
-                ? (formData.imagenUrl.startsWith('data:') ? 'Foto cargada desde tu dispositivo (optimizada automáticamente)' : 'Enlace web configurado')
-                : 'Sube una imagen desde tu PC, teléfono o galería para identificar el producto'}
-            </span>
-          </div>
-        </div>
-
-        {/* Categoría y Nombre del Producto */}
+        {/* 2. Categoría y Nombre */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
           <SelectField
             label="Categoría del Producto"
@@ -399,7 +164,7 @@ export function ProductoModal({
           />
         </div>
 
-        {/* Modelo y Material */}
+        {/* 3. Modelo y Material */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
           <SelectField
             label="Modelo & Marca"
@@ -424,62 +189,14 @@ export function ProductoModal({
           />
         </div>
 
-        {/* Selector Visual de Colores */}
-        <div>
-          <label className="form-field-label">Color del Producto</label>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '0.45rem',
-              padding: '0.6rem',
-              backgroundColor: 'var(--bg-secondary)',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--border-color)',
-              maxHeight: '120px',
-              overflowY: 'auto',
-            }}
-          >
-            {colores.map((c) => {
-              const isSelected = String(formData.idColor) === String(c.idColor);
-              return (
-                <button
-                  key={c.idColor}
-                  type="button"
-                  onClick={() => setFormData({ ...formData, idColor: c.idColor })}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.45rem',
-                    padding: '0.35rem 0.65rem',
-                    borderRadius: 'var(--radius-sm)',
-                    background: isSelected ? 'var(--brand-gold-bg)' : 'rgba(255,255,255,0.05)',
-                    border: isSelected ? '1px solid var(--brand-gold)' : '1px solid rgba(255,255,255,0.1)',
-                    color: isSelected ? 'var(--brand-gold)' : 'var(--text-secondary)',
-                    cursor: 'pointer',
-                    fontSize: '0.82rem',
-                    fontWeight: isSelected ? 700 : 500,
-                    transition: 'all 0.15s ease',
-                  }}
-                >
-                  <span
-                    style={{
-                      width: '14px',
-                      height: '14px',
-                      borderRadius: '3px',
-                      backgroundColor: c.codigoHex || '#888',
-                      border: '1px solid rgba(255,255,255,0.3)',
-                      flexShrink: 0,
-                    }}
-                  />
-                  <span>{c.nombre}</span>
-                  {isSelected && <Check size={13} />}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        {/* 4. Selector de Color */}
+        <ColorSelectorSection
+          colores={colores}
+          selectedColorId={formData.idColor}
+          onSelectColor={(cId) => setFormData({ ...formData, idColor: cId })}
+        />
 
+        {/* 5. Descripción */}
         <TextAreaField
           label="Descripción"
           placeholder="Especificaciones técnicas, características, memoria..."
@@ -488,7 +205,7 @@ export function ProductoModal({
           onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
         />
 
-        {/* Precios */}
+        {/* 6. Precios */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
           <InputField
             label="Precio Compra (Bs.)"
@@ -522,7 +239,7 @@ export function ProductoModal({
           />
         </div>
 
-        {/* Stocks */}
+        {/* 7. Stocks */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
           <InputField
             label={producto ? 'Stock Actual' : 'Stock Inicial'}

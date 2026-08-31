@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
-import { CreditCard, Plus, Trash2, CheckCircle } from 'lucide-react';
+import { CreditCard, Plus, CheckCircle } from 'lucide-react';
 import { Card, CardTitle, CardBody } from '../common/Card';
-import { InputField } from '../common/InputField';
 import { SelectField } from '../common/SelectField';
+import { TextAreaField } from '../common/TextAreaField';
 import { Button } from '../common/Button';
 import { METODOS_PAGO } from '../../data/paymentMethods';
+import { VentaDetalleRow } from './VentaDetalleRow';
 
+/**
+ * Formulario de Punto de Venta (POS) para emisión de ventas directas.
+ * Responsabilidad: Gestión del encabezado de venta, método de pago, cliente y totales.
+ */
 export function NuevaVentaPOSForm({
   clientes = [],
   productos = [],
@@ -28,7 +33,7 @@ export function NuevaVentaPOSForm({
   };
 
   const handleProductChange = (index, prodId) => {
-    const prod = productos.find((p) => p.idProducto === parseInt(prodId, 10));
+    const prod = productos.find((p) => String(p.idProducto) === String(prodId));
     const newItems = [...itemsVenta];
     newItems[index].idProducto = prodId;
     newItems[index].precioUnitario = prod ? prod.precioUnitario : 0;
@@ -85,6 +90,7 @@ export function NuevaVentaPOSForm({
       </CardTitle>
       <CardBody>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          {/* Cliente y Método de Pago */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
             <SelectField
               label="Cliente"
@@ -101,118 +107,65 @@ export function NuevaVentaPOSForm({
               label="Método de Pago"
               value={selectedMetodo}
               onChange={(e) => setSelectedMetodo(e.target.value)}
-              options={METODOS_PAGO}
+              options={METODOS_PAGO.map((m) => ({
+                value: m.id,
+                label: `${m.icono} ${m.nombre}`,
+              }))}
               required
-            />
-
-            <InputField
-              label="Observaciones / Nota"
-              placeholder="Ej. Descuento aplicado / Envío a domicilio"
-              value={observaciones}
-              onChange={(e) => setObservaciones(e.target.value)}
             />
           </div>
 
+          {/* Líneas de Venta */}
           <div>
-            <label className="form-field-label" style={{ marginBottom: '0.75rem' }}>
-              Productos a Vender *
-            </label>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {itemsVenta.map((item, idx) => {
-                const prod = productos.find((p) => p.idProducto === parseInt(item.idProducto, 10));
-                const maxStock = prod ? prod.stockActual : 999;
-                return (
-                  <div
-                    key={idx}
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'minmax(200px, 2fr) minmax(100px, 1fr) minmax(120px, 1fr) minmax(110px, 1fr) auto',
-                      gap: '0.75rem',
-                      alignItems: 'end',
-                      padding: '0.75rem',
-                      backgroundColor: 'var(--bg-secondary)',
-                      borderRadius: 'var(--radius-md)',
-                      border: '1px solid var(--border-color)',
-                    }}
-                  >
-                    <SelectField
-                      label="Producto"
-                      value={item.idProducto}
-                      onChange={(e) => handleProductChange(idx, e.target.value)}
-                      placeholder="Seleccionar..."
-                      options={productos.map((p) => ({
-                        value: p.idProducto,
-                        label: `${p.sku} - ${p.nombre} (Disp: ${p.stockActual})`,
-                      }))}
-                      required
-                    />
-
-                    <InputField
-                      label="Cantidad"
-                      type="number"
-                      min="1"
-                      max={maxStock}
-                      value={item.cantidad}
-                      onChange={(e) => handleCantidadChange(idx, e.target.value)}
-                      required
-                    />
-
-                    <InputField
-                      label="Precio Venta (Bs.)"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={item.precioUnitario}
-                      onChange={(e) => handlePrecioChange(idx, e.target.value)}
-                      required
-                    />
-
-                    <div style={{ paddingBottom: '0.65rem' }}>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Subtotal</div>
-                      <strong style={{ color: 'var(--brand-gold)', fontSize: '0.95rem' }}>
-                        Bs. {((item.cantidad * (item.precioUnitario || 0)) || 0).toFixed(2)}
-                      </strong>
-                    </div>
-
-                    {itemsVenta.length > 1 && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRemoveItem(idx)}
-                        style={{ color: 'var(--brand-red)', marginBottom: '0.4rem' }}
-                        icon={Trash2}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={handleAddItem}
-                style={{ alignSelf: 'flex-start', marginTop: '0.25rem' }}
-                icon={Plus}
-              >
-                Añadir otro producto al carrito
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+              <label className="form-field-label" style={{ margin: 0 }}>
+                Productos a Vender ({itemsVenta.length})
+              </label>
+              <Button type="button" variant="secondary" size="sm" icon={Plus} onClick={handleAddItem}>
+                Añadir Producto
               </Button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+              {itemsVenta.map((item, index) => (
+                <VentaDetalleRow
+                  key={index}
+                  item={item}
+                  index={index}
+                  productos={productos}
+                  onProductChange={handleProductChange}
+                  onCantidadChange={handleCantidadChange}
+                  onPrecioChange={handlePrecioChange}
+                  onRemove={handleRemoveItem}
+                  canRemove={itemsVenta.length > 1}
+                />
+              ))}
             </div>
           </div>
 
+          <TextAreaField
+            label="Observaciones de la Venta (Opcional)"
+            placeholder="Notas de entrega, número de comprobante..."
+            rows={2}
+            value={observaciones}
+            onChange={(e) => setObservaciones(e.target.value)}
+          />
+
+          {/* Footer con Total y Acciones */}
           <div
             style={{
               display: 'flex',
-              alignItems: 'center',
               justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingTop: '1rem',
               borderTop: '1px solid var(--border-color)',
-              paddingTop: '1.25rem',
               flexWrap: 'wrap',
               gap: '1rem',
             }}
           >
             <div>
-              <span style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>Total a Cobrar:</span>
-              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--brand-gold)' }}>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Total de la Venta:</span>
+              <div style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--brand-gold)' }}>
                 Bs. {totalCalculado.toFixed(2)}
               </div>
             </div>

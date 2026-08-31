@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import {
-  PlusCircle,
-  MinusCircle,
-  Scale,
-  Check,
-  ShoppingCart,
-  Truck,
-  ArrowRight,
-  Calculator,
-} from 'lucide-react';
+import { Check, Calculator } from 'lucide-react';
 import { Modal } from './common/Modal';
 import { InputField } from './common/InputField';
 import { Button } from './common/Button';
 import { Card } from './common/Card';
+import { OperacionSegmentSelector } from './movimientos/OperacionSegmentSelector';
+import { OperacionesDirectLinks } from './movimientos/OperacionesDirectLinks';
 
+/**
+ * Modal para Ajuste Rápido de Stock Físico.
+ * Responsabilidad: Cálculo en tiempo real del nuevo stock proyectado y confirmación de movimiento.
+ */
 export function MovimientoModal({
   isOpen,
   onClose,
@@ -22,7 +19,7 @@ export function MovimientoModal({
   usuarios = [],
   onNavigateTab,
 }) {
-  const [tipoOperacion, setTipoOperacion] = useState('ENTRADA'); // 'ENTRADA' | 'SALIDA' | 'AJUSTE'
+  const [tipoOperacion, setTipoOperacion] = useState('ENTRADA');
   const [cantidad, setCantidad] = useState(1);
   const [motivo, setMotivo] = useState('');
   const [loading, setLoading] = useState(false);
@@ -89,16 +86,12 @@ export function MovimientoModal({
 
   const handleGoToVentas = () => {
     onClose();
-    if (onNavigateTab) {
-      onNavigateTab('ventas');
-    }
+    if (onNavigateTab) onNavigateTab('ventas');
   };
 
   const handleGoToCompras = () => {
     onClose();
-    if (onNavigateTab) {
-      onNavigateTab('compras');
-    }
+    if (onNavigateTab) onNavigateTab('compras');
   };
 
   return (
@@ -151,101 +144,16 @@ export function MovimientoModal({
           </div>
         </Card>
 
-        {/* Pestañas / Segmentos de Operación Intuitivos */}
-        <div>
-          <label className="form-field-label">Selecciona el Tipo de Operación</label>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '0.5rem',
-              padding: '0.35rem',
-              backgroundColor: 'var(--bg-secondary)',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--border-color)',
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => {
-                setTipoOperacion('ENTRADA');
-                setError('');
-              }}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '0.3rem',
-                padding: '0.65rem 0.4rem',
-                borderRadius: 'var(--radius-sm)',
-                border: 'none',
-                background: tipoOperacion === 'ENTRADA' ? 'var(--brand-gold-bg)' : 'transparent',
-                color: tipoOperacion === 'ENTRADA' ? 'var(--brand-gold)' : 'var(--text-secondary)',
-                fontWeight: tipoOperacion === 'ENTRADA' ? 700 : 500,
-                fontSize: '0.82rem',
-                cursor: 'pointer',
-                transition: 'var(--transition)',
-              }}
-            >
-              <PlusCircle size={18} style={{ color: tipoOperacion === 'ENTRADA' ? 'var(--brand-gold)' : 'var(--text-muted)' }} />
-              <span>Ingreso</span>
-            </button>
+        {/* Selector de Operación (Ingreso / Salida / Ajuste) */}
+        <OperacionSegmentSelector
+          tipoOperacion={tipoOperacion}
+          onSelectTipo={(t) => {
+            setTipoOperacion(t);
+            setError('');
+          }}
+        />
 
-            <button
-              type="button"
-              onClick={() => {
-                setTipoOperacion('SALIDA');
-                setError('');
-              }}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '0.3rem',
-                padding: '0.65rem 0.4rem',
-                borderRadius: 'var(--radius-sm)',
-                border: 'none',
-                background: tipoOperacion === 'SALIDA' ? 'var(--brand-red-bg)' : 'transparent',
-                color: tipoOperacion === 'SALIDA' ? 'var(--brand-red)' : 'var(--text-secondary)',
-                fontWeight: tipoOperacion === 'SALIDA' ? 700 : 500,
-                fontSize: '0.82rem',
-                cursor: 'pointer',
-                transition: 'var(--transition)',
-              }}
-            >
-              <MinusCircle size={18} style={{ color: tipoOperacion === 'SALIDA' ? 'var(--brand-red)' : 'var(--text-muted)' }} />
-              <span>Salida / Merma</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setTipoOperacion('AJUSTE');
-                setError('');
-              }}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '0.3rem',
-                padding: '0.65rem 0.4rem',
-                borderRadius: 'var(--radius-sm)',
-                border: 'none',
-                background: tipoOperacion === 'AJUSTE' ? 'rgba(255,255,255,0.1)' : 'transparent',
-                color: tipoOperacion === 'AJUSTE' ? 'var(--text-white)' : 'var(--text-secondary)',
-                fontWeight: tipoOperacion === 'AJUSTE' ? 700 : 500,
-                fontSize: '0.82rem',
-                cursor: 'pointer',
-                transition: 'var(--transition)',
-              }}
-            >
-              <Scale size={18} style={{ color: tipoOperacion === 'AJUSTE' ? 'var(--text-white)' : 'var(--text-muted)' }} />
-              <span>Ajuste Físico</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Inputs dinámicos según pestaña */}
+        {/* Input de Cantidad Dinámica */}
         <InputField
           label={
             tipoOperacion === 'ENTRADA'
@@ -287,61 +195,11 @@ export function MovimientoModal({
           onChange={(e) => setMotivo(e.target.value)}
         />
 
-        {/* Acceso Rápido / Redirección a Ventas y Compras */}
-        <div style={{ marginTop: '0.5rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem' }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem' }}>
-            ¿Necesitas registrar operaciones comerciales completas?
-          </span>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-            <button
-              type="button"
-              onClick={handleGoToVentas}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0.5rem 0.75rem',
-                borderRadius: 'var(--radius-sm)',
-                border: '1px solid var(--border-color)',
-                backgroundColor: 'var(--bg-secondary)',
-                color: 'var(--text-secondary)',
-                fontSize: '0.78rem',
-                cursor: 'pointer',
-                transition: 'var(--transition)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <ShoppingCart size={14} style={{ color: 'var(--brand-gold)' }} />
-                <span>Punto de Venta</span>
-              </div>
-              <ArrowRight size={12} />
-            </button>
-
-            <button
-              type="button"
-              onClick={handleGoToCompras}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0.5rem 0.75rem',
-                borderRadius: 'var(--radius-sm)',
-                border: '1px solid var(--border-color)',
-                backgroundColor: 'var(--bg-secondary)',
-                color: 'var(--text-secondary)',
-                fontSize: '0.78rem',
-                cursor: 'pointer',
-                transition: 'var(--transition)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <Truck size={14} style={{ color: 'var(--brand-gold)' }} />
-                <span>Orden de Compra</span>
-              </div>
-              <ArrowRight size={12} />
-            </button>
-          </div>
-        </div>
+        {/* Enlaces Rápidos a Ventas y Compras */}
+        <OperacionesDirectLinks
+          onGoToVentas={handleGoToVentas}
+          onGoToCompras={handleGoToCompras}
+        />
       </form>
     </Modal>
   );
