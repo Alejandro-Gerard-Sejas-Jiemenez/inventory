@@ -186,6 +186,7 @@ export function CatalogoClienteView({
         }}
       >
         <div
+          className="tienda-header-container"
           style={{
             maxWidth: '1280px',
             margin: '0 auto',
@@ -194,6 +195,7 @@ export function CatalogoClienteView({
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '1.2rem',
+            flexWrap: 'wrap',
           }}
         >
           {/* Emblema Oficial de la Empresa */}
@@ -567,13 +569,7 @@ export function CatalogoClienteView({
           </div>
         ) : (
           <>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-                gap: '1.3rem',
-              }}
-            >
+            <div className="tienda-product-grid">
               {paginatedProductos.map((prod) => {
                 const cartItem = cartItems.find((ci) => ci.idProducto === prod.idProducto);
                 return (
