@@ -796,6 +796,35 @@
   - Commit: `feat(tienda): enhance multi-viewport responsiveness for mobile, tablet, and desktop viewports`
   - Rama: `main` en GitHub.
 
+---
+
+## Bloque 25: Tarjetas de Producto Limpias y Cápsula de Búsqueda Minimalista
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-14` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Frontend (`components/tienda/ProductoCard.jsx`, `pages/CatalogoClienteView.jsx`) |
+| **Skills Aplicadas** | `apple-design`, `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- En `ProductoCard.jsx`, eliminar el subtítulo amarillo en mayúsculas duplicado para mostrar directamente el título limpio y en negrita del producto.
+- En `CatalogoClienteView.jsx`, simplificar la cápsula de búsqueda retirando selectores redundantes de marca, orden de precio y checkbox de stock, dejándola como una barra de búsqueda rápida y minimalista con botón de acción rojo.
+- Asegurar que la tipografía y contrastes en modo oscuro y claro sean 100% nítidos sin textos claros sobre fondos claros.
+
+### Fase 2: IMPLEMENTACIÓN
+- `ProductoCard.jsx`: Removido div de marca/modelo superior amarillo; título de producto en primer plano.
+- `CatalogoClienteView.jsx`: Cápsula Airbnb minimalista con input `¿Qué estás buscando?`, botón `Limpiar` condicional y botón circular de búsqueda.
+
+### Fase 3: VERIFICACIÓN
+- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
+- Subagente de Navegador: Verificado en escritorio y móvil (420px) en modo oscuro y claro con captura de pantallas.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `fix(tienda): remove redundant card subtitles, simplify search capsule, and ensure optimal contrast in dark mode`
+  - Rama: `main` en GitHub.
+
+
 
 
 

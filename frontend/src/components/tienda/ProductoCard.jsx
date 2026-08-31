@@ -156,7 +156,7 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
       {/* Cuerpo de la Tarjeta con Tipografía Óptica */}
       <div
         style={{
-          padding: '1rem 1.1rem 1.1rem',
+          padding: '0.9rem 1rem 1rem',
           display: 'flex',
           flexDirection: 'column',
           flex: 1,
@@ -164,19 +164,6 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
           backgroundColor: 'var(--bg-card)',
         }}
       >
-        {/* Marca y Modelo con Tracking Preciso */}
-        <div
-          style={{
-            fontSize: '0.7rem',
-            color: 'var(--brand-gold)',
-            fontWeight: 700,
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase',
-          }}
-        >
-          {producto.modelo?.marca?.nombre || 'Los Caseritos'} {producto.modelo?.nombre ? `· ${producto.modelo.nombre}` : ''}
-        </div>
-
         {/* Título de Producto */}
         <h4
           style={{

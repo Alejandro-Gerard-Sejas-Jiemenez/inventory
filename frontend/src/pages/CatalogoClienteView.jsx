@@ -7,7 +7,6 @@ import {
   ChevronLeft,
   ChevronRight,
   RotateCcw,
-  SlidersHorizontal,
   Sun,
   Moon,
   Laptop,
@@ -25,7 +24,6 @@ import { CheckoutWhatsAppModal } from '../components/tienda/CheckoutWhatsAppModa
 export function CatalogoClienteView({
   productos = [],
   categorias = [],
-  marcas = [],
   cartItems = [],
   onAddToCart,
   onUpdateCartQuantity,
@@ -58,9 +56,6 @@ export function CatalogoClienteView({
 
   const [search, setSearch] = useState('');
   const [selectedCategoria, setSelectedCategoria] = useState('ALL');
-  const [selectedMarca, setSelectedMarca] = useState('ALL');
-  const [onlyInStock, setOnlyInStock] = useState(false);
-  const [sortBy, setSortBy] = useState('featured');
 
   // Control del Drawer del Carrito y Modal WhatsApp
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -71,7 +66,7 @@ export function CatalogoClienteView({
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 8;
 
-  // Filtrado reactivo de productos
+  // Filtrado reactivo de productos (por Categoría y Búsqueda Libre)
   const filteredProductos = useMemo(() => {
     let list = [...productos].filter((p) => p.activo !== false);
 
@@ -82,19 +77,7 @@ export function CatalogoClienteView({
       );
     }
 
-    // Filtro por marca
-    if (selectedMarca !== 'ALL') {
-      list = list.filter(
-        (p) => String(p.modelo?.marca?.idMarca) === String(selectedMarca)
-      );
-    }
-
-    // Filtro solo con stock disponible
-    if (onlyInStock) {
-      list = list.filter((p) => (p.stockActual ?? 0) > 0);
-    }
-
-    // Búsqueda por texto (nombre, modelo, marca, color)
+    // Búsqueda por texto (nombre, modelo, marca, color, material)
     if (search.trim()) {
       const q = search.toLowerCase().trim();
       list = list.filter((p) => {
@@ -102,26 +85,21 @@ export function CatalogoClienteView({
         const modelo = p.modelo?.nombre?.toLowerCase() || '';
         const marca = p.modelo?.marca?.nombre?.toLowerCase() || '';
         const color = p.color?.nombre?.toLowerCase() || '';
+        const material = p.material?.nombre?.toLowerCase() || '';
         const categoria = p.categoria?.nombre?.toLowerCase() || '';
         return (
           nombre.includes(q) ||
           modelo.includes(q) ||
           marca.includes(q) ||
           color.includes(q) ||
+          material.includes(q) ||
           categoria.includes(q)
         );
       });
     }
 
-    // Ordenamiento comercial
-    if (sortBy === 'price-asc') {
-      list.sort((a, b) => Number(a.precioUnitario) - Number(b.precioUnitario));
-    } else if (sortBy === 'price-desc') {
-      list.sort((a, b) => Number(b.precioUnitario) - Number(a.precioUnitario));
-    }
-
     return list;
-  }, [productos, selectedCategoria, selectedMarca, onlyInStock, search, sortBy]);
+  }, [productos, selectedCategoria, search]);
 
   // Paginación calculada
   const totalPages = Math.max(1, Math.ceil(filteredProductos.length / PAGE_SIZE));
@@ -380,18 +358,17 @@ export function CatalogoClienteView({
         </div>
       </section>
 
-      {/* 2. Cápsula de Búsqueda y Filtros Unificada Estilo Airbnb */}
+      {/* 2. Cápsula de Búsqueda Limpia Estilo Airbnb */}
       <section style={{ maxWidth: '1280px', margin: '1.2rem auto 0', padding: '0 1.4rem', width: '100%' }}>
-        <div className="airbnb-capsule-bar">
-          {/* Segmento 1: ¿Qué buscas? (Búsqueda de Texto) */}
-          <div className="airbnb-capsule-segment" style={{ flex: 1.4 }}>
-            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-white)', letterSpacing: '0.02em' }}>
-              ¿Qué buscas?
+        <div className="airbnb-capsule-bar" style={{ maxWidth: '640px' }}>
+          <div className="airbnb-capsule-segment" style={{ flex: 1, borderRight: 'none', padding: '0.35rem 1.1rem' }}>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-white)', letterSpacing: '0.02em', display: 'block', marginBottom: '2px' }}>
+              ¿Qué estás buscando?
             </span>
             <input
               type="text"
               className="apple-search-input"
-              placeholder="Nombre, modelo, material..."
+              placeholder="Buscar por nombre, modelo, color o material..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -402,80 +379,33 @@ export function CatalogoClienteView({
                 backgroundColor: 'transparent',
                 border: 'none',
                 outline: 'none',
-                fontSize: '0.82rem',
+                fontSize: '0.84rem',
                 fontWeight: 500,
+                color: 'var(--input-text)',
                 padding: '0.1rem 0',
               }}
             />
           </div>
 
-          {/* Segmento 2: Marca */}
-          <div className="airbnb-capsule-segment">
-            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-white)', letterSpacing: '0.02em' }}>
-              Marca
-            </span>
-            <select
-              value={selectedMarca}
-              onChange={(e) => {
-                setSelectedMarca(e.target.value);
-                setCurrentPage(1);
-              }}
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch('')}
               style={{
-                backgroundColor: 'transparent',
+                background: 'rgba(255, 255, 255, 0.08)',
                 border: 'none',
-                outline: 'none',
                 color: 'var(--text-secondary)',
-                fontSize: '0.8rem',
-                fontWeight: 500,
-                padding: '0.1rem 0',
+                fontSize: '0.72rem',
+                padding: '0.25rem 0.6rem',
+                borderRadius: '999px',
                 cursor: 'pointer',
+                fontWeight: 600,
+                marginRight: '0.4rem',
               }}
             >
-              <option value="ALL">Todas las marcas</option>
-              {marcas.map((m) => (
-                <option key={m.idMarca} value={m.idMarca}>
-                  {m.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Segmento 3: Disponibilidad y Orden */}
-          <div className="airbnb-capsule-segment" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.8rem' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '0.78rem' }}>
-              <input
-                type="checkbox"
-                checked={onlyInStock}
-                onChange={(e) => {
-                  setOnlyInStock(e.target.checked);
-                  setCurrentPage(1);
-                }}
-                style={{ accentColor: 'var(--brand-gold)' }}
-              />
-              <span style={{ fontWeight: 600 }}>En stock</span>
-            </label>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              <SlidersHorizontal size={13} style={{ color: 'var(--text-muted)' }} />
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                style={{
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  outline: 'none',
-                  color: 'var(--text-secondary)',
-                  fontSize: '0.78rem',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                }}
-              >
-                <option value="featured">Destacados</option>
-                <option value="price-asc">Menor precio</option>
-                <option value="price-desc">Mayor precio</option>
-              </select>
-            </div>
-          </div>
+              Limpiar
+            </button>
+          )}
 
           {/* Botón Circular de Acción Airbnb (Rojo Carmesí) */}
           <button
