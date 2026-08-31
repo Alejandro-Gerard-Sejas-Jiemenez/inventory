@@ -679,8 +679,39 @@
 ### Fase 3: VERIFICACIÓN
 - Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
 - **Git Commit & Push (Conventional Commits):**
-  - Commit: `feat(tienda): implement Apple Design system with translucent glass materials, optical typography, and tactile spring feedback`
+  - Commit: `feat(tienda): polish Apple Design system with segmented controls, glassmorphic elevation, and spring physics`
   - Rama: `main` en GitHub.
+
+---
+
+## Bloque 21: Arquitectura Bento Grid, Liquid Glass y Toggle de Tema Claro/Oscuro
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-10` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Frontend (`pages/CatalogoClienteView.jsx`, `components/tienda/ProductoCard.jsx`, `index.css`) |
+| **Skills Aplicadas** | `apple-design`, `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Incorporar **Selector de Tema Claro / Oscuro** persistente con transición visual fluida y diseño cerámico Apple en modo claro (`#F4F6F9` / `#FFFFFF`) y obsidiana en modo oscuro (`#070A12` / `#0E1424`).
+- Romper la monotonía de tarjetas genéricas implementando una **Bento Grid Showcase** (Hero Bento Card con micro-insignias y tiles complementarios de despachos y garantía).
+- Destacar el emblema oficial de la marca con un badge satinado de doble borde dorado y resplandor sutil.
+- Garantizar que las tarjetas de producto adapten fondo, bordes y tipografía en ambos modos cromáticos.
+
+### Fase 2: IMPLEMENTACIÓN
+- `index.css`: Tokens de diseño para temas `[data-theme='light']` y `[data-theme='dark']`, `.bento-grid`, `.bento-card-main`, `.bento-card-sub`, `.brand-logo-badge`, `.theme-toggle-btn`.
+- `CatalogoClienteView.jsx`: Toggle de tema con iconos Sun/Moon, Hero Bento Grid y adaptación cromática.
+- `ProductoCard.jsx`: Fondos y bordes variables dinámicos (`var(--bg-card)`, `var(--border-color)`, `var(--text-white)`).
+
+### Fase 3: VERIFICACIÓN
+- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
+- Subagente de Navegador: Verificado el cambio instantáneo entre tema oscuro y tema claro (cerámica blanca), la presentación de la Bento Grid y la legibilidad en ambas modalidades.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `feat(tienda): implement Bento Grid architecture, dynamic light/dark theme switcher, and enhanced company logo emblem`
+  - Rama: `main` en GitHub.
+
 
 
 

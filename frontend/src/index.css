@@ -1,54 +1,65 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-main: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
   
-  /* Paleta Oficial de 5 Colores "Los Caseritos" */
-  /* 1. Oro / Ámbar (Acento Primario) */
+  /* Paleta Oficial de Colores "Los Caseritos" */
   --brand-gold: #F59E0B;
   --brand-gold-hover: #D97706;
   --brand-gold-light: #FDE68A;
-  --brand-gold-glow: rgba(245, 158, 11, 0.25);
+  --brand-gold-glow: rgba(245, 158, 11, 0.28);
   --brand-gold-bg: rgba(245, 158, 11, 0.12);
 
-  /* 2. Rojo Fuego / Carmesí (Acento Secundario / Alertas) */
   --brand-red: #EF4444;
   --brand-red-hover: #DC2626;
   --brand-red-bg: rgba(239, 68, 68, 0.12);
   --brand-gradient: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
-  --brand-gradient-hover: linear-gradient(135deg, #FBBF24 0%, #DC2626 100%);
 
-  /* 3. Blanco Puro (Texto Primario y Contrastes) */
+  /* Default Dark Mode Variables */
   --text-white: #FFFFFF;
   --text-primary: #F8FAFC;
   --text-secondary: #94A3B8;
   --text-muted: #64748B;
 
-  /* 4. Gris Grafito (Tarjetas, Bordes y Superficies) */
-  --bg-card: #1E293B;
-  --bg-card-hover: #26354A;
-  --bg-glass: rgba(30, 41, 59, 0.75);
-  --border-color: #334155;
-  --border-light: rgba(255, 255, 255, 0.08);
+  --bg-primary: #070A12;
+  --bg-secondary: #0E1424;
+  --bg-card: rgba(18, 24, 38, 0.65);
+  --bg-card-solid: #131A2B;
+  --bg-glass: rgba(18, 24, 38, 0.75);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-light: rgba(255, 255, 255, 0.04);
+  --border-specular: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 
-  /* 5. Negro Carbón (Fondo Principal y Sidebar) */
-  --bg-primary: #0B0F19;
-  --bg-secondary: #0F172A;
-  --bg-sidebar: #0A0E17;
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.35);
+  --shadow-bento: 0 12px 36px rgba(0, 0, 0, 0.45);
 
-  /* Radios y Sombras */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 18px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
-  --shadow-gold: 0 0 20px rgba(245, 158, 11, 0.3);
+  --transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+/* Light Theme Variables */
+[data-theme='light'] {
+  --text-white: #0F172A;
+  --text-primary: #1E293B;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+
+  --bg-primary: #F4F6F9;
+  --bg-secondary: #FFFFFF;
+  --bg-card: rgba(255, 255, 255, 0.88);
+  --bg-card-solid: #FFFFFF;
+  --bg-glass: rgba(255, 255, 255, 0.85);
+  --border-color: rgba(15, 23, 42, 0.09);
+  --border-light: rgba(15, 23, 42, 0.05);
+  --border-specular: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+  --shadow-card: 0 8px 24px rgba(15, 23, 42, 0.07);
+  --shadow-bento: 0 12px 32px rgba(15, 23, 42, 0.09);
 }
 
 * {
@@ -1184,14 +1195,96 @@ body {
 
 /* 6. Apple Segmented Control Container */
 .apple-segmented-container {
-  background: rgba(18, 24, 38, 0.55);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
   border-radius: 999px;
   padding: 0.35rem;
 }
+
+/* 7. Bento Grid Architecture (Modern Spatial Showcase) */
+.bento-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bento-card-main {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, var(--bg-card) 60%, rgba(220, 38, 38, 0.08) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 2rem 2.2rem;
+  box-shadow: var(--shadow-bento), var(--border-specular);
+  position: relative;
+  overflow: hidden;
+}
+
+.bento-card-sub {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem 1.6rem;
+  box-shadow: var(--shadow-card), var(--border-specular);
+  display: flex;
+  flex-direction: column;
+  justifyContent: space-between;
+  gap: 0.75rem;
+}
+
+/* 8. Official Brand Logo Emblem */
+.brand-logo-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(220, 38, 38, 0.2) 100%);
+  border: 1.5px solid rgba(245, 158, 11, 0.5);
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s var(--apple-spring-snappy), box-shadow 0.25s ease;
+}
+
+.brand-logo-badge:hover {
+  transform: scale(1.06) rotate(-2deg);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+}
+
+/* 9. Theme Switcher Pill */
+.theme-toggle-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  transition: all 0.22s var(--apple-spring-default);
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--brand-gold);
+  color: var(--brand-gold);
+  transform: scale(1.08);
+}
+
 
 
 

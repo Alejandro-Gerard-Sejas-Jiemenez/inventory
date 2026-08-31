@@ -19,7 +19,7 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
   return (
     <div
       style={{
-        borderRadius: '16px',
+        borderRadius: 'var(--radius-lg)',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
@@ -34,8 +34,8 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
         style={{
           position: 'relative',
           width: '100%',
-          paddingTop: '96%', // Proporción áurea casi cuadrada
-          backgroundColor: 'rgba(10, 14, 23, 0.6)',
+          paddingTop: '96%',
+          backgroundColor: 'var(--bg-secondary)',
           overflow: 'hidden',
         }}
       >
@@ -50,7 +50,7 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              transition: 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)',
+              transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
             onError={(e) => {
               e.target.style.display = 'none';
@@ -69,27 +69,27 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '0.45rem',
-              background: 'radial-gradient(circle at center, rgba(30, 41, 59, 0.6) 0%, rgba(11, 15, 25, 0.9) 100%)',
+              background: 'radial-gradient(circle at center, var(--border-light) 0%, var(--bg-secondary) 100%)',
               color: 'var(--text-muted)',
             }}
           >
             <div
               style={{
-                width: '48px',
-                height: '48px',
+                width: '50px',
+                height: '50px',
                 borderRadius: '14px',
-                backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                backgroundColor: 'var(--bg-card)',
+                border: '1px solid var(--border-color)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'var(--brand-gold)',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+                boxShadow: 'var(--shadow-card)',
               }}
             >
-              <ImageIcon size={22} opacity={0.8} />
+              <ImageIcon size={24} opacity={0.85} />
             </div>
-            <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.04em' }}>
+            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.04em' }}>
               {producto.modelo?.marca?.nombre || 'Los Caseritos'}
             </span>
           </div>
@@ -110,11 +110,11 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
           {isOutOfStock && (
             <span
               style={{
-                backgroundColor: 'rgba(220, 38, 38, 0.88)',
+                backgroundColor: 'var(--brand-red)',
                 color: '#fff',
                 fontSize: '0.66rem',
                 fontWeight: 700,
-                padding: '0.2rem 0.5rem',
+                padding: '0.2rem 0.55rem',
                 borderRadius: '999px',
                 backdropFilter: 'blur(12px)',
                 WebkitBackdropFilter: 'blur(12px)',
@@ -133,15 +133,16 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
           {producto.categoria?.nombre && (
             <span
               style={{
-                backgroundColor: 'rgba(11, 15, 25, 0.72)',
+                backgroundColor: 'var(--bg-glass)',
                 color: 'var(--text-secondary)',
                 fontSize: '0.65rem',
                 fontWeight: 600,
-                padding: '0.2rem 0.5rem',
+                padding: '0.2rem 0.55rem',
                 borderRadius: '999px',
                 backdropFilter: 'blur(12px)',
                 WebkitBackdropFilter: 'blur(12px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                border: '1px solid var(--border-color)',
+                boxShadow: 'var(--shadow-card)',
                 width: 'fit-content',
                 letterSpacing: '0.02em',
               }}
@@ -155,11 +156,12 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
       {/* Cuerpo de la Tarjeta con Tipografía Óptica */}
       <div
         style={{
-          padding: '0.95rem 1rem 1rem',
+          padding: '1rem 1.1rem 1.1rem',
           display: 'flex',
           flexDirection: 'column',
           flex: 1,
           gap: '0.4rem',
+          backgroundColor: 'var(--bg-card)',
         }}
       >
         {/* Marca y Modelo con Tracking Preciso */}
@@ -179,9 +181,9 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
         <h4
           style={{
             margin: 0,
-            fontSize: '0.9rem',
+            fontSize: '0.92rem',
             color: 'var(--text-white)',
-            fontWeight: 600,
+            fontWeight: 700,
             lineHeight: 1.32,
             letterSpacing: '-0.015em',
             display: '-webkit-box',
@@ -205,9 +207,8 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
                   height: '10px',
                   borderRadius: '50%',
                   backgroundColor: producto.color.codigoHex || '#888',
-                  border: '1px solid rgba(255,255,255,0.3)',
+                  border: '1px solid var(--border-color)',
                   display: 'inline-block',
-                  boxShadow: '0 0 4px rgba(0,0,0,0.5)',
                 }}
               />
               <span>{producto.color.nombre}</span>
@@ -222,11 +223,11 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
         <div
           style={{
             marginTop: 'auto',
-            paddingTop: '0.65rem',
+            paddingTop: '0.75rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+            borderTop: '1px solid var(--border-color)',
           }}
         >
           <div>
@@ -245,7 +246,7 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
             <div
               className="apple-price-typography"
               style={{
-                fontSize: '1.15rem',
+                fontSize: '1.18rem',
                 fontWeight: 800,
                 color: 'var(--brand-gold)',
                 lineHeight: 1.1,
@@ -262,22 +263,22 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
             disabled={isOutOfStock || remainingStock <= 0}
             className="apple-btn-tactile"
             style={{
-              padding: '0.52rem 0.9rem',
+              padding: '0.52rem 0.95rem',
               borderRadius: '999px',
               border: 'none',
               backgroundColor: isOutOfStock
-                ? 'rgba(255, 255, 255, 0.05)'
+                ? 'var(--border-color)'
                 : addedAnimation
-                ? 'var(--brand-green)'
+                ? 'var(--brand-green, #10B981)'
                 : 'var(--brand-gold)',
               color: isOutOfStock ? 'var(--text-muted)' : '#111',
-              fontWeight: 700,
+              fontWeight: 800,
               fontSize: '0.8rem',
               cursor: isOutOfStock || remainingStock <= 0 ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
               gap: '0.35rem',
-              boxShadow: isOutOfStock ? 'none' : '0 2px 10px rgba(245, 158, 11, 0.25)',
+              boxShadow: isOutOfStock ? 'none' : '0 2px 10px var(--brand-gold-glow)',
             }}
           >
             {isOutOfStock ? (

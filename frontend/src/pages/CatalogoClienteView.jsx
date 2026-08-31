@@ -1,16 +1,19 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Search,
   ShoppingBag,
   Sparkles,
   ShieldCheck,
   Truck,
-  MessageCircle,
   LayoutDashboard,
   ChevronLeft,
   ChevronRight,
   RotateCcw,
   SlidersHorizontal,
+  Sun,
+  Moon,
+  ArrowRight,
+  Zap,
 } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 import { ProductoCard } from '../components/tienda/ProductoCard';
@@ -28,11 +31,34 @@ export function CatalogoClienteView({
   onClearCart,
   onGoToAdmin,
 }) {
+  // Estado de Tema Claro / Oscuro
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem('caseritos_theme') || 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    try {
+      localStorage.setItem('caseritos_theme', nextTheme);
+    } catch {
+      // Ignorar error
+    }
+  };
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
   const [search, setSearch] = useState('');
   const [selectedCategoria, setSelectedCategoria] = useState('ALL');
   const [selectedMarca, setSelectedMarca] = useState('ALL');
   const [onlyInStock, setOnlyInStock] = useState(false);
-  const [sortBy, setSortBy] = useState('featured'); // 'featured' | 'price-asc' | 'price-desc'
+  const [sortBy, setSortBy] = useState('featured');
 
   // Control del Drawer del Carrito y Modal WhatsApp
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -118,21 +144,23 @@ export function CatalogoClienteView({
 
   const handleOrderSuccess = () => {
     onClearCart();
-    setOrderSuccessMessage('¡Tu pedido ha sido enviado con éxito por WhatsApp! Nos contactaremos a la brevedad para coordinar la entrega.');
+    setOrderSuccessMessage('¡Tu pedido ha sido enviado con éxito por WhatsApp! Nos contactaremos de inmediato para coordinar la entrega.');
     setTimeout(() => setOrderSuccessMessage(''), 8000);
   };
 
   return (
     <div
+      data-theme={theme}
       style={{
         minHeight: '100vh',
-        backgroundColor: '#070A12',
-        backgroundImage: 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(245, 158, 11, 0.08), transparent 70%)',
+        backgroundColor: 'var(--bg-primary)',
+        color: 'var(--text-primary)',
         display: 'flex',
         flexDirection: 'column',
+        transition: 'background-color 0.3s ease, color 0.3s ease',
       }}
     >
-      {/* Header Transparente con Cristal Esmerilado (Apple Translucent Chrome) */}
+      {/* Header Translúcido Estilo Apple Liquid Glass */}
       <header
         className="apple-glass-nav"
         style={{
@@ -145,16 +173,16 @@ export function CatalogoClienteView({
           style={{
             maxWidth: '1280px',
             margin: '0 auto',
-            padding: '0.8rem 1.4rem',
+            padding: '0.85rem 1.4rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '1.2rem',
           }}
         >
-          {/* Logotipo Oficial con Micro-Interacción */}
+          {/* Emblema Oficial de la Empresa Resaltado */}
           <div
-            style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', flexShrink: 0 }}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', cursor: 'pointer', flexShrink: 0 }}
             onClick={() => {
               setSelectedCategoria('ALL');
               setSelectedMarca('ALL');
@@ -163,20 +191,7 @@ export function CatalogoClienteView({
             }}
             className="apple-btn-tactile"
           >
-            <div
-              style={{
-                width: '42px',
-                height: '42px',
-                borderRadius: '12px',
-                backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                padding: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
-              }}
-            >
+            <div className="brand-logo-badge">
               <img
                 src={logoImg}
                 alt="Los Caseritos Logo"
@@ -188,8 +203,9 @@ export function CatalogoClienteView({
                 className="apple-display-heading"
                 style={{
                   margin: 0,
-                  fontSize: '1.15rem',
-                  color: '#FFFFFF',
+                  fontSize: '1.2rem',
+                  color: 'var(--text-white)',
+                  letterSpacing: '0.04em',
                 }}
               >
                 LOS CASERITOS
@@ -203,17 +219,17 @@ export function CatalogoClienteView({
                   marginTop: '-1px',
                 }}
               >
-                Catálogo Oficial
+                Catálogo Oficial & Tienda
               </span>
             </div>
           </div>
 
-          {/* Buscador Central Redondeado con Foco Fluido */}
+          {/* Buscador Central Apple con Borde Especular */}
           <div
             className="apple-search-bar"
             style={{
               flex: 1,
-              maxWidth: '540px',
+              maxWidth: '520px',
               position: 'relative',
               display: 'flex',
               alignItems: 'center',
@@ -269,9 +285,19 @@ export function CatalogoClienteView({
             )}
           </div>
 
-          {/* Acciones: Bolsa y Acceso Admin */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
-            {/* Botón Mi Bolsa con Resorte Táctil */}
+          {/* Acciones: Toggle de Tema, Bolsa y Acceso Admin */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexShrink: 0 }}>
+            {/* Toggle de Tema Claro / Oscuro */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="theme-toggle-btn apple-btn-tactile"
+              title={theme === 'dark' ? 'Cambiar a Tema Claro' : 'Cambiar a Tema Oscuro'}
+            >
+              {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+            </button>
+
+            {/* Botón Mi Bolsa */}
             <button
               type="button"
               onClick={() => setIsCartOpen(true)}
@@ -288,7 +314,7 @@ export function CatalogoClienteView({
                 fontWeight: 800,
                 fontSize: '0.82rem',
                 cursor: 'pointer',
-                boxShadow: '0 2px 14px rgba(245, 158, 11, 0.28)',
+                boxShadow: '0 2px 14px var(--brand-gold-glow)',
               }}
             >
               <ShoppingBag size={16} />
@@ -321,9 +347,9 @@ export function CatalogoClienteView({
                 gap: '0.35rem',
                 padding: '0.52rem 0.85rem',
                 borderRadius: '999px',
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                backgroundColor: 'var(--bg-card)',
                 color: 'var(--text-secondary)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                border: '1px solid var(--border-color)',
                 fontSize: '0.76rem',
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -347,7 +373,7 @@ export function CatalogoClienteView({
             backgroundColor: 'rgba(16, 185, 129, 0.12)',
             border: '1px solid rgba(16, 185, 129, 0.35)',
             color: 'var(--brand-green)',
-            borderRadius: '14px',
+            borderRadius: 'var(--radius-md)',
             fontWeight: 600,
             fontSize: '0.86rem',
             display: 'flex',
@@ -361,80 +387,147 @@ export function CatalogoClienteView({
         </div>
       )}
 
-      {/* Hero Banner Minimalista con Estilo Apple / Editorial */}
-      <section style={{ maxWidth: '1280px', margin: '1.2rem auto 0', padding: '0 1.4rem', width: '100%' }}>
-        <div
-          style={{
-            padding: '1.8rem 2rem',
-            borderRadius: '20px',
-            background: 'linear-gradient(135deg, rgba(26, 34, 53, 0.6) 0%, rgba(13, 17, 28, 0.8) 100%)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '1.5rem',
-          }}
-        >
-          <div style={{ maxWidth: '640px' }}>
+      {/* Bento Grid Showcase Arquitectura Espacial (Liquid Glass + Spatial UI) */}
+      <section style={{ maxWidth: '1280px', margin: '1.4rem auto 0', padding: '0 1.4rem', width: '100%' }}>
+        <div className="bento-grid">
+          {/* Tarjeta Principal Bento Hero */}
+          <div className="bento-card-main">
             <div
               className="apple-label-small"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.35rem',
-                fontSize: '0.68rem',
+                gap: '0.4rem',
+                fontSize: '0.7rem',
                 color: 'var(--brand-gold)',
-                marginBottom: '0.4rem',
+                marginBottom: '0.6rem',
               }}
             >
-              <Sparkles size={13} />
-              <span>Catálogo Digital · Los Caseritos</span>
+              <Sparkles size={14} />
+              <span>Experiencia de Compra Digital · Los Caseritos</span>
             </div>
             <h2
-              className="apple-display-heading"
+              className="apple-hero-title"
               style={{
-                margin: '0 0 0.4rem 0',
-                fontSize: '1.65rem',
-                color: '#FFFFFF',
+                margin: '0 0 0.6rem 0',
+                fontSize: '1.85rem',
+                color: 'var(--text-white)',
               }}
             >
-              Elige tus productos y realiza tu pedido directo por WhatsApp
+              Elige tus productos y pide directamente por WhatsApp
             </h2>
-            <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
-              Explora nuestra variedad multirubro con stock en tiempo real, agrégalos a tu bolsa y coordina tu despacho al instante.
+            <p style={{ margin: '0 0 1.2rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5, maxWidth: '520px' }}>
+              Catálogo multirubro con stock disponible en tiempo real. Agrega a tu bolsa y coordinamos tu despacho de inmediato.
             </p>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  const gridEl = document.getElementById('productos-grid');
+                  if (gridEl) gridEl.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="apple-btn-tactile"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.65rem 1.2rem',
+                  borderRadius: '999px',
+                  backgroundColor: 'var(--brand-gold)',
+                  color: '#111',
+                  border: 'none',
+                  fontWeight: 800,
+                  fontSize: '0.84rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 16px var(--brand-gold-glow)',
+                }}
+              >
+                <span>Explorar Catálogo</span>
+                <ArrowRight size={15} />
+              </button>
+
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  fontSize: '0.78rem',
+                  color: 'var(--text-muted)',
+                  fontWeight: 600,
+                }}
+              >
+                <Zap size={14} style={{ color: 'var(--brand-gold)' }} />
+                <span>Respuesta Inmediata</span>
+              </div>
+            </div>
           </div>
 
-          {/* Insignias de Confianza con Vidrio Esmerilado */}
-          <div style={{ display: 'flex', gap: '1.2rem', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-gold)' }}>
-                <Truck size={16} />
+          {/* Sub-Tarjetas Bento en Columna */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {/* Tile 1: Despachos y Cobertura */}
+            <div className="bento-card-sub">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div
+                  style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '12px',
+                    backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--brand-gold)',
+                  }}
+                >
+                  <Truck size={18} />
+                </div>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '0.92rem', color: 'var(--text-white)', fontWeight: 700 }}>
+                    Envíos Garantizados
+                  </h4>
+                  <span style={{ fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
+                    Despachos rápidos y seguros a nivel nacional
+                  </span>
+                </div>
               </div>
-              <span>Despachos Rápidos</span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-gold)' }}>
-                <ShieldCheck size={16} />
+            {/* Tile 2: Garantía Oficial Caseritos */}
+            <div className="bento-card-sub">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div
+                  style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '12px',
+                    backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--brand-red)',
+                  }}
+                >
+                  <ShieldCheck size={18} />
+                </div>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '0.92rem', color: 'var(--text-white)', fontWeight: 700 }}>
+                    Garantía Los Caseritos
+                  </h4>
+                  <span style={{ fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
+                    Atención personalizada 1 a 1 en cada compra
+                  </span>
+                </div>
               </div>
-              <span>Garantía Oficial</span>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-gold)' }}>
-                <MessageCircle size={16} />
-              </div>
-              <span>Atención 1 a 1</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Navegación Segmentada de Categorías (Apple Segmented Style) */}
-      <section style={{ maxWidth: '1280px', margin: '1.2rem auto 0', padding: '0 1.4rem', width: '100%' }}>
+      {/* Navegación Segmentada de Categorías Apple Segmented Control */}
+      <section style={{ maxWidth: '1280px', margin: '1.4rem auto 0', padding: '0 1.4rem', width: '100%' }}>
         <div
           className="apple-segmented-container"
           style={{
@@ -498,14 +591,15 @@ export function CatalogoClienteView({
         </div>
       </section>
 
-      {/* Barra de Filtros Secundarios y Conteo Óptico */}
+      {/* Barra de Filtros Secundarios y Conteo de Resultados */}
       <section style={{ maxWidth: '1280px', margin: '0.9rem auto 0', padding: '0 1.4rem', width: '100%' }}>
         <div
           style={{
             padding: '0.65rem 1rem',
-            backgroundColor: 'rgba(15, 23, 42, 0.45)',
-            borderRadius: '12px',
-            border: '1px solid rgba(255, 255, 255, 0.05)',
+            backgroundColor: 'var(--bg-card)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-color)',
+            boxShadow: 'var(--shadow-card)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -514,9 +608,9 @@ export function CatalogoClienteView({
             fontSize: '0.8rem',
           }}
         >
-          {/* Conteo */}
+          {/* Conteo de Resultados */}
           <div style={{ color: 'var(--text-secondary)' }}>
-            Mostrando <strong style={{ color: '#FFFFFF' }}>{filteredProductos.length}</strong> productos
+            Mostrando <strong style={{ color: 'var(--text-white)' }}>{filteredProductos.length}</strong> productos
             {selectedCategoria !== 'ALL' && (
               <span> en <strong style={{ color: 'var(--brand-gold)' }}>{categorias.find((c) => String(c.idCategoria) === String(selectedCategoria))?.nombre}</strong></span>
             )}
@@ -534,9 +628,9 @@ export function CatalogoClienteView({
                     setCurrentPage(1);
                   }}
                   style={{
-                    backgroundColor: 'rgba(10, 14, 23, 0.8)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '8px',
+                    backgroundColor: 'var(--bg-primary)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: 'var(--radius-sm)',
                     color: 'var(--text-primary)',
                     padding: '0.3rem 0.6rem',
                     fontSize: '0.76rem',
@@ -573,9 +667,9 @@ export function CatalogoClienteView({
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 style={{
-                  backgroundColor: 'rgba(10, 14, 23, 0.8)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '8px',
+                  backgroundColor: 'var(--bg-primary)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-sm)',
                   color: 'var(--text-primary)',
                   padding: '0.3rem 0.6rem',
                   fontSize: '0.76rem',
@@ -591,16 +685,16 @@ export function CatalogoClienteView({
         </div>
       </section>
 
-      {/* Grid de Productos con Tarjetas de Cristal */}
-      <main style={{ maxWidth: '1280px', margin: '1.2rem auto', padding: '0 1.4rem', width: '100%', flex: 1 }}>
+      {/* Grid de Productos con Tarjetas Apple Liquid Glass */}
+      <main id="productos-grid" style={{ maxWidth: '1280px', margin: '1.2rem auto', padding: '0 1.4rem', width: '100%', flex: 1 }}>
         {filteredProductos.length === 0 ? (
           <div
             style={{
               padding: '3.5rem 1.5rem',
               textAlign: 'center',
-              backgroundColor: 'rgba(20, 27, 45, 0.4)',
-              borderRadius: '20px',
-              border: '1px dashed rgba(255, 255, 255, 0.1)',
+              backgroundColor: 'var(--bg-card)',
+              borderRadius: 'var(--radius-xl)',
+              border: '1px dashed var(--border-color)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -625,7 +719,7 @@ export function CatalogoClienteView({
               className="apple-btn-tactile"
               style={{
                 marginTop: '0.5rem',
-                padding: '0.5rem 1rem',
+                padding: '0.5rem 1.1rem',
                 borderRadius: '999px',
                 backgroundColor: 'var(--brand-gold)',
                 color: '#111',
@@ -644,7 +738,7 @@ export function CatalogoClienteView({
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-                gap: '1.25rem',
+                gap: '1.3rem',
               }}
             >
               {paginatedProductos.map((prod) => {
@@ -668,7 +762,7 @@ export function CatalogoClienteView({
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '0.35rem',
-                  marginTop: '2.2rem',
+                  marginTop: '2.4rem',
                   paddingBottom: '1.5rem',
                 }}
               >
@@ -680,8 +774,8 @@ export function CatalogoClienteView({
                   style={{
                     padding: '0.45rem 0.75rem',
                     borderRadius: '10px',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    backgroundColor: 'rgba(20, 27, 45, 0.6)',
+                    border: '1px solid var(--border-color)',
+                    backgroundColor: 'var(--bg-card)',
                     color: 'var(--text-primary)',
                     cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
                     opacity: currentPage === 1 ? 0.35 : 1,
@@ -702,8 +796,8 @@ export function CatalogoClienteView({
                       width: '34px',
                       height: '34px',
                       borderRadius: '10px',
-                      border: pageNum === currentPage ? '1px solid var(--brand-gold)' : '1px solid rgba(255, 255, 255, 0.06)',
-                      backgroundColor: pageNum === currentPage ? 'var(--brand-gold)' : 'rgba(20, 27, 45, 0.6)',
+                      border: pageNum === currentPage ? '1px solid var(--brand-gold)' : '1px solid var(--border-color)',
+                      backgroundColor: pageNum === currentPage ? 'var(--brand-gold)' : 'var(--bg-card)',
                       color: pageNum === currentPage ? '#111' : 'var(--text-secondary)',
                       fontWeight: pageNum === currentPage ? 800 : 500,
                       fontSize: '0.82rem',
@@ -722,8 +816,8 @@ export function CatalogoClienteView({
                   style={{
                     padding: '0.45rem 0.75rem',
                     borderRadius: '10px',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    backgroundColor: 'rgba(20, 27, 45, 0.6)',
+                    border: '1px solid var(--border-color)',
+                    backgroundColor: 'var(--bg-card)',
                     color: 'var(--text-primary)',
                     cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
                     opacity: currentPage === totalPages ? 0.35 : 1,
@@ -739,19 +833,19 @@ export function CatalogoClienteView({
         )}
       </main>
 
-      {/* Footer Minimalista */}
+      {/* Footer Minimalista Apple */}
       <footer
         style={{
           marginTop: 'auto',
-          borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-          backgroundColor: 'rgba(7, 10, 18, 0.95)',
+          borderTop: '1px solid var(--border-color)',
+          backgroundColor: 'var(--bg-card)',
           padding: '1.5rem 1.4rem',
         }}
       >
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <img src={logoImg} alt="Logo" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
-            <span style={{ fontSize: '0.82rem', color: '#FFFFFF', fontWeight: 700 }}>
+            <span style={{ fontSize: '0.82rem', color: 'var(--text-white)', fontWeight: 700 }}>
               Los Caseritos · Catálogo Digital
             </span>
           </div>
