@@ -436,14 +436,11 @@ export function CatalogoClienteView({
       {/* Navegación Segmentada de Categorías (Apple Segmented Style) */}
       <section style={{ maxWidth: '1280px', margin: '1.2rem auto 0', padding: '0 1.4rem', width: '100%' }}>
         <div
+          className="apple-segmented-container"
           style={{
             display: 'flex',
             gap: '0.4rem',
             overflowX: 'auto',
-            padding: '0.35rem',
-            borderRadius: '999px',
-            backgroundColor: 'rgba(20, 27, 45, 0.5)',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
             scrollbarWidth: 'none',
             width: 'fit-content',
             maxWidth: '100%',
