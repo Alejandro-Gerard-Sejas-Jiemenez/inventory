@@ -219,6 +219,11 @@ frontend/
     │   │   ├── Modal.jsx                        ← Modal accesible con tecla Escape y backdrop
     │   │   └── index.js                         ← Exportador unificado de common
     │   │
+    │   ├── tienda/                              ← Componentes de la Tienda de Clientes (E-commerce)
+    │   │   ├── ProductoCard.jsx                 ← Tarjeta e-commerce con badges de stock y botón de compra
+    │   │   ├── CarritoDrawer.jsx                ← Drawer lateral deslizante de carrito con tope de stock
+    │   │   └── CheckoutWhatsAppModal.jsx        ← Formulario de entrega y enlace universal a WhatsApp
+    │   │
     │   ├── catalogos/                           ← Sub-componentes específicos de Catálogos
     │   │   ├── NuevaCategoriaForm.jsx           ← Formulario aislado para alta de categorías
     │   │   ├── NuevaMarcaForm.jsx               ← Formulario aislado para alta de marcas
@@ -237,13 +242,14 @@ frontend/
     │   ├── productos/                           ← Sub-componentes específicos de Productos
     │   │   └── ProductoColumns.jsx              ← Definición desacoplada de columnas de tabla
     │   │
-    │   ├── Sidebar.jsx                          ← Menú lateral con logo oficial de Los Caseritos
-    │   ├── ProductoModal.jsx                    ← Modal para crear/editar productos (con chips de color)
+    │   ├── Sidebar.jsx                          ← Menú lateral con logo oficial y botón a Tienda
+    │   ├── ProductoModal.jsx                    ← Modal para crear/editar productos (con chips de color e imagen)
     │   ├── MovimientoModal.jsx                  ← Modal para registrar entradas/salidas de stock
     │   ├── StockModal.jsx                       ← Modal para ajuste rápido de inventario
     │   └── CategoriaModal.jsx                   ← Modal para gestión de catálogos auxiliares
     │
     ├── pages/                                   ← Vistas principales del sistema
+    │   ├── CatalogoClienteView.jsx              ← Catálogo público y tienda virtual sin inicio de sesión
     │   ├── DashboardView.jsx                    ← Panel de métricas e indicadores en tiempo real
     │   ├── ProductosView.jsx                    ← Listado multirubro con filtros de categoría y marca
     │   ├── MovimientosView.jsx                  ← Historial de movimientos de stock (Kardex)
@@ -252,6 +258,9 @@ frontend/
     │   ├── CatalogosView.jsx                    ← Gestión de 5 catálogos (Categorías, Marcas, Modelos, Materiales, Colores)
     │   ├── DatabaseView.jsx                     ← Explorador y visor del esquema de BD (18 tablas)
     │   └── BitacoraView.jsx                     ← Auditoría del sistema y registro de actividad
+    │
+    ├── utils/                                   ← Utilidades transversales
+    │   └── whatsappHelper.js                    ← Generador de enlaces y mensajes estructurados de WhatsApp
     │
     ├── assets/
     │   └── logo.png                             ← Logo oficial de Los Caseritos

@@ -8,11 +8,18 @@ import { CatalogosView } from './pages/CatalogosView';
 import { MovimientosView } from './pages/MovimientosView';
 import { BitacoraView } from './pages/BitacoraView';
 import { DatabaseView } from './pages/DatabaseView';
+import { CatalogoClienteView } from './pages/CatalogoClienteView';
 import { MovimientoModal } from './components/MovimientoModal';
 import { api } from './services/api';
 
 export function App() {
+  // Modo de aplicación: 'admin' (panel de gestión) o 'tienda' (catálogo de clientes)
+  const [appMode, setAppMode] = useState('tienda');
   const [currentTab, setCurrentTab] = useState('dashboard');
+
+  // Carrito de compras global
+  const [cartItems, setCartItems] = useState([]);
+
   const [stats, setStats] = useState(null);
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -98,7 +105,7 @@ export function App() {
         idCategoria: selectedCategoria || undefined,
         idModelo: selectedModelo || undefined,
         search: searchQuery || undefined,
-        lowStock: filterLowStock,
+        lowStock: filterLowStock || undefined,
       });
       setProductos(data);
     } catch (err) {
@@ -114,128 +121,209 @@ export function App() {
     loadProductos();
   }, [loadProductos]);
 
-  // Handlers Productos
-  const handleSaveProducto = async (data) => {
-    if (data.idProducto) {
-      await api.updateProducto(data.idProducto, data);
-    } else {
-      await api.createProducto(data);
+  // Manejadores del Carrito de Compras
+  const handleAddToCart = (producto) => {
+    setCartItems((prev) => {
+      const existing = prev.find((item) => item.idProducto === producto.idProducto);
+      const stockMax = producto.stockActual ?? 999;
+      if (existing) {
+        if (existing.cantidad >= stockMax) return prev;
+        return prev.map((item) =>
+          item.idProducto === producto.idProducto
+            ? { ...item, cantidad: item.cantidad + 1 }
+            : item
+        );
+      }
+      return [...prev, { ...producto, cantidad: 1 }];
+    });
+  };
+
+  const handleUpdateCartQuantity = (idProducto, cantidad) => {
+    if (cantidad <= 0) {
+      handleRemoveCartItem(idProducto);
+      return;
     }
-    await loadProductos();
-    await loadData();
+    setCartItems((prev) =>
+      prev.map((item) => {
+        if (item.idProducto === idProducto) {
+          const maxStock = item.stockActual ?? 999;
+          const finalCant = Math.min(cantidad, maxStock);
+          return { ...item, cantidad: finalCant };
+        }
+        return item;
+      })
+    );
+  };
+
+  const handleRemoveCartItem = (idProducto) => {
+    setCartItems((prev) => prev.filter((item) => item.idProducto !== idProducto));
+  };
+
+  const handleClearCart = () => {
+    setCartItems([]);
+  };
+
+  // Handlers CRUD Admin
+  const handleSaveProducto = async (productoData) => {
+    if (productoData.idProducto) {
+      await api.updateProducto(productoData.idProducto, productoData);
+    } else {
+      await api.createProducto(productoData);
+    }
+    loadProductos();
+    loadData();
   };
 
   const handleDeleteProducto = async (id) => {
-    if (window.confirm('¿Seguro de dar de baja este producto?')) {
+    if (window.confirm('¿Estás seguro de eliminar este producto?')) {
       await api.deleteProducto(id);
-      await loadProductos();
-      await loadData();
+      loadProductos();
+      loadData();
     }
   };
 
-  // Handlers Catálogos
-  const handleCreateCategoria = async (data) => {
-    await api.createCategoria(data);
-    await loadData();
-  };
-  const handleDeleteCategoria = async (id) => {
-    await api.deleteCategoria(id);
-    await loadData();
-  };
-
-  const handleCreateMarca = async (data) => {
-    await api.createMarca(data);
-    await loadData();
-  };
-  const handleDeleteMarca = async (id) => {
-    await api.deleteMarca(id);
-    await loadData();
-  };
-
-  const handleCreateModelo = async (data) => {
-    await api.createModelo(data);
-    await loadData();
-  };
-  const handleDeleteModelo = async (id) => {
-    await api.deleteModelo(id);
-    await loadData();
-  };
-
-  const handleCreateColor = async (data) => {
-    await api.createColor(data);
-    await loadData();
-  };
-  const handleDeleteColor = async (id) => {
-    await api.deleteColor(id);
-    await loadData();
-  };
-
-  const handleCreateMaterial = async (data) => {
-    await api.createMaterial(data);
-    await loadData();
-  };
-  const handleDeleteMaterial = async (id) => {
-    await api.deleteMaterial(id);
-    await loadData();
-  };
-
-  // Handlers Ventas y Clientes
-  const handleRegistrarVenta = async (data) => {
-    await api.registrarVenta(data);
-    await loadData();
-    await loadProductos();
-  };
-  const handleCreateCliente = async (data) => {
-    await api.createCliente(data);
-    await loadData();
-  };
-
-  // Handlers Compras y Proveedores
-  const handleRegistrarCompra = async (data) => {
-    await api.registrarCompra(data);
-    await loadData();
-    await loadProductos();
-  };
-  const handleCreateProveedor = async (data) => {
-    await api.createProveedor(data);
-    await loadData();
-  };
-
-  // Handlers Movimientos
-  const handleSaveMovimiento = async (data) => {
-    await api.registrarMovimiento(data);
-    await loadProductos();
-    await loadData();
-  };
-
-  const handleOpenMovimientoModal = (prod) => {
-    setSelectedProductoForMov(prod);
+  const handleOpenMovimientoModal = (producto) => {
+    setSelectedProductoForMov(producto);
     setMovimientoModalOpen(true);
   };
 
+  const handleSaveMovimiento = async (movData) => {
+    await api.createMovimiento(movData);
+    loadProductos();
+    loadData();
+  };
+
+  const handleRegistrarVenta = async (ventaData) => {
+    await api.createVenta(ventaData);
+    loadProductos();
+    loadData();
+  };
+
+  const handleRegistrarCompra = async (compraData) => {
+    await api.createCompra(compraData);
+    loadProductos();
+    loadData();
+  };
+
+  const handleCreateCliente = async (clienteData) => {
+    await api.createCliente(clienteData);
+    loadData();
+  };
+
+  const handleCreateProveedor = async (provData) => {
+    await api.createProveedor(provData);
+    loadData();
+  };
+
+  const handleCreateCategoria = async (catData) => {
+    await api.createCategoria(catData);
+    loadData();
+  };
+
+  const handleDeleteCategoria = async (id) => {
+    if (window.confirm('¿Eliminar esta categoría?')) {
+      await api.deleteCategoria(id);
+      loadData();
+    }
+  };
+
+  const handleCreateMarca = async (marcaData) => {
+    await api.createMarca(marcaData);
+    loadData();
+  };
+
+  const handleDeleteMarca = async (id) => {
+    if (window.confirm('¿Eliminar esta marca?')) {
+      await api.deleteMarca(id);
+      loadData();
+    }
+  };
+
+  const handleCreateModelo = async (modData) => {
+    await api.createModelo(modData);
+    loadData();
+  };
+
+  const handleDeleteModelo = async (id) => {
+    if (window.confirm('¿Eliminar este modelo?')) {
+      await api.deleteModelo(id);
+      loadData();
+    }
+  };
+
+  const handleCreateColor = async (colData) => {
+    await api.createColor(colData);
+    loadData();
+  };
+
+  const handleDeleteColor = async (id) => {
+    if (window.confirm('¿Eliminar este color?')) {
+      await api.deleteColor(id);
+      loadData();
+    }
+  };
+
+  const handleCreateMaterial = async (matData) => {
+    await api.createMaterial(matData);
+    loadData();
+  };
+
+  const handleDeleteMaterial = async (id) => {
+    if (window.confirm('¿Eliminar este material?')) {
+      await api.deleteMaterial(id);
+      loadData();
+    }
+  };
+
+  // Si el modo es 'tienda', renderiza la Tienda Pública sin sidebar administrativo
+  if (appMode === 'tienda') {
+    return (
+      <CatalogoClienteView
+        productos={productos}
+        categorias={categorias}
+        marcas={marcas}
+        cartItems={cartItems}
+        onAddToCart={handleAddToCart}
+        onUpdateCartQuantity={handleUpdateCartQuantity}
+        onRemoveCartItem={handleRemoveCartItem}
+        onClearCart={handleClearCart}
+        onGoToAdmin={() => setAppMode('admin')}
+      />
+    );
+  }
+
+  // Si el modo es 'admin', renderiza el Panel de Control con Sidebar
   return (
     <div className="app-layout">
-      <Sidebar currentTab={currentTab} onSelectTab={setCurrentTab} stats={stats} />
+      <Sidebar
+        currentTab={currentTab}
+        onSelectTab={setCurrentTab}
+        stats={stats}
+        onSwitchToTienda={() => setAppMode('tienda')}
+      />
 
       <main className="main-content">
         {currentTab === 'dashboard' && (
-          <DashboardView stats={stats} productos={productos} onSelectTab={setCurrentTab} />
+          <DashboardView
+            stats={stats}
+            lowStockProducts={productos.filter(
+              (p) => p.activo && p.stockActual <= p.stockMinimo
+            )}
+            onOpenMovimiento={handleOpenMovimientoModal}
+            onSelectTab={setCurrentTab}
+          />
         )}
 
         {currentTab === 'productos' && (
           <ProductosView
             productos={productos}
             categorias={categorias}
-            marcas={marcas}
             modelos={modelos}
             materiales={materiales}
             colores={colores}
-            loading={loading}
             onSaveProducto={handleSaveProducto}
             onDeleteProducto={handleDeleteProducto}
             onOpenMovimiento={handleOpenMovimientoModal}
-            filterLowStock={filterLowStock}
-            setFilterLowStock={setFilterLowStock}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             selectedCategoria={selectedCategoria}

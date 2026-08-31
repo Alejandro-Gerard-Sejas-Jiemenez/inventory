@@ -550,6 +550,39 @@
   - Commit: `feat(catalogo): support direct device image upload with automatic client compression`
   - Rama: `main` en GitHub.
 
+---
+
+## Bloque 17: Catálogo Digital Público y Tienda Virtual de Clientes con Carrito y Notificación WhatsApp
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-6` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Frontend (`pages/`, `components/tienda/`, `utils/`, `index.css`) |
+| **Skills Aplicadas** | `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Diseñar la experiencia pública para clientes sin inicio de sesión ("Los Caseritos Store") inspirada en tiendas e-commerce modernas (Shein / Importadora Miranda).
+- Implementar validación estricta de stock en tiempo real (bloqueo y aviso de "Agotado" si `stock === 0`, aviso de "Últimas unidades", tope de stock en el carrito).
+- Incorporar carrito de compras lateral (Drawer deslizante) y formulario de entrega para generar y despachar el pedido directamente al WhatsApp de la tienda.
+
+### Fase 2: IMPLEMENTACIÓN
+- `whatsappHelper.js`: Formateador universal de pedidos y enlaces directos `https://wa.me/` con desglose detallado de ítems, totales y datos de despacho.
+- `ProductoCard.jsx`: Tarjeta de producto e-commerce con efecto hover zoom, badges de stock dinámicos (Disponible / Agotado / Últimas Unidades), muestras de color y botón de acción interactivo.
+- `CarritoDrawer.jsx`: Drawer lateral animado con control de cantidades limitado por stock disponible, eliminación y resumen de totales.
+- `CheckoutWhatsAppModal.jsx`: Formulario de datos de contacto y entrega (Nombre, Teléfono, Dirección, Notas) con apertura inmediata de WhatsApp.
+- `CatalogoClienteView.jsx`: Vista principal de tienda con top banner comercial, header con búsqueda central, banner de promociones, chips de categorías y filtros por marca y disponibilidad.
+- `Sidebar.jsx` & `App.jsx`: Alternador fluido entre el modo "Tienda de Clientes" y el "Panel de Control Administrador".
+- `index.css`: Clases CSS y animaciones `@keyframes slideLeft` y zoom de tarjetas.
+
+### Fase 3: VERIFICACIÓN
+- Linter Frontend (`npm run lint` / `oxlint`): **0 errores**.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `feat(tienda): add public client store with stock validation, shopping cart drawer, and WhatsApp checkout`
+  - Rama: `main` en GitHub.
+
+
 
 
 

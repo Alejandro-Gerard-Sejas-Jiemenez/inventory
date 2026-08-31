@@ -1072,3 +1072,33 @@ body {
     padding: 1rem;
   }
 }
+
+/* ========================================================================= */
+/* TIENDA / CATÁLOGO PÚBLICO E-COMMERCE (Estilo Shein / Importadora Miranda) */
+/* ========================================================================= */
+@keyframes slideLeft {
+  from {
+    transform: translateX(100%);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.shein-product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  border-color: rgba(245, 158, 11, 0.4) !important;
+}
+
+.shein-product-card:hover .shein-product-image {
+  transform: scale(1.06);
+}
+
+.shein-search-input:focus {
+  border-color: var(--brand-gold) !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
