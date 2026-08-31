@@ -824,6 +824,36 @@
   - Commit: `fix(tienda): remove redundant card subtitles, simplify search capsule, and ensure optimal contrast in dark mode`
   - Rama: `main` en GitHub.
 
+---
+
+## Bloque 26: Restauración de Filtros de Marca y Orden con Alto Contraste en Tema Oscuro
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-15` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Frontend (`pages/CatalogoClienteView.jsx`, `index.css`) |
+| **Skills Aplicadas** | `apple-design`, `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Mantener excluido el filtro de stock ("En stock") y reincorporar los filtros esenciales solicitados:
+  - **Filtro por Marca:** Selector de todas las marcas disponibles.
+  - **Filtro por Orden:** Selector de orden (Destacados, Menor precio, Mayor precio).
+- Garantizar que los elementos `<select>` y `<option>` tengan un contraste impecable en **Tema Oscuro** (`.airbnb-capsule-select` con fondo oscuro y texto blanco nítido) y en **Tema Claro** (texto carbón y fondo blanco).
+
+### Fase 2: IMPLEMENTACIÓN
+- `index.css`: Clases `.airbnb-capsule-select` con reglas de color y fondo para `<option>`.
+- `CatalogoClienteView.jsx`: Reincorporados los segmentos de Marca y Orden a la cápsula de búsqueda con tipografía de alto contraste.
+
+### Fase 3: VERIFICACIÓN
+- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
+- Subagente de Navegador: Verificado en vivo en Tema Oscuro y Tema Claro que los selectores de Marca y Orden son 100% legibles y funcionales, sin el filtro de stock.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `feat(tienda): restore brand and price sorting filters with high contrast in dark mode and without stock filter`
+  - Rama: `main` en GitHub.
+
+
 
 
 

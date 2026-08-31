@@ -1375,6 +1375,24 @@ body {
   border-right: none;
 }
 
+.airbnb-capsule-select {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-white);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  padding: 0.15rem 0;
+}
+
+.airbnb-capsule-select option {
+  background-color: var(--bg-card);
+  color: var(--text-white);
+  padding: 0.4rem;
+}
+
 .airbnb-search-btn {
   width: 44px;
   height: 44px;

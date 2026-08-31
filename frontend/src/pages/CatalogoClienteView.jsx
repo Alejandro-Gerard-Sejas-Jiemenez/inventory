@@ -24,6 +24,7 @@ import { CheckoutWhatsAppModal } from '../components/tienda/CheckoutWhatsAppModa
 export function CatalogoClienteView({
   productos = [],
   categorias = [],
+  marcas = [],
   cartItems = [],
   onAddToCart,
   onUpdateCartQuantity,
@@ -56,6 +57,8 @@ export function CatalogoClienteView({
 
   const [search, setSearch] = useState('');
   const [selectedCategoria, setSelectedCategoria] = useState('ALL');
+  const [selectedMarca, setSelectedMarca] = useState('ALL');
+  const [sortBy, setSortBy] = useState('featured');
 
   // Control del Drawer del Carrito y Modal WhatsApp
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -66,7 +69,7 @@ export function CatalogoClienteView({
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 8;
 
-  // Filtrado reactivo de productos (por Categoría y Búsqueda Libre)
+  // Filtrado reactivo de productos (por Categoría, Marca, Búsqueda y Orden)
   const filteredProductos = useMemo(() => {
     let list = [...productos].filter((p) => p.activo !== false);
 
@@ -74,6 +77,13 @@ export function CatalogoClienteView({
     if (selectedCategoria !== 'ALL') {
       list = list.filter(
         (p) => String(p.categoria?.idCategoria) === String(selectedCategoria)
+      );
+    }
+
+    // Filtro por marca
+    if (selectedMarca !== 'ALL') {
+      list = list.filter(
+        (p) => String(p.modelo?.marca?.idMarca) === String(selectedMarca)
       );
     }
 
@@ -98,8 +108,15 @@ export function CatalogoClienteView({
       });
     }
 
+    // Ordenamiento comercial por precio o destacados
+    if (sortBy === 'price-asc') {
+      list.sort((a, b) => Number(a.precioUnitario) - Number(b.precioUnitario));
+    } else if (sortBy === 'price-desc') {
+      list.sort((a, b) => Number(b.precioUnitario) - Number(a.precioUnitario));
+    }
+
     return list;
-  }, [productos, selectedCategoria, search]);
+  }, [productos, selectedCategoria, selectedMarca, search, sortBy]);
 
   // Paginación calculada
   const totalPages = Math.max(1, Math.ceil(filteredProductos.length / PAGE_SIZE));
@@ -358,17 +375,18 @@ export function CatalogoClienteView({
         </div>
       </section>
 
-      {/* 2. Cápsula de Búsqueda Limpia Estilo Airbnb */}
+      {/* 2. Cápsula de Búsqueda y Filtros de Marca/Orden Estilo Airbnb */}
       <section style={{ maxWidth: '1280px', margin: '1.2rem auto 0', padding: '0 1.4rem', width: '100%' }}>
-        <div className="airbnb-capsule-bar" style={{ maxWidth: '640px' }}>
-          <div className="airbnb-capsule-segment" style={{ flex: 1, borderRight: 'none', padding: '0.35rem 1.1rem' }}>
+        <div className="airbnb-capsule-bar" style={{ maxWidth: '820px' }}>
+          {/* Segmento 1: ¿Qué buscas? (Búsqueda de Texto) */}
+          <div className="airbnb-capsule-segment" style={{ flex: 1.4 }}>
             <span style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-white)', letterSpacing: '0.02em', display: 'block', marginBottom: '2px' }}>
-              ¿Qué estás buscando?
+              ¿Qué buscas?
             </span>
             <input
               type="text"
               className="apple-search-input"
-              placeholder="Buscar por nombre, modelo, color o material..."
+              placeholder="Buscar producto, modelo, color..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -387,25 +405,45 @@ export function CatalogoClienteView({
             />
           </div>
 
-          {search && (
-            <button
-              type="button"
-              onClick={() => setSearch('')}
-              style={{
-                background: 'rgba(255, 255, 255, 0.08)',
-                border: 'none',
-                color: 'var(--text-secondary)',
-                fontSize: '0.72rem',
-                padding: '0.25rem 0.6rem',
-                borderRadius: '999px',
-                cursor: 'pointer',
-                fontWeight: 600,
-                marginRight: '0.4rem',
-              }}
-            >
-              Limpiar
-            </button>
+          {/* Segmento 2: Filtro por Marca */}
+          {marcas.length > 0 && (
+            <div className="airbnb-capsule-segment" style={{ flex: 0.9 }}>
+              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-white)', letterSpacing: '0.02em', display: 'block', marginBottom: '2px' }}>
+                Marca
+              </span>
+              <select
+                value={selectedMarca}
+                onChange={(e) => {
+                  setSelectedMarca(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="airbnb-capsule-select"
+              >
+                <option value="ALL">Todas las marcas</option>
+                {marcas.map((m) => (
+                  <option key={m.idMarca} value={m.idMarca}>
+                    {m.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
           )}
+
+          {/* Segmento 3: Filtro por Orden */}
+          <div className="airbnb-capsule-segment" style={{ flex: 0.9 }}>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-white)', letterSpacing: '0.02em', display: 'block', marginBottom: '2px' }}>
+              Ordenar
+            </span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="airbnb-capsule-select"
+            >
+              <option value="featured">Destacados</option>
+              <option value="price-asc">Menor precio</option>
+              <option value="price-desc">Mayor precio</option>
+            </select>
+          </div>
 
           {/* Botón Circular de Acción Airbnb (Rojo Carmesí) */}
           <button
@@ -430,11 +468,20 @@ export function CatalogoClienteView({
             {selectedCategoria !== 'ALL' && (
               <span> en <strong style={{ color: 'var(--brand-gold)' }}>{categorias.find((c) => String(c.idCategoria) === String(selectedCategoria))?.nombre}</strong></span>
             )}
+            {selectedMarca !== 'ALL' && (
+              <span> de <strong style={{ color: 'var(--brand-gold)' }}>{marcas.find((m) => String(m.idMarca) === String(selectedMarca))?.nombre}</strong></span>
+            )}
           </div>
-          {search && (
+          {(search || selectedMarca !== 'ALL' || selectedCategoria !== 'ALL' || sortBy !== 'featured') && (
             <button
               type="button"
-              onClick={() => setSearch('')}
+              onClick={() => {
+                setSearch('');
+                setSelectedMarca('ALL');
+                setSelectedCategoria('ALL');
+                setSortBy('featured');
+                setCurrentPage(1);
+              }}
               style={{
                 background: 'transparent',
                 border: 'none',
@@ -444,7 +491,7 @@ export function CatalogoClienteView({
                 cursor: 'pointer',
               }}
             >
-              Borrar filtro de búsqueda
+              Restablecer filtros
             </button>
           )}
         </div>
@@ -479,7 +526,7 @@ export function CatalogoClienteView({
                 setSearch('');
                 setSelectedCategoria('ALL');
                 setSelectedMarca('ALL');
-                setOnlyInStock(false);
+                setSortBy('featured');
               }}
               className="apple-btn-tactile"
               style={{
