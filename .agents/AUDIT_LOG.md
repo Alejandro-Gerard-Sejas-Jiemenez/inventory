@@ -619,6 +619,41 @@
   - Commit: `feat(auth): add admin login authentication gate, hide public stock count, and refine boutique typography`
   - Rama: `main` en GitHub.
 
+---
+
+## Bloque 19: Rediseño Boutique del Catálogo de Clientes con Logo Oficial e Inspiración Shein / Miranda
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-8` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Frontend (`pages/CatalogoClienteView.jsx`, `components/tienda/ProductoCard.jsx`) |
+| **Skills Aplicadas** | `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Remover la barra superior amarilla para lograr una presentación más sobria, estilizada y moderna.
+- Usar el logo corporativo oficial de *Los Caseritos* en el encabezado principal de la tienda.
+- Rediseñar el catálogo e-commerce aplicando la estética refinada de las referencias (Shein / Importadora Miranda): buscador redondeado, pill tabs de categorías, micro badges de garantía y tarjetas de producto con placeholders geométricos.
+
+### Fase 2: IMPLEMENTACIÓN
+- `CatalogoClienteView.jsx`:
+  - Eliminado el banner amarillo superior.
+  - Integrado el logotipo oficial `logo.png` con marco estilizado.
+  - Rediseñado el Hero Banner con gradiente boutique compacto y micro insignias (*Envíos Rápidos, Garantía Oficial, Atención 1 a 1*).
+  - Píldoras de navegación de categorías con transiciones suaves y estilo moderno.
+  - Filtros y barra de conteo de resultados en tiempo real.
+- `ProductoCard.jsx`:
+  - Placeholder visual con avatar de marca y aspecto boutique para productos sin fotografía.
+
+### Fase 3: VERIFICACIÓN
+- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
+- Subagente de Navegador: Verificado el catálogo sin banner amarillo, con logo oficial, filtrado dinámico de categorías y tarjetas comerciales de alta gama.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `feat(tienda): redesign boutique customer catalog with official logo and shein/miranda aesthetic`
+  - Rama: `main` en GitHub.
+
+
 
 
 

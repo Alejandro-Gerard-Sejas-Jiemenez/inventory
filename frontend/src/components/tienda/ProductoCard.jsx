@@ -67,12 +67,32 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
               width: '100%',
               height: '100%',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
+              gap: '0.4rem',
+              background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.95) 100%)',
               color: 'var(--text-muted)',
             }}
           >
-            <ImageIcon size={38} opacity={0.35} />
+            <div
+              style={{
+                width: '46px',
+                height: '46px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--brand-gold)',
+              }}
+            >
+              <ImageIcon size={22} opacity={0.7} />
+            </div>
+            <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+              {producto.modelo?.marca?.nombre || 'Los Caseritos'}
+            </span>
           </div>
         )}
 
