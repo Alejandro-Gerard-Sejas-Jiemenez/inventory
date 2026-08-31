@@ -653,6 +653,36 @@
   - Commit: `feat(tienda): redesign boutique customer catalog with official logo and shein/miranda aesthetic`
   - Rama: `main` en GitHub.
 
+---
+
+## Bloque 20: Aplicación de Principios de Apple Design al Catálogo de Clientes
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-9` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Frontend (`pages/CatalogoClienteView.jsx`, `components/tienda/ProductoCard.jsx`, `index.css`) |
+| **Skills Aplicadas** | `apple-design`, `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Integrar los principios de **Apple Design** (WWDC):
+  - **Materiales y Profundidad:** Vidrio esmerilado translúcido con `backdrop-filter: blur(24px) saturate(190%)` y micro-borde de luz `inset 0 1px 0 rgba(255,255,255,0.1)`.
+  - **Tipografía Óptica:** Tracking negativo en títulos grandes (`-0.03em`), tracking ligeramente positivo en micro-etiquetas (`0.04em`) y alineación numérica tabular en precios.
+  - **Física y Respuesta Inmediata (Kill Latency):** Micro-resortes táctiles en botones y píldoras (`:active { transform: scale(0.96); }`), elevación física en hover y transiciones fluidas con curvas `cubic-bezier(0.2, 0.8, 0.2, 1)`.
+
+### Fase 2: IMPLEMENTACIÓN
+- `index.css`: Clases `.apple-glass-nav`, `.apple-glass-card`, `.apple-btn-tactile`, `.apple-pill-tab`, `.apple-search-bar`, `.apple-display-heading`, `.apple-label-small`.
+- `CatalogoClienteView.jsx`: Encabezado flotante con cristal esmerilado translúcido, buscador con foco suave tipo Apple, selector de categorías segmentado con píldoras y tarjetas con proporción visual áurea.
+- `ProductoCard.jsx`: Tarjetas de cristal translúcido con elevación física, botón de compra con feedback táctil inmediato y micro-insignias flotantes esmeriladas.
+
+### Fase 3: VERIFICACIÓN
+- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `feat(tienda): implement Apple Design system with translucent glass materials, optical typography, and tactile spring feedback`
+  - Rama: `main` en GitHub.
+
+
 
 
 

@@ -1074,7 +1074,7 @@ body {
 }
 
 /* ========================================================================= */
-/* TIENDA / CATÁLOGO PÚBLICO E-COMMERCE (Estilo Shein / Importadora Miranda) */
+/* APPLE DESIGN SYSTEM: Translucency, Materials, Springs & Optical Sizing    */
 /* ========================================================================= */
 @keyframes slideLeft {
   from {
@@ -1087,18 +1087,71 @@ body {
   }
 }
 
-.shein-product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-  border-color: rgba(245, 158, 11, 0.4) !important;
+/* Translucent Frosted Glass Materials */
+.apple-glass-nav {
+  background: rgba(11, 15, 25, 0.78);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
 }
 
-.shein-product-card:hover .shein-product-image {
-  transform: scale(1.06);
+.apple-glass-card {
+  background: rgba(20, 27, 45, 0.65);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.shein-search-input:focus {
-  border-color: var(--brand-gold) !important;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+.apple-glass-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(245, 158, 11, 0.35);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 20px rgba(245, 158, 11, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
+
+/* Apple Spring Tactile Active States */
+.apple-btn-tactile {
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.18s ease, box-shadow 0.18s ease;
+}
+.apple-btn-tactile:active {
+  transform: scale(0.96) !important;
+}
+
+.apple-pill-tab {
+  transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.apple-pill-tab:active {
+  transform: scale(0.95);
+}
+
+.apple-search-bar {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.apple-search-bar:focus-within {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(245, 158, 11, 0.6);
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.18);
+}
+
+/* Optical Typography Tracking */
+.apple-display-heading {
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.apple-label-small {
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.apple-price-typography {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
 

@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   RotateCcw,
+  SlidersHorizontal,
 } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 import { ProductoCard } from '../components/tienda/ProductoCard';
@@ -38,7 +39,7 @@ export function CatalogoClienteView({
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [orderSuccessMessage, setOrderSuccessMessage] = useState('');
 
-  // Paginación de la tienda (8 productos por página para navegación ágil)
+  // Paginación de la tienda
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 8;
 
@@ -122,30 +123,36 @@ export function CatalogoClienteView({
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)', display: 'flex', flexDirection: 'column' }}>
-      {/* Header Comercial E-Commerce (Inspirado en Shein / Importadora Miranda) */}
+    <div
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#070A12',
+        backgroundImage: 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(245, 158, 11, 0.08), transparent 70%)',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* Header Transparente con Cristal Esmerilado (Apple Translucent Chrome) */}
       <header
+        className="apple-glass-nav"
         style={{
-          backgroundColor: 'rgba(15, 23, 42, 0.95)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          backdropFilter: 'blur(12px)',
         }}
       >
         <div
           style={{
             maxWidth: '1280px',
             margin: '0 auto',
-            padding: '0.75rem 1.25rem',
+            padding: '0.8rem 1.4rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '1.2rem',
           }}
         >
-          {/* Logo Oficial de la Empresa y Nombre de Marca */}
+          {/* Logotipo Oficial con Micro-Interacción */}
           <div
             style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', flexShrink: 0 }}
             onClick={() => {
@@ -154,19 +161,20 @@ export function CatalogoClienteView({
               setSearch('');
               setCurrentPage(1);
             }}
+            className="apple-btn-tactile"
           >
             <div
               style={{
                 width: '42px',
                 height: '42px',
-                borderRadius: '8px',
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(245, 158, 11, 0.3)',
-                padding: '3px',
+                borderRadius: '12px',
+                backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                padding: '4px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
               }}
             >
               <img
@@ -177,46 +185,46 @@ export function CatalogoClienteView({
             </div>
             <div>
               <h1
+                className="apple-display-heading"
                 style={{
                   margin: 0,
                   fontSize: '1.15rem',
-                  color: 'var(--text-white)',
-                  fontWeight: 800,
-                  letterSpacing: '0.04em',
-                  lineHeight: 1.1,
+                  color: '#FFFFFF',
                 }}
               >
                 LOS CASERITOS
               </h1>
               <span
+                className="apple-label-small"
                 style={{
-                  fontSize: '0.68rem',
+                  fontSize: '0.66rem',
                   color: 'var(--brand-gold)',
-                  fontWeight: 600,
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
+                  display: 'block',
+                  marginTop: '-1px',
                 }}
               >
-                Tienda Oficial
+                Catálogo Oficial
               </span>
             </div>
           </div>
 
-          {/* Barra de Búsqueda Central con Estilo Redondeado Moderno */}
+          {/* Buscador Central Redondeado con Foco Fluido */}
           <div
+            className="apple-search-bar"
             style={{
               flex: 1,
-              maxWidth: '560px',
+              maxWidth: '540px',
               position: 'relative',
               display: 'flex',
               alignItems: 'center',
+              borderRadius: '999px',
+              padding: '0.2rem 0.5rem',
             }}
           >
             <Search
-              size={17}
+              size={16}
               style={{
-                position: 'absolute',
-                left: '1rem',
+                marginLeft: '0.6rem',
                 color: 'var(--text-muted)',
                 pointerEvents: 'none',
               }}
@@ -231,28 +239,27 @@ export function CatalogoClienteView({
               }}
               style={{
                 width: '100%',
-                padding: '0.65rem 1rem 0.65rem 2.8rem',
-                backgroundColor: 'rgba(11, 15, 25, 0.85)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                borderRadius: '999px',
+                padding: '0.45rem 0.75rem',
+                backgroundColor: 'transparent',
+                border: 'none',
                 color: 'var(--text-white)',
                 fontSize: '0.84rem',
                 outline: 'none',
-                transition: 'all 0.2s ease',
               }}
-              className="shein-search-input"
             />
             {search && (
               <button
                 type="button"
                 onClick={() => setSearch('')}
+                className="apple-btn-tactile"
                 style={{
-                  position: 'absolute',
-                  right: '0.85rem',
-                  background: 'none',
+                  marginRight: '0.4rem',
+                  background: 'rgba(255, 255, 255, 0.08)',
                   border: 'none',
-                  color: 'var(--text-muted)',
-                  fontSize: '0.75rem',
+                  color: 'var(--text-secondary)',
+                  fontSize: '0.72rem',
+                  padding: '0.2rem 0.5rem',
+                  borderRadius: '999px',
                   cursor: 'pointer',
                   fontWeight: 600,
                 }}
@@ -262,40 +269,40 @@ export function CatalogoClienteView({
             )}
           </div>
 
-          {/* Acciones: Bolsa de Compras y Botón Admin */}
+          {/* Acciones: Bolsa y Acceso Admin */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
-            {/* Botón Mi Bolsa */}
+            {/* Botón Mi Bolsa con Resorte Táctil */}
             <button
               type="button"
               onClick={() => setIsCartOpen(true)}
+              className="apple-btn-tactile"
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem',
+                gap: '0.45rem',
                 padding: '0.55rem 1rem',
                 borderRadius: '999px',
                 backgroundColor: 'var(--brand-gold)',
                 color: '#111',
                 border: 'none',
                 fontWeight: 800,
-                fontSize: '0.84rem',
+                fontSize: '0.82rem',
                 cursor: 'pointer',
-                boxShadow: '0 2px 10px rgba(245, 158, 11, 0.25)',
-                transition: 'transform 0.15s ease',
+                boxShadow: '0 2px 14px rgba(245, 158, 11, 0.28)',
               }}
             >
-              <ShoppingBag size={17} />
+              <ShoppingBag size={16} />
               <span>Mi Bolsa</span>
               {totalCartUnits > 0 && (
                 <span
                   style={{
                     backgroundColor: 'var(--brand-red)',
                     color: '#fff',
-                    fontSize: '0.7rem',
+                    fontSize: '0.68rem',
                     fontWeight: 900,
-                    padding: '0.12rem 0.45rem',
+                    padding: '0.1rem 0.42rem',
                     borderRadius: '999px',
-                    marginLeft: '0.15rem',
+                    marginLeft: '0.1rem',
                   }}
                 >
                   {totalCartUnits}
@@ -303,27 +310,27 @@ export function CatalogoClienteView({
               )}
             </button>
 
-            {/* Enlace al Panel Administrador */}
+            {/* Enlace al Panel Admin */}
             <button
               type="button"
               onClick={onGoToAdmin}
+              className="apple-btn-tactile"
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.4rem',
-                padding: '0.55rem 0.85rem',
+                gap: '0.35rem',
+                padding: '0.52rem 0.85rem',
                 borderRadius: '999px',
                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
                 color: 'var(--text-secondary)',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
-                fontSize: '0.78rem',
+                fontSize: '0.76rem',
                 fontWeight: 600,
                 cursor: 'pointer',
-                transition: 'all 0.15s ease',
               }}
               title="Acceso restringido para administradores"
             >
-              <LayoutDashboard size={15} />
+              <LayoutDashboard size={14} />
               <span>Panel Admin</span>
             </button>
           </div>
@@ -340,12 +347,13 @@ export function CatalogoClienteView({
             backgroundColor: 'rgba(16, 185, 129, 0.12)',
             border: '1px solid rgba(16, 185, 129, 0.35)',
             color: 'var(--brand-green)',
-            borderRadius: 'var(--radius-md)',
+            borderRadius: '14px',
             fontWeight: 600,
-            fontSize: '0.88rem',
+            fontSize: '0.86rem',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
+            boxShadow: '0 4px 16px rgba(16, 185, 129, 0.15)',
           }}
         >
           <ShieldCheck size={18} />
@@ -353,82 +361,92 @@ export function CatalogoClienteView({
         </div>
       )}
 
-      {/* Hero Banner Boutique (Compacto y Elegante estilo Miranda/Shein) */}
-      <section style={{ maxWidth: '1280px', margin: '1rem auto 0', padding: '0 1.25rem', width: '100%' }}>
+      {/* Hero Banner Minimalista con Estilo Apple / Editorial */}
+      <section style={{ maxWidth: '1280px', margin: '1.2rem auto 0', padding: '0 1.4rem', width: '100%' }}>
         <div
           style={{
-            padding: '1.4rem 1.6rem',
-            borderRadius: 'var(--radius-md)',
-            background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%)',
-            border: '1px solid rgba(245, 158, 11, 0.2)',
+            padding: '1.8rem 2rem',
+            borderRadius: '20px',
+            background: 'linear-gradient(135deg, rgba(26, 34, 53, 0.6) 0%, rgba(13, 17, 28, 0.8) 100%)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             flexWrap: 'wrap',
-            gap: '1.2rem',
-            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.25)',
+            gap: '1.5rem',
           }}
         >
-          <div style={{ maxWidth: '620px' }}>
+          <div style={{ maxWidth: '640px' }}>
             <div
+              className="apple-label-small"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.35rem',
-                fontSize: '0.7rem',
-                fontWeight: 800,
+                fontSize: '0.68rem',
                 color: 'var(--brand-gold)',
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-                marginBottom: '0.35rem',
+                marginBottom: '0.4rem',
               }}
             >
               <Sparkles size={13} />
-              <span>Colección Oficial & Multirubro</span>
+              <span>Catálogo Digital · Los Caseritos</span>
             </div>
             <h2
+              className="apple-display-heading"
               style={{
-                margin: '0 0 0.35rem 0',
-                fontSize: '1.45rem',
-                color: 'var(--text-white)',
-                fontWeight: 800,
-                letterSpacing: '-0.01em',
+                margin: '0 0 0.4rem 0',
+                fontSize: '1.65rem',
+                color: '#FFFFFF',
               }}
             >
-              Elige tus productos y pide directamente por WhatsApp
+              Elige tus productos y realiza tu pedido directo por WhatsApp
             </h2>
-            <p style={{ margin: 0, fontSize: '0.84rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-              Agrega los artículos a tu bolsa virtual y despacharemos tu orden de inmediato con atención personalizada.
+            <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
+              Explora nuestra variedad multirubro con stock en tiempo real, agrégalos a tu bolsa y coordina tu despacho al instante.
             </p>
           </div>
 
-          {/* Micro Insignias de Confianza */}
+          {/* Insignias de Confianza con Vidrio Esmerilado */}
           <div style={{ display: 'flex', gap: '1.2rem', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
-              <Truck size={16} style={{ color: 'var(--brand-gold)' }} />
-              <span>Envíos Rápidos</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-gold)' }}>
+                <Truck size={16} />
+              </div>
+              <span>Despachos Rápidos</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
-              <ShieldCheck size={16} style={{ color: 'var(--brand-gold)' }} />
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-gold)' }}>
+                <ShieldCheck size={16} />
+              </div>
               <span>Garantía Oficial</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
-              <MessageCircle size={16} style={{ color: 'var(--brand-gold)' }} />
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '10px', backgroundColor: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-gold)' }}>
+                <MessageCircle size={16} />
+              </div>
               <span>Atención 1 a 1</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Barra de Categorías Horizontal Estilo Shein / Miranda (Pill Tabs) */}
-      <section style={{ maxWidth: '1280px', margin: '1rem auto 0', padding: '0 1.25rem', width: '100%' }}>
+      {/* Navegación Segmentada de Categorías (Apple Segmented Style) */}
+      <section style={{ maxWidth: '1280px', margin: '1.2rem auto 0', padding: '0 1.4rem', width: '100%' }}>
         <div
           style={{
             display: 'flex',
-            gap: '0.45rem',
+            gap: '0.4rem',
             overflowX: 'auto',
-            paddingBottom: '0.3rem',
+            padding: '0.35rem',
+            borderRadius: '999px',
+            backgroundColor: 'rgba(20, 27, 45, 0.5)',
+            border: '1px solid rgba(255, 255, 255, 0.06)',
             scrollbarWidth: 'none',
+            width: 'fit-content',
+            maxWidth: '100%',
           }}
         >
           <button
@@ -437,17 +455,17 @@ export function CatalogoClienteView({
               setSelectedCategoria('ALL');
               setCurrentPage(1);
             }}
+            className="apple-pill-tab"
             style={{
-              padding: '0.5rem 1rem',
+              padding: '0.45rem 1.1rem',
               borderRadius: '999px',
-              border: selectedCategoria === 'ALL' ? '1px solid var(--brand-gold)' : '1px solid rgba(255, 255, 255, 0.08)',
-              backgroundColor: selectedCategoria === 'ALL' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(30, 41, 59, 0.6)',
+              border: selectedCategoria === 'ALL' ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid transparent',
+              backgroundColor: selectedCategoria === 'ALL' ? 'rgba(245, 158, 11, 0.18)' : 'transparent',
               color: selectedCategoria === 'ALL' ? 'var(--brand-gold)' : 'var(--text-secondary)',
               fontWeight: selectedCategoria === 'ALL' ? 700 : 500,
               fontSize: '0.8rem',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
-              transition: 'all 0.15s ease',
             }}
           >
             Todas las Categorías
@@ -463,17 +481,17 @@ export function CatalogoClienteView({
                   setSelectedCategoria(c.idCategoria);
                   setCurrentPage(1);
                 }}
+                className="apple-pill-tab"
                 style={{
-                  padding: '0.5rem 1rem',
+                  padding: '0.45rem 1.1rem',
                   borderRadius: '999px',
-                  border: isSelected ? '1px solid var(--brand-gold)' : '1px solid rgba(255, 255, 255, 0.08)',
-                  backgroundColor: isSelected ? 'rgba(245, 158, 11, 0.15)' : 'rgba(30, 41, 59, 0.6)',
+                  border: isSelected ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid transparent',
+                  backgroundColor: isSelected ? 'rgba(245, 158, 11, 0.18)' : 'transparent',
                   color: isSelected ? 'var(--brand-gold)' : 'var(--text-secondary)',
                   fontWeight: isSelected ? 700 : 500,
                   fontSize: '0.8rem',
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
-                  transition: 'all 0.15s ease',
                 }}
               >
                 {c.nombre}
@@ -483,14 +501,14 @@ export function CatalogoClienteView({
         </div>
       </section>
 
-      {/* Barra de Filtros Secundarios y Conteo de Resultados */}
-      <section style={{ maxWidth: '1280px', margin: '0.8rem auto 0', padding: '0 1.25rem', width: '100%' }}>
+      {/* Barra de Filtros Secundarios y Conteo Óptico */}
+      <section style={{ maxWidth: '1280px', margin: '0.9rem auto 0', padding: '0 1.4rem', width: '100%' }}>
         <div
           style={{
             padding: '0.65rem 1rem',
-            backgroundColor: 'rgba(15, 23, 42, 0.6)',
-            borderRadius: 'var(--radius-sm)',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
+            backgroundColor: 'rgba(15, 23, 42, 0.45)',
+            borderRadius: '12px',
+            border: '1px solid rgba(255, 255, 255, 0.05)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -499,20 +517,19 @@ export function CatalogoClienteView({
             fontSize: '0.8rem',
           }}
         >
-          {/* Contador de Productos */}
+          {/* Conteo */}
           <div style={{ color: 'var(--text-secondary)' }}>
-            Mostrando <strong style={{ color: 'var(--text-white)' }}>{filteredProductos.length}</strong> productos
+            Mostrando <strong style={{ color: '#FFFFFF' }}>{filteredProductos.length}</strong> productos
             {selectedCategoria !== 'ALL' && (
               <span> en <strong style={{ color: 'var(--brand-gold)' }}>{categorias.find((c) => String(c.idCategoria) === String(selectedCategoria))?.nombre}</strong></span>
             )}
           </div>
 
-          {/* Filtros de Marca, Disponibilidad y Orden */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
-            {/* Selector de Marca */}
+          {/* Selectores de Marca y Orden */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', flexWrap: 'wrap' }}>
             {marcas.length > 0 && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <span style={{ color: 'var(--text-muted)' }}>Marca:</span>
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.76rem' }}>Marca:</span>
                 <select
                   value={selectedMarca}
                   onChange={(e) => {
@@ -520,12 +537,12 @@ export function CatalogoClienteView({
                     setCurrentPage(1);
                   }}
                   style={{
-                    backgroundColor: 'var(--bg-primary)',
+                    backgroundColor: 'rgba(10, 14, 23, 0.8)',
                     border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: 'var(--radius-sm)',
+                    borderRadius: '8px',
                     color: 'var(--text-primary)',
                     padding: '0.3rem 0.6rem',
-                    fontSize: '0.78rem',
+                    fontSize: '0.76rem',
                     outline: 'none',
                   }}
                 >
@@ -539,8 +556,7 @@ export function CatalogoClienteView({
               </div>
             )}
 
-            {/* Checkbox solo con stock */}
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '0.78rem' }}>
               <input
                 type="checkbox"
                 checked={onlyInStock}
@@ -553,19 +569,19 @@ export function CatalogoClienteView({
               <span>Solo disponibles</span>
             </label>
 
-            {/* Ordenamiento por Precio */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Ordenar:</span>
+              <SlidersHorizontal size={13} style={{ color: 'var(--text-muted)' }} />
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.76rem' }}>Ordenar:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 style={{
-                  backgroundColor: 'var(--bg-primary)',
+                  backgroundColor: 'rgba(10, 14, 23, 0.8)',
                   border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: 'var(--radius-sm)',
+                  borderRadius: '8px',
                   color: 'var(--text-primary)',
                   padding: '0.3rem 0.6rem',
-                  fontSize: '0.78rem',
+                  fontSize: '0.76rem',
                   outline: 'none',
                 }}
               >
@@ -578,15 +594,15 @@ export function CatalogoClienteView({
         </div>
       </section>
 
-      {/* Grid de Productos (Catálogo E-Commerce) */}
-      <main style={{ maxWidth: '1280px', margin: '1.2rem auto', padding: '0 1.25rem', width: '100%', flex: 1 }}>
+      {/* Grid de Productos con Tarjetas de Cristal */}
+      <main style={{ maxWidth: '1280px', margin: '1.2rem auto', padding: '0 1.4rem', width: '100%', flex: 1 }}>
         {filteredProductos.length === 0 ? (
           <div
             style={{
               padding: '3.5rem 1.5rem',
               textAlign: 'center',
-              backgroundColor: 'rgba(30, 41, 59, 0.4)',
-              borderRadius: 'var(--radius-md)',
+              backgroundColor: 'rgba(20, 27, 45, 0.4)',
+              borderRadius: '20px',
               border: '1px dashed rgba(255, 255, 255, 0.1)',
               display: 'flex',
               flexDirection: 'column',
@@ -594,12 +610,12 @@ export function CatalogoClienteView({
               gap: '0.75rem',
             }}
           >
-            <RotateCcw size={36} opacity={0.35} color="var(--brand-gold)" />
-            <h3 style={{ margin: 0, color: 'var(--text-white)', fontSize: '1.1rem' }}>
+            <RotateCcw size={34} opacity={0.35} color="var(--brand-gold)" />
+            <h3 style={{ margin: 0, color: 'var(--text-white)', fontSize: '1.05rem', fontWeight: 700 }}>
               No se encontraron productos coincidentes
             </h3>
-            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-              Prueba cambiando la categoría, los filtros de marca o borrando el término de búsqueda.
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.84rem' }}>
+              Intenta cambiando la categoría o ajustando los filtros de búsqueda.
             </p>
             <button
               type="button"
@@ -609,10 +625,11 @@ export function CatalogoClienteView({
                 setSelectedMarca('ALL');
                 setOnlyInStock(false);
               }}
+              className="apple-btn-tactile"
               style={{
                 marginTop: '0.5rem',
                 padding: '0.5rem 1rem',
-                borderRadius: 'var(--radius-sm)',
+                borderRadius: '999px',
                 backgroundColor: 'var(--brand-gold)',
                 color: '#111',
                 border: 'none',
@@ -629,8 +646,8 @@ export function CatalogoClienteView({
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-                gap: '1.2rem',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+                gap: '1.25rem',
               }}
             >
               {paginatedProductos.map((prod) => {
@@ -646,30 +663,31 @@ export function CatalogoClienteView({
               })}
             </div>
 
-            {/* Paginación de la Tienda */}
+            {/* Paginación Segmentada */}
             {totalPages > 1 && (
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '0.4rem',
-                  marginTop: '2rem',
-                  paddingBottom: '1rem',
+                  gap: '0.35rem',
+                  marginTop: '2.2rem',
+                  paddingBottom: '1.5rem',
                 }}
               >
                 <button
                   type="button"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
+                  className="apple-btn-tactile"
                   style={{
                     padding: '0.45rem 0.75rem',
-                    borderRadius: 'var(--radius-sm)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    backgroundColor: 'rgba(30, 41, 59, 0.6)',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    backgroundColor: 'rgba(20, 27, 45, 0.6)',
                     color: 'var(--text-primary)',
                     cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                    opacity: currentPage === 1 ? 0.4 : 1,
+                    opacity: currentPage === 1 ? 0.35 : 1,
                     display: 'flex',
                     alignItems: 'center',
                   }}
@@ -682,17 +700,17 @@ export function CatalogoClienteView({
                     key={pageNum}
                     type="button"
                     onClick={() => setCurrentPage(pageNum)}
+                    className="apple-btn-tactile"
                     style={{
                       width: '34px',
                       height: '34px',
-                      borderRadius: 'var(--radius-sm)',
-                      border: pageNum === currentPage ? '1px solid var(--brand-gold)' : '1px solid rgba(255, 255, 255, 0.08)',
-                      backgroundColor: pageNum === currentPage ? 'var(--brand-gold)' : 'rgba(30, 41, 59, 0.6)',
+                      borderRadius: '10px',
+                      border: pageNum === currentPage ? '1px solid var(--brand-gold)' : '1px solid rgba(255, 255, 255, 0.06)',
+                      backgroundColor: pageNum === currentPage ? 'var(--brand-gold)' : 'rgba(20, 27, 45, 0.6)',
                       color: pageNum === currentPage ? '#111' : 'var(--text-secondary)',
                       fontWeight: pageNum === currentPage ? 800 : 500,
                       fontSize: '0.82rem',
                       cursor: 'pointer',
-                      transition: 'all 0.15s ease',
                     }}
                   >
                     {pageNum}
@@ -703,14 +721,15 @@ export function CatalogoClienteView({
                   type="button"
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
+                  className="apple-btn-tactile"
                   style={{
                     padding: '0.45rem 0.75rem',
-                    borderRadius: 'var(--radius-sm)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    backgroundColor: 'rgba(30, 41, 59, 0.6)',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    backgroundColor: 'rgba(20, 27, 45, 0.6)',
                     color: 'var(--text-primary)',
                     cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                    opacity: currentPage === totalPages ? 0.4 : 1,
+                    opacity: currentPage === totalPages ? 0.35 : 1,
                     display: 'flex',
                     alignItems: 'center',
                   }}
@@ -723,24 +742,23 @@ export function CatalogoClienteView({
         )}
       </main>
 
-      {/* Footer de la Tienda Pública */}
+      {/* Footer Minimalista */}
       <footer
         style={{
           marginTop: 'auto',
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-          backgroundColor: 'rgba(11, 15, 25, 0.95)',
-          padding: '1.5rem 1.25rem',
-          textAlign: 'center',
+          borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+          backgroundColor: 'rgba(7, 10, 18, 0.95)',
+          padding: '1.5rem 1.4rem',
         }}
       >
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <img src={logoImg} alt="Logo" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
-            <span style={{ fontSize: '0.84rem', color: 'var(--text-white)', fontWeight: 700 }}>
+            <img src={logoImg} alt="Logo" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
+            <span style={{ fontSize: '0.82rem', color: '#FFFFFF', fontWeight: 700 }}>
               Los Caseritos · Catálogo Digital
             </span>
           </div>
-          <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
             © {new Date().getFullYear()} Los Caseritos. Todos los derechos reservados. Desarrollado por Alejandro Gerard Sejas.
           </div>
         </div>
