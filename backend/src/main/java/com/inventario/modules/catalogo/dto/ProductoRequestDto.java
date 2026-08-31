@@ -27,6 +27,8 @@ public class ProductoRequestDto {
 
     private String descripcion;
 
+    private String imagenUrl;
+
     private String sku;
 
     @NotNull(message = "El stock actual es obligatorio")

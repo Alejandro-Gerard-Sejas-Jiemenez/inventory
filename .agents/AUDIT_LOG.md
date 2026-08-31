@@ -481,6 +481,41 @@
   - Commit: `style(ui): remove all emojis and replace with Lucide React icons`
   - Rama: `main` en GitHub.
 
+---
+
+## Bloque 15: Soporte Integral de Imágenes de Productos (Backend + Frontend)
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-4` |
+| **Fecha** | 2026-08-30 |
+| **Módulos Afectados** | Backend (`modules/catalogo/`) & Frontend (`components/`, `components/productos/`) |
+| **Skills Aplicadas** | `spring-modular-backend`, `react-modern-frontend`, `clean-code`, `ui-ux-usability`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Añadir soporte persistente para la fotografía/imagen de productos en la base de datos y endpoints REST.
+- Habilitar en el modal de productos un espacio moderno e intuitivo para ingresar la URL de la imagen con previsualización en vivo.
+- Renderizar la miniatura (thumbnail) de la imagen en la tabla de catálogo de productos.
+
+### Fase 2: IMPLEMENTACIÓN
+- **Backend (Spring Boot 3 + JPA/H2):**
+  - `Producto.java`: Columna `imagen_url` (`VARCHAR(1000)`).
+  - `ProductoRequestDto.java`: Campo `imagenUrl` para creación y actualización.
+  - `ProductoServiceImpl.java`: Mapeo de `imagenUrl` en métodos `create` y `update`.
+  - `DataInitializer.java`: URLs de muestra para productos precargados del catálogo.
+- **Frontend (React 19 + Lucide React):**
+  - `ProductoModal.jsx`: Contenedor de previsualización visual con icono de fallback `ImageIcon`, input para URL con icono `Link`, y botón de limpieza rápida (`X`).
+  - `ProductoColumns.jsx`: Visualización de thumbnail de 38x38px con esquinas suaves `var(--radius-sm)` junto al nombre del producto.
+
+### Fase 3: VERIFICACIÓN
+- Backend Tests (`./mvnw test`): **4 tests exitosos, 0 fallos, 0 errores (BUILD SUCCESS)**.
+- Frontend Linter (`npm run lint` / `oxlint`): **0 errores**.
+- **Git Commit & Push (Conventional Commits):**
+  - Commit: `feat(catalogo): add product image support with live preview and table thumbnails`
+  - Rama: `main` en GitHub.
+
+
 
 
 

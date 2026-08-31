@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Save, Check } from 'lucide-react';
+import { Package, Save, Check, Image as ImageIcon, X, Link } from 'lucide-react';
 import { Modal } from './common/Modal';
 import { InputField } from './common/InputField';
 import { SelectField } from './common/SelectField';
@@ -21,6 +21,7 @@ export function ProductoModal({
     sku: '',
     nombre: '',
     descripcion: '',
+    imagenUrl: '',
     idCategoria: '',
     idModelo: '',
     idMaterial: '',
@@ -42,6 +43,7 @@ export function ProductoModal({
         sku: producto.sku || '',
         nombre: producto.nombre || '',
         descripcion: producto.descripcion || '',
+        imagenUrl: producto.imagenUrl || '',
         idCategoria: producto.categoria?.idCategoria || (categorias.length > 0 ? categorias[0].idCategoria : ''),
         idModelo: producto.modelo?.idModelo || '',
         idMaterial: producto.material?.idMaterial || '',
@@ -58,6 +60,7 @@ export function ProductoModal({
         sku: '',
         nombre: '',
         descripcion: '',
+        imagenUrl: '',
         idCategoria: categorias.length > 0 ? categorias[0].idCategoria : '',
         idModelo: modelos.length > 0 ? modelos[0].idModelo : '',
         idMaterial: materiales.length > 0 ? materiales[0].idMaterial : '',
@@ -84,9 +87,10 @@ export function ProductoModal({
       setError('');
       await onSave({
         idProducto: formData.idProducto || undefined,
-        sku: formData.sku || undefined, // Backend genera automáticamente si está vacío
+        sku: formData.sku || undefined,
         nombre: formData.nombre.trim(),
         descripcion: formData.descripcion || '',
+        imagenUrl: formData.imagenUrl?.trim() || null,
         idCategoria: formData.idCategoria ? parseInt(formData.idCategoria, 10) : null,
         idModelo: formData.idModelo ? parseInt(formData.idModelo, 10) : null,
         idMaterial: formData.idMaterial ? parseInt(formData.idMaterial, 10) : null,
@@ -112,7 +116,7 @@ export function ProductoModal({
       title={producto ? 'Editar Producto' : 'Nuevo Producto'}
       subtitle={producto ? `Modificando existencias y atributos (ID: #${producto.idProducto})` : 'Registrar nuevo artículo en el catálogo multirubro'}
       icon={Package}
-      maxWidth="680px"
+      maxWidth="720px"
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={loading}>
@@ -144,6 +148,79 @@ export function ProductoModal({
             {error}
           </div>
         )}
+
+        {/* Sección de Imagen del Producto */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '1rem',
+            padding: '0.85rem',
+            backgroundColor: 'var(--bg-secondary)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-color)',
+            alignItems: 'center',
+          }}
+        >
+          {/* Vista Previa de Imagen */}
+          <div
+            style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: 'var(--radius-sm)',
+              border: '2px dashed var(--border-color)',
+              backgroundColor: 'var(--bg-primary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'hidden',
+              flexShrink: 0,
+              position: 'relative',
+            }}
+          >
+            {formData.imagenUrl ? (
+              <img
+                src={formData.imagenUrl}
+                alt="Vista previa"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
+              />
+            ) : (
+              <ImageIcon size={28} style={{ color: 'var(--text-muted)' }} />
+            )}
+          </div>
+
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <label className="form-field-label" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <ImageIcon size={14} style={{ color: 'var(--brand-gold)' }} />
+              Imagen del Producto (URL)
+            </label>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <div style={{ flex: 1 }}>
+                <InputField
+                  placeholder="https://ejemplo.com/foto-producto.jpg"
+                  value={formData.imagenUrl}
+                  onChange={(e) => setFormData({ ...formData, imagenUrl: e.target.value })}
+                  icon={Link}
+                />
+              </div>
+              {formData.imagenUrl && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setFormData({ ...formData, imagenUrl: '' })}
+                  icon={X}
+                  title="Quitar imagen"
+                />
+              )}
+            </div>
+            <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+              Pega el enlace de la fotografía o déjalo vacío para usar el icono por defecto.
+            </span>
+          </div>
+        </div>
 
         {/* Categoría y Nombre del Producto */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
@@ -193,7 +270,7 @@ export function ProductoModal({
           />
         </div>
 
-        {/* Selector Visual de Colores con Muestras Suavemente Redondeadas */}
+        {/* Selector Visual de Colores */}
         <div>
           <label className="form-field-label">Color del Producto</label>
           <div
@@ -221,7 +298,7 @@ export function ProductoModal({
                     alignItems: 'center',
                     gap: '0.45rem',
                     padding: '0.35rem 0.65rem',
-                    borderRadius: 'var(--radius-sm)', // Redondeo suave disminuido
+                    borderRadius: 'var(--radius-sm)',
                     background: isSelected ? 'var(--brand-gold-bg)' : 'rgba(255,255,255,0.05)',
                     border: isSelected ? '1px solid var(--brand-gold)' : '1px solid rgba(255,255,255,0.1)',
                     color: isSelected ? 'var(--brand-gold)' : 'var(--text-secondary)',
@@ -235,7 +312,7 @@ export function ProductoModal({
                     style={{
                       width: '14px',
                       height: '14px',
-                      borderRadius: '3px', // Redondeo suave disminuido
+                      borderRadius: '3px',
                       backgroundColor: c.codigoHex || '#888',
                       border: '1px solid rgba(255,255,255,0.3)',
                       flexShrink: 0,

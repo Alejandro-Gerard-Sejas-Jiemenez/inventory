@@ -109,6 +109,7 @@ public class ProductoServiceImpl implements ProductoService {
                 .sku(sku)
                 .nombre(request.getNombre().trim())
                 .descripcion(request.getDescripcion())
+                .imagenUrl(request.getImagenUrl())
                 .precioCompra(request.getPrecioCompra() != null ? request.getPrecioCompra() : java.math.BigDecimal.ZERO)
                 .precioMayoreo(request.getPrecioMayoreo())
                 .precioUnitario(request.getPrecioUnitario())
@@ -183,6 +184,7 @@ public class ProductoServiceImpl implements ProductoService {
         producto.setSku(sku);
         producto.setNombre(request.getNombre().trim());
         producto.setDescripcion(request.getDescripcion());
+        producto.setImagenUrl(request.getImagenUrl());
         producto.setPrecioCompra(request.getPrecioCompra() != null ? request.getPrecioCompra() : producto.getPrecioCompra());
         producto.setPrecioMayoreo(request.getPrecioMayoreo());
         producto.setPrecioUnitario(request.getPrecioUnitario());
