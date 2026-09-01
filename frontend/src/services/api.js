@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8088/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8089/api';
 
 async function handleResponse(response) {
   if (!response.ok) {

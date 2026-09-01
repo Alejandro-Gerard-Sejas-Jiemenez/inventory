@@ -48,7 +48,7 @@ public class Producto {
     private String descripcion;
 
     @Lob
-    @Column(name = "imagen_url", columnDefinition = "CLOB")
+    @Column(name = "imagen_url", columnDefinition = "TEXT")
     private String imagenUrl;
 
     @NotBlank(message = "El SKU es obligatorio")
