@@ -5,7 +5,7 @@ libros/
 *.pdf
 
 # Base de datos local H2 y almacenamiento persistente
-data/
+/data/
 backend/data/
 *.mv.db
 *.trace.db
