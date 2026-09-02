@@ -99,7 +99,7 @@ export function App() {
       {/* Barra Lateral de Navegación Admin */}
       <Sidebar
         currentTab={currentTab}
-        setCurrentTab={setCurrentTab}
+        onSelectTab={setCurrentTab}
         currentUser={currentUser}
         onLogout={handleLogout}
         onGoToTienda={() => setAppMode('tienda')}
