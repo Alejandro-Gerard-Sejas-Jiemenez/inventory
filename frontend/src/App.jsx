@@ -115,7 +115,7 @@ export function App() {
             productos={inventory.productos}
             categorias={inventory.categorias}
             proveedores={inventory.proveedores}
-            onTabChange={setCurrentTab}
+            onSelectTab={setCurrentTab}
           />
         )}
 
