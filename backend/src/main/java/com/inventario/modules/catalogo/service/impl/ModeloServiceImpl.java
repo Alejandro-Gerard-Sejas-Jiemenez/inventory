@@ -58,9 +58,15 @@ public class ModeloServiceImpl implements ModeloService {
     @Transactional
     public void delete(Long id) {
         Modelo modelo = findById(id);
-        if (!productoRepository.findByModeloIdModelo(id).isEmpty()) {
-            throw new BadRequestException("No se puede eliminar el modelo porque contiene productos asociados.");
-        }
-        modeloRepository.delete(modelo);
+        modelo.setActivo(false);
+        modeloRepository.save(modelo);
+    }
+
+    @Override
+    @Transactional
+    public void restaurar(Long id) {
+        Modelo modelo = findById(id);
+        modelo.setActivo(true);
+        modeloRepository.save(modelo);
     }
 }

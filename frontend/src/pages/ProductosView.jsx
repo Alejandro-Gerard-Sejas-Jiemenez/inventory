@@ -16,6 +16,7 @@ export function ProductosView({
   modelos = [],
   materiales = [],
   colores = [],
+  propietarios = [],
   loading = false,
   onSaveProducto,
   onDeleteProducto,
@@ -124,6 +125,7 @@ export function ProductosView({
         modelos={modelos}
         materiales={materiales}
         colores={colores}
+        propietarios={propietarios}
       />
     </div>
   );

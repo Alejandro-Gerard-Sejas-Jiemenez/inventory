@@ -9,4 +9,5 @@ public interface CategoriaService {
     Categoria obtenerPorId(Long id);
     Categoria guardar(Categoria categoria);
     void eliminar(Long id);
+    void restaurar(Long id);
 }

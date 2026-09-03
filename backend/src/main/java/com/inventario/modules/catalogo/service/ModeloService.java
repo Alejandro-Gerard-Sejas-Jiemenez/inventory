@@ -10,4 +10,5 @@ public interface ModeloService {
     Modelo create(Modelo modelo);
     Modelo update(Long id, Modelo modelo);
     void delete(Long id);
+    void restaurar(Long id);
 }

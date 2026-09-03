@@ -57,9 +57,15 @@ public class ColorServiceImpl implements ColorService {
     @Transactional
     public void delete(Long id) {
         Color color = findById(id);
-        if (!productoRepository.findByColorIdColor(id).isEmpty()) {
-            throw new BadRequestException("No se puede eliminar el color porque contiene productos asociados.");
-        }
-        colorRepository.delete(color);
+        color.setActivo(false);
+        colorRepository.save(color);
+    }
+
+    @Override
+    @Transactional
+    public void restaurar(Long id) {
+        Color color = findById(id);
+        color.setActivo(true);
+        colorRepository.save(color);
     }
 }

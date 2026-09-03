@@ -24,6 +24,7 @@ public class ProductoServiceImpl implements ProductoService {
     private final ModeloRepository modeloRepository;
     private final MaterialRepository materialRepository;
     private final ColorRepository colorRepository;
+    private final PropietarioRepository propietarioRepository;
     private final MovimientoStockRepository movimientoStockRepository;
 
     @Override
@@ -105,6 +106,12 @@ public class ProductoServiceImpl implements ProductoService {
                     .orElseThrow(() -> new ResourceNotFoundException("Color no encontrado"));
         }
 
+        Propietario propietario = null;
+        if (request.getIdPropietario() != null) {
+            propietario = propietarioRepository.findById(request.getIdPropietario())
+                    .orElseThrow(() -> new ResourceNotFoundException("Propietario no encontrado"));
+        }
+
         Producto producto = Producto.builder()
                 .sku(sku)
                 .nombre(request.getNombre().trim())
@@ -119,6 +126,7 @@ public class ProductoServiceImpl implements ProductoService {
                 .modelo(modelo)
                 .material(material)
                 .color(color)
+                .propietario(propietario)
                 .activo(request.getActivo() != null ? request.getActivo() : true)
                 .build();
 
@@ -178,6 +186,12 @@ public class ProductoServiceImpl implements ProductoService {
                     .orElseThrow(() -> new ResourceNotFoundException("Color no encontrado"));
         }
 
+        Propietario propietario = null;
+        if (request.getIdPropietario() != null) {
+            propietario = propietarioRepository.findById(request.getIdPropietario())
+                    .orElseThrow(() -> new ResourceNotFoundException("Propietario no encontrado"));
+        }
+
         int stockAnterior = producto.getStockActual();
         int stockNuevo = request.getStockActual() != null ? request.getStockActual() : stockAnterior;
 
@@ -194,6 +208,7 @@ public class ProductoServiceImpl implements ProductoService {
         producto.setModelo(modelo);
         producto.setMaterial(material);
         producto.setColor(color);
+        producto.setPropietario(propietario);
         if (request.getActivo() != null) {
             producto.setActivo(request.getActivo());
         }

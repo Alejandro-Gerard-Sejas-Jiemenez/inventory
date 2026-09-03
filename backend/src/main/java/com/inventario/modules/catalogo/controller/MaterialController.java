@@ -43,4 +43,10 @@ public class MaterialController {
         materialService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/restaurar")
+    public ResponseEntity<Void> restaurar(@PathVariable Long id) {
+        materialService.restaurar(id);
+        return ResponseEntity.ok().build();
+    }
 }

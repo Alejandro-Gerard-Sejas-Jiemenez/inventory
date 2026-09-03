@@ -21,6 +21,7 @@ public class ProductoRequestDto {
     private Long idModelo;
     private Long idMaterial;
     private Long idColor;
+    private Long idPropietario;
 
     @NotBlank(message = "El nombre del producto es obligatorio")
     private String nombre;

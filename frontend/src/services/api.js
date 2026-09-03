@@ -34,28 +34,39 @@ export const api = {
   createCategoria: (data) => fetch(`${API_BASE_URL}/categorias`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
   updateCategoria: (id, data) => fetch(`${API_BASE_URL}/categorias/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
   deleteCategoria: (id) => fetch(`${API_BASE_URL}/categorias/${id}`, { method: 'DELETE' }).then(handleResponse),
+  restaurarCategoria: (id) => fetch(`${API_BASE_URL}/categorias/${id}/restaurar`, { method: 'PUT' }).then(handleResponse),
 
   // Marcas
   getMarcas: () => fetch(`${API_BASE_URL}/marcas`).then(handleResponse),
   createMarca: (data) => fetch(`${API_BASE_URL}/marcas`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
   updateMarca: (id, data) => fetch(`${API_BASE_URL}/marcas/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
   deleteMarca: (id) => fetch(`${API_BASE_URL}/marcas/${id}`, { method: 'DELETE' }).then(handleResponse),
+  restaurarMarca: (id) => fetch(`${API_BASE_URL}/marcas/${id}/restaurar`, { method: 'PUT' }).then(handleResponse),
 
   // Modelos
   getModelos: () => fetch(`${API_BASE_URL}/modelos`).then(handleResponse),
   createModelo: (data) => fetch(`${API_BASE_URL}/modelos`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
   updateModelo: (id, data) => fetch(`${API_BASE_URL}/modelos/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
   deleteModelo: (id) => fetch(`${API_BASE_URL}/modelos/${id}`, { method: 'DELETE' }).then(handleResponse),
+  restaurarModelo: (id) => fetch(`${API_BASE_URL}/modelos/${id}/restaurar`, { method: 'PUT' }).then(handleResponse),
 
   // Colores
   getColores: () => fetch(`${API_BASE_URL}/colores`).then(handleResponse),
   createColor: (data) => fetch(`${API_BASE_URL}/colores`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
   deleteColor: (id) => fetch(`${API_BASE_URL}/colores/${id}`, { method: 'DELETE' }).then(handleResponse),
+  restaurarColor: (id) => fetch(`${API_BASE_URL}/colores/${id}/restaurar`, { method: 'PUT' }).then(handleResponse),
 
   // Materiales
   getMateriales: () => fetch(`${API_BASE_URL}/materiales`).then(handleResponse),
   createMaterial: (data) => fetch(`${API_BASE_URL}/materiales`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
   deleteMaterial: (id) => fetch(`${API_BASE_URL}/materiales/${id}`, { method: 'DELETE' }).then(handleResponse),
+  restaurarMaterial: (id) => fetch(`${API_BASE_URL}/materiales/${id}/restaurar`, { method: 'PUT' }).then(handleResponse),
+
+  // Propietarios
+  getPropietarios: () => fetch(`${API_BASE_URL}/propietarios`).then(handleResponse),
+  createPropietario: (data) => fetch(`${API_BASE_URL}/propietarios`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
+  deletePropietario: (id) => fetch(`${API_BASE_URL}/propietarios/${id}`, { method: 'DELETE' }).then(handleResponse),
+  restaurarPropietario: (id) => fetch(`${API_BASE_URL}/propietarios/${id}/restaurar`, { method: 'PUT' }).then(handleResponse),
 
   // Proveedores
   getProveedores: () => fetch(`${API_BASE_URL}/proveedores`).then(handleResponse),

@@ -21,4 +21,8 @@ public class Marca {
     @NotBlank(message = "El nombre de la marca es obligatorio")
     @Column(nullable = false, length = 100, unique = true)
     private String nombre;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean activo = true;
 }

@@ -10,4 +10,5 @@ public interface MaterialService {
     Material create(Material material);
     Material update(Long id, Material material);
     void delete(Long id);
+    void restaurar(Long id);
 }

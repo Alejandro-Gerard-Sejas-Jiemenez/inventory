@@ -38,9 +38,16 @@ public class CategoriaServiceImpl implements CategoriaService {
     @Override
     @Transactional
     public void eliminar(Long id) {
-        if (!categoriaRepository.existsById(id)) {
-            throw new ResourceNotFoundException("No se puede eliminar. Categoría no encontrada con ID: " + id);
-        }
-        categoriaRepository.deleteById(id);
+        Categoria categoria = obtenerPorId(id);
+        categoria.setActivo(false);
+        categoriaRepository.save(categoria);
+    }
+
+    @Override
+    @Transactional
+    public void restaurar(Long id) {
+        Categoria categoria = obtenerPorId(id);
+        categoria.setActivo(true);
+        categoriaRepository.save(categoria);
     }
 }

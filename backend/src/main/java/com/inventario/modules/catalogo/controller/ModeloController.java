@@ -43,4 +43,10 @@ public class ModeloController {
         modeloService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/restaurar")
+    public ResponseEntity<Void> restaurar(@PathVariable Long id) {
+        modeloService.restaurar(id);
+        return ResponseEntity.ok().build();
+    }
 }

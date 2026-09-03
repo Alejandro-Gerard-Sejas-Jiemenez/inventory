@@ -10,4 +10,5 @@ public interface ColorService {
     Color create(Color color);
     Color update(Long id, Color color);
     void delete(Long id);
+    void restaurar(Long id);
 }

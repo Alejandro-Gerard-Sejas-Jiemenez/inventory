@@ -127,6 +127,7 @@ export function App() {
             modelos={inventory.modelos}
             materiales={inventory.materiales}
             colores={inventory.colores}
+            propietarios={inventory.propietarios}
             searchQuery={inventory.searchQuery}
             setSearchQuery={inventory.setSearchQuery}
             selectedCategoria={inventory.selectedCategoria}
@@ -172,18 +173,27 @@ export function App() {
             modelos={inventory.modelos}
             materiales={inventory.materiales}
             colores={inventory.colores}
+            propietarios={inventory.propietarios}
             proveedores={inventory.proveedores}
 
             onCreateCategoria={inventory.createCategoria}
             onDeleteCategoria={inventory.deleteCategoria}
+            onRestaurarCategoria={inventory.restaurarCategoria}
             onCreateMarca={inventory.createMarca}
             onDeleteMarca={inventory.deleteMarca}
+            onRestaurarMarca={inventory.restaurarMarca}
             onCreateModelo={inventory.createModelo}
             onDeleteModelo={inventory.deleteModelo}
+            onRestaurarModelo={inventory.restaurarModelo}
             onCreateColor={inventory.createColor}
             onDeleteColor={inventory.deleteColor}
+            onRestaurarColor={inventory.restaurarColor}
             onCreateMaterial={inventory.createMaterial}
             onDeleteMaterial={inventory.deleteMaterial}
+            onRestaurarMaterial={inventory.restaurarMaterial}
+            onCreatePropietario={inventory.createPropietario}
+            onDeletePropietario={inventory.deletePropietario}
+            onRestaurarPropietario={inventory.restaurarPropietario}
             onCreateProveedor={inventory.createProveedor}
 
           />

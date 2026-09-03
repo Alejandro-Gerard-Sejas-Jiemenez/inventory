@@ -21,6 +21,7 @@ export function ProductoModal({
   modelos = [],
   materiales = [],
   colores = [],
+  propietarios = [],
 }) {
   const [formData, setFormData] = useState({
     idProducto: null,
@@ -32,6 +33,7 @@ export function ProductoModal({
     idModelo: '',
     idMaterial: '',
     idColor: '',
+    idPropietario: '',
     precioCompra: '',
     precioMayoreo: '',
     precioUnitario: '',
@@ -53,6 +55,7 @@ export function ProductoModal({
         idModelo: producto.modelo?.idModelo || '',
         idMaterial: producto.material?.idMaterial || '',
         idColor: producto.color?.idColor || '',
+        idPropietario: producto.propietario?.idPropietario || '',
         precioCompra: producto.precioCompra != null ? producto.precioCompra : '',
         precioMayoreo: producto.precioMayoreo != null ? producto.precioMayoreo : '',
         precioUnitario: producto.precioUnitario != null ? producto.precioUnitario : '',
@@ -70,6 +73,7 @@ export function ProductoModal({
         idModelo: '',
         idMaterial: '',
         idColor: '',
+        idPropietario: '',
         precioCompra: '',
         precioMayoreo: '',
         precioUnitario: '',
@@ -78,6 +82,8 @@ export function ProductoModal({
       });
     }
   }, [producto, categorias, isOpen]);
+
+  const filterActive = (list) => list.filter(item => item.activo !== false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -93,6 +99,7 @@ export function ProductoModal({
         idModelo: formData.idModelo ? Number(formData.idModelo) : null,
         idMaterial: formData.idMaterial ? Number(formData.idMaterial) : null,
         idColor: formData.idColor ? Number(formData.idColor) : null,
+        idPropietario: formData.idPropietario ? Number(formData.idPropietario) : null,
         precioCompra: formData.precioCompra !== '' ? Number(formData.precioCompra) : null,
         precioMayoreo: formData.precioMayoreo !== '' ? Number(formData.precioMayoreo) : null,
         precioUnitario: Number(formData.precioUnitario),
@@ -148,7 +155,7 @@ export function ProductoModal({
             value={formData.idCategoria}
             onChange={(e) => setFormData({ ...formData, idCategoria: e.target.value })}
             placeholder="(Seleccionar Categoría...)"
-            options={categorias.map((c) => ({
+            options={filterActive(categorias).map((c) => ({
               value: c.idCategoria,
               label: c.nombre,
             }))}
@@ -171,7 +178,7 @@ export function ProductoModal({
             value={formData.idModelo}
             onChange={(e) => setFormData({ ...formData, idModelo: e.target.value })}
             placeholder="(Sin modelo específico)"
-            options={modelos.map((m) => ({
+            options={filterActive(modelos).map((m) => ({
               value: m.idModelo,
               label: `${m.nombre} ${m.marca?.nombre ? `(${m.marca.nombre})` : ''}`,
             }))}
@@ -182,16 +189,28 @@ export function ProductoModal({
             value={formData.idMaterial}
             onChange={(e) => setFormData({ ...formData, idMaterial: e.target.value })}
             placeholder="(Sin material)"
-            options={materiales.map((mat) => ({
+            options={filterActive(materiales).map((mat) => ({
               value: mat.idMaterial,
               label: mat.nombre,
             }))}
+          />
+
+          <SelectField
+            label="Propietario / Dueño"
+            value={formData.idPropietario}
+            onChange={(e) => setFormData({ ...formData, idPropietario: e.target.value })}
+            placeholder="(Seleccionar propietario...)"
+            options={filterActive(propietarios).map((p) => ({
+              value: p.idPropietario,
+              label: p.nombre,
+            }))}
+            required
           />
         </div>
 
         {/* 4. Selector de Color */}
         <ColorSelectorSection
-          colores={colores}
+          colores={filterActive(colores)}
           selectedColorId={formData.idColor}
           onSelectColor={(cId) => setFormData({ ...formData, idColor: cId })}
         />

@@ -5,25 +5,22 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
-@Table(name = "categorias")
+@Table(name = "propietarios")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Categoria {
+public class Propietario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_categoria")
-    private Long idCategoria;
+    @Column(name = "id_propietario")
+    private Long idPropietario;
 
-    @NotBlank(message = "El nombre de la categoría es obligatorio")
+    @NotBlank(message = "El nombre del propietario es obligatorio")
     @Column(nullable = false, length = 100, unique = true)
     private String nombre;
-
-    @Column(length = 255)
-    private String descripcion;
 
     @Builder.Default
     @Column(nullable = false)

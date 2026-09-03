@@ -107,6 +107,8 @@ Cada cambio en el proyecto DEBE seguir estrictamente estas 4 fases en orden:
 - Correr tests con `./mvnw test` garantizando 100% de tests exitosos y 0 fallos.
 - Verificar interfaz en frontend o endpoints HTTP.
 - Registrar resultado detallado en `AUDIT_LOG.md` y actualizar `FILE_INDEX.md`.
+- **Registro de Errores Interno:** Cada vez que se encuentre y resuelva un error técnico en la sesión, el agente DEBE documentarlo obligatoriamente en el archivo de artefactos locales `registro_errores_solucionados.md`.
+- 🚫 **PROHIBICIÓN ESTRICTA:** Está TERMINANTEMENTE PROHIBIDO incluir el archivo `registro_errores_solucionados.md` en cualquier `git commit` o subirlo al repositorio remoto. Debe mantenerse estrictamente en local.
 - **Git Commit & Push (Obligatorio tras verificación):**
   - Formato **Conventional Commits**: `<tipo>(<alcance>): <descripción>`
   - Tipos: `feat:`, `fix:`, `refactor:`, `test:`, `style:`, `docs:`, `chore:`

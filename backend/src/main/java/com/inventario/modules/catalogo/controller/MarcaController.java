@@ -44,4 +44,10 @@ public class MarcaController {
         marcaService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/restaurar")
+    public ResponseEntity<Void> restaurar(@PathVariable Long id) {
+        marcaService.restaurar(id);
+        return ResponseEntity.ok().build();
+    }
 }

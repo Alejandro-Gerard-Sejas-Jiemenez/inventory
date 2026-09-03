@@ -43,4 +43,10 @@ public class ColorController {
         colorService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/restaurar")
+    public ResponseEntity<Void> restaurar(@PathVariable Long id) {
+        colorService.restaurar(id);
+        return ResponseEntity.ok().build();
+    }
 }

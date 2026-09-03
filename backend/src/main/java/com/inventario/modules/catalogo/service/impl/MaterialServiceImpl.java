@@ -57,9 +57,15 @@ public class MaterialServiceImpl implements MaterialService {
     @Transactional
     public void delete(Long id) {
         Material material = findById(id);
-        if (!productoRepository.findByMaterialIdMaterial(id).isEmpty()) {
-            throw new BadRequestException("No se puede eliminar el material porque contiene productos asociados.");
-        }
-        materialRepository.delete(material);
+        material.setActivo(false);
+        materialRepository.save(material);
+    }
+
+    @Override
+    @Transactional
+    public void restaurar(Long id) {
+        Material material = findById(id);
+        material.setActivo(true);
+        materialRepository.save(material);
     }
 }

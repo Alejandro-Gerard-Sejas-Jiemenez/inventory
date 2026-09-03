@@ -38,9 +38,16 @@ public class MarcaServiceImpl implements MarcaService {
     @Override
     @Transactional
     public void eliminar(Long id) {
-        if (!marcaRepository.existsById(id)) {
-            throw new ResourceNotFoundException("No se puede eliminar. Marca no encontrada con ID: " + id);
-        }
-        marcaRepository.deleteById(id);
+        Marca marca = obtenerPorId(id);
+        marca.setActivo(false);
+        marcaRepository.save(marca);
+    }
+
+    @Override
+    @Transactional
+    public void restaurar(Long id) {
+        Marca marca = obtenerPorId(id);
+        marca.setActivo(true);
+        marcaRepository.save(marca);
     }
 }

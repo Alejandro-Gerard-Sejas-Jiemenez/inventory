@@ -13,6 +13,7 @@ export function useInventoryData() {
   const [modelos, setModelos] = useState([]);
   const [materiales, setMateriales] = useState([]);
   const [colores, setColores] = useState([]);
+  const [propietarios, setPropietarios] = useState([]);
   const [proveedores, setProveedores] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [ventas, setVentas] = useState([]);
@@ -37,6 +38,7 @@ export function useInventoryData() {
         modelosData,
         materialesData,
         coloresData,
+        propietariosData,
         proveedoresData,
         usuariosData,
         ventasData,
@@ -50,6 +52,7 @@ export function useInventoryData() {
         api.getModelos().catch(() => []),
         api.getMateriales().catch(() => []),
         api.getColores().catch(() => []),
+        api.getPropietarios().catch(() => []),
         api.getProveedores().catch(() => []),
         api.getUsuarios().catch(() => []),
         api.getVentas().catch(() => []),
@@ -64,6 +67,7 @@ export function useInventoryData() {
       setModelos(modelosData);
       setMateriales(materialesData);
       setColores(coloresData);
+      setPropietarios(propietariosData);
       setProveedores(proveedoresData);
       setUsuarios(usuariosData);
       setVentas(ventasData);
@@ -148,10 +152,15 @@ export function useInventoryData() {
   };
 
   const deleteCategoria = async (id) => {
-    if (window.confirm('¿Eliminar esta categoría?')) {
+    if (window.confirm('¿Desactivar esta categoría?')) {
       await api.deleteCategoria(id);
       await loadData();
     }
+  };
+
+  const restaurarCategoria = async (id) => {
+    await api.restaurarCategoria(id);
+    await loadData();
   };
 
   const createMarca = async (marcaData) => {
@@ -160,10 +169,15 @@ export function useInventoryData() {
   };
 
   const deleteMarca = async (id) => {
-    if (window.confirm('¿Eliminar esta marca?')) {
+    if (window.confirm('¿Desactivar esta marca?')) {
       await api.deleteMarca(id);
       await loadData();
     }
+  };
+
+  const restaurarMarca = async (id) => {
+    await api.restaurarMarca(id);
+    await loadData();
   };
 
   const createModelo = async (modData) => {
@@ -172,10 +186,15 @@ export function useInventoryData() {
   };
 
   const deleteModelo = async (id) => {
-    if (window.confirm('¿Eliminar este modelo?')) {
+    if (window.confirm('¿Desactivar este modelo?')) {
       await api.deleteModelo(id);
       await loadData();
     }
+  };
+
+  const restaurarModelo = async (id) => {
+    await api.restaurarModelo(id);
+    await loadData();
   };
 
   const createColor = async (colData) => {
@@ -184,10 +203,15 @@ export function useInventoryData() {
   };
 
   const deleteColor = async (id) => {
-    if (window.confirm('¿Eliminar este color?')) {
+    if (window.confirm('¿Desactivar este color?')) {
       await api.deleteColor(id);
       await loadData();
     }
+  };
+
+  const restaurarColor = async (id) => {
+    await api.restaurarColor(id);
+    await loadData();
   };
 
   const createMaterial = async (matData) => {
@@ -196,10 +220,32 @@ export function useInventoryData() {
   };
 
   const deleteMaterial = async (id) => {
-    if (window.confirm('¿Eliminar este material?')) {
+    if (window.confirm('¿Desactivar este material?')) {
       await api.deleteMaterial(id);
       await loadData();
     }
+  };
+
+  const restaurarMaterial = async (id) => {
+    await api.restaurarMaterial(id);
+    await loadData();
+  };
+
+  const createPropietario = async (propData) => {
+    await api.createPropietario(propData);
+    await loadData();
+  };
+
+  const deletePropietario = async (id) => {
+    if (window.confirm('¿Desactivar este propietario?')) {
+      await api.deletePropietario(id);
+      await loadData();
+    }
+  };
+
+  const restaurarPropietario = async (id) => {
+    await api.restaurarPropietario(id);
+    await loadData();
   };
 
   return {
@@ -210,6 +256,7 @@ export function useInventoryData() {
     modelos,
     materiales,
     colores,
+    propietarios,
     proveedores,
     usuarios,
     ventas,
@@ -235,13 +282,21 @@ export function useInventoryData() {
     createProveedor,
     createCategoria,
     deleteCategoria,
+    restaurarCategoria,
     createMarca,
     deleteMarca,
+    restaurarMarca,
     createModelo,
     deleteModelo,
+    restaurarModelo,
     createColor,
     deleteColor,
+    restaurarColor,
     createMaterial,
     deleteMaterial,
+    restaurarMaterial,
+    createPropietario,
+    deletePropietario,
+    restaurarPropietario,
   };
 }

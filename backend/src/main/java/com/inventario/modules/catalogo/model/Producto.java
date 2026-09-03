@@ -40,6 +40,10 @@ public class Producto {
     @JoinColumn(name = "id_color")
     private Color color;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_propietario")
+    private Propietario propietario;
+
     @NotBlank(message = "El nombre del producto es obligatorio")
     @Column(nullable = false, length = 150)
     private String nombre;

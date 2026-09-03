@@ -9,4 +9,5 @@ public interface MarcaService {
     Marca obtenerPorId(Long id);
     Marca guardar(Marca marca);
     void eliminar(Long id);
+    void restaurar(Long id);
 }
