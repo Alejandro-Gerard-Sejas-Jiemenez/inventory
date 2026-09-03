@@ -36,6 +36,7 @@ public class DataInitializer implements CommandLineRunner {
     private final ProveedorRepository proveedorRepository;
     private final ProductoRepository productoRepository;
     private final ProductoService productoService;
+    private final ConfiguracionRepository configuracionRepository;
     private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
     private void executeSqlQuietly(String sql) {
