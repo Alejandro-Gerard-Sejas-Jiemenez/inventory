@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Tag, Palette, Box, Layers, FolderTree, Award, Users } from 'lucide-react';
+import { Tag, Palette, Box, Layers, FolderTree, Award, Users, Edit, X } from 'lucide-react';
 import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardTitle, CardBody } from '../components/common/Card';
 import { DataTable } from '../components/common/DataTable';
@@ -27,26 +27,33 @@ export function CatalogosView({
   colores = [],
   propietarios = [],
   onCreateCategoria,
+  onUpdateCategoria,
   onDeleteCategoria,
   onRestaurarCategoria,
   onCreateMarca,
+  onUpdateMarca,
   onDeleteMarca,
   onRestaurarMarca,
   onCreateModelo,
+  onUpdateModelo,
   onDeleteModelo,
   onRestaurarModelo,
   onCreateColor,
+  onUpdateColor,
   onDeleteColor,
   onRestaurarColor,
   onCreateMaterial,
+  onUpdateMaterial,
   onDeleteMaterial,
   onRestaurarMaterial,
   onCreatePropietario,
+  onUpdatePropietario,
   onDeletePropietario,
   onRestaurarPropietario,
 }) {
   const [activeSubTab, setActiveSubTab] = useState('categorias');
   const [showInactive, setShowInactive] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
 
   const filterActive = (list) => {
     return list.filter((item) => (showInactive ? item.activo === false : item.activo !== false));
@@ -61,12 +68,53 @@ export function CatalogosView({
     { id: 'propietarios', label: 'Propietarios', count: filterActive(propietarios).length, icon: Users },
   ];
 
-  const categoriaCols = useMemo(() => getCategoriaColumns(onDeleteCategoria, onRestaurarCategoria), [onDeleteCategoria, onRestaurarCategoria]);
-  const marcaCols = useMemo(() => getMarcaColumns(onDeleteMarca, onRestaurarMarca), [onDeleteMarca, onRestaurarMarca]);
-  const modeloCols = useMemo(() => getModeloColumns(onDeleteModelo, onRestaurarModelo), [onDeleteModelo, onRestaurarModelo]);
-  const materialCols = useMemo(() => getMaterialColumns(onDeleteMaterial, onRestaurarMaterial), [onDeleteMaterial, onRestaurarMaterial]);
-  const colorCols = useMemo(() => getColorColumns(onDeleteColor, onRestaurarColor), [onDeleteColor, onRestaurarColor]);
-  const propietarioCols = useMemo(() => getPropietarioColumns(onDeletePropietario, onRestaurarPropietario), [onDeletePropietario, onRestaurarPropietario]);
+  const handleEdit = (item) => {
+    setEditingItem(item);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingItem(null);
+  };
+
+  const handleSubmitForm = async (formData) => {
+    if (editingItem) {
+      if (activeSubTab === 'categorias' && onUpdateCategoria) {
+        await onUpdateCategoria(editingItem.idCategoria, formData);
+      } else if (activeSubTab === 'marcas' && onUpdateMarca) {
+        await onUpdateMarca(editingItem.idMarca, formData);
+      } else if (activeSubTab === 'modelos' && onUpdateModelo) {
+        await onUpdateModelo(editingItem.idModelo, formData);
+      } else if (activeSubTab === 'materiales' && onUpdateMaterial) {
+        await onUpdateMaterial(editingItem.idMaterial, formData);
+      } else if (activeSubTab === 'colores' && onUpdateColor) {
+        await onUpdateColor(editingItem.idColor, formData);
+      } else if (activeSubTab === 'propietarios' && onUpdatePropietario) {
+        await onUpdatePropietario(editingItem.idPropietario, formData);
+      }
+      setEditingItem(null);
+    } else {
+      if (activeSubTab === 'categorias' && onCreateCategoria) {
+        await onCreateCategoria(formData);
+      } else if (activeSubTab === 'marcas' && onCreateMarca) {
+        await onCreateMarca(formData);
+      } else if (activeSubTab === 'modelos' && onCreateModelo) {
+        await onCreateModelo(formData);
+      } else if (activeSubTab === 'materiales' && onCreateMaterial) {
+        await onCreateMaterial(formData);
+      } else if (activeSubTab === 'colores' && onCreateColor) {
+        await onCreateColor(formData);
+      } else if (activeSubTab === 'propietarios' && onCreatePropietario) {
+        await onCreatePropietario(formData);
+      }
+    }
+  };
+
+  const categoriaCols = useMemo(() => getCategoriaColumns(onDeleteCategoria, onRestaurarCategoria, handleEdit), [onDeleteCategoria, onRestaurarCategoria]);
+  const marcaCols = useMemo(() => getMarcaColumns(onDeleteMarca, onRestaurarMarca, handleEdit), [onDeleteMarca, onRestaurarMarca]);
+  const modeloCols = useMemo(() => getModeloColumns(onDeleteModelo, onRestaurarModelo, handleEdit), [onDeleteModelo, onRestaurarModelo]);
+  const materialCols = useMemo(() => getMaterialColumns(onDeleteMaterial, onRestaurarMaterial, handleEdit), [onDeleteMaterial, onRestaurarMaterial]);
+  const colorCols = useMemo(() => getColorColumns(onDeleteColor, onRestaurarColor, handleEdit), [onDeleteColor, onRestaurarColor]);
+  const propietarioCols = useMemo(() => getPropietarioColumns(onDeletePropietario, onRestaurarPropietario, handleEdit), [onDeletePropietario, onRestaurarPropietario]);
 
   return (
     <div className="view-container">
@@ -80,18 +128,38 @@ export function CatalogosView({
                 type="checkbox" 
                 id="showInactive" 
                 checked={showInactive} 
-                onChange={(e) => setShowInactive(e.target.checked)} 
+                onChange={(e) => {
+                  setShowInactive(e.target.checked);
+                  setEditingItem(null);
+                }} 
               />
               <label htmlFor="showInactive">Ver Inactivos</label>
             </div>
-            <Tabs tabs={tabsConfig} activeTab={activeSubTab} onChange={setActiveSubTab} />
+            <Tabs 
+              tabs={tabsConfig} 
+              activeTab={activeSubTab} 
+              onChange={(tab) => {
+                setActiveSubTab(tab);
+                setEditingItem(null);
+              }} 
+            />
           </div>
         }
       />
 
       {activeSubTab === 'categorias' && (
         <div className="grid-split-form">
-          {!showInactive && <NuevaCategoriaForm onSubmit={onCreateCategoria} />}
+          {!showInactive && (
+            <div>
+              {editingItem && (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', background: 'var(--brand-gold-bg)', padding: '0.5rem 0.8rem', borderRadius: 'var(--radius-md)' }}>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--brand-gold)', fontWeight: 700 }}>Modo Edición: {editingItem.nombre}</span>
+                  <button type="button" onClick={handleCancelEdit} style={{ background: 'none', border: 'none', color: 'var(--text-white)', cursor: 'pointer' }}><X size={14} /></button>
+                </div>
+              )}
+              <NuevaCategoriaForm onSubmit={handleSubmitForm} initialData={editingItem} key={editingItem?.idCategoria || 'new-cat'} />
+            </div>
+          )}
           <Card style={{ gridColumn: showInactive ? '1 / -1' : 'auto' }}>
             <CardTitle icon={FolderTree} subtitle={showInactive ? "Categorías desactivadas" : "Rubros y agrupaciones de productos"}>
               {showInactive ? "Categorías Inactivas" : "Listado de Categorías"}
@@ -100,10 +168,7 @@ export function CatalogosView({
               <DataTable
                 columns={categoriaCols}
                 data={filterActive(categorias)}
-                keyExtractor={(cat) => cat.idCategoria}
-                showSearch={true}
-                searchPlaceholder="Buscar categoría..."
-                emptyMessage={showInactive ? "No hay categorías inactivas." : "No hay categorías registradas aún."}
+                emptyMessage="No hay categorías registradas"
               />
             </CardBody>
           </Card>
@@ -112,19 +177,26 @@ export function CatalogosView({
 
       {activeSubTab === 'marcas' && (
         <div className="grid-split-form">
-          {!showInactive && <NuevaMarcaForm onSubmit={onCreateMarca} />}
+          {!showInactive && (
+            <div>
+              {editingItem && (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', background: 'var(--brand-gold-bg)', padding: '0.5rem 0.8rem', borderRadius: 'var(--radius-md)' }}>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--brand-gold)', fontWeight: 700 }}>Modo Edición: {editingItem.nombre}</span>
+                  <button type="button" onClick={handleCancelEdit} style={{ background: 'none', border: 'none', color: 'var(--text-white)', cursor: 'pointer' }}><X size={14} /></button>
+                </div>
+              )}
+              <NuevaMarcaForm onSubmit={handleSubmitForm} initialData={editingItem} key={editingItem?.idMarca || 'new-mar'} />
+            </div>
+          )}
           <Card style={{ gridColumn: showInactive ? '1 / -1' : 'auto' }}>
-            <CardTitle icon={Award} subtitle={showInactive ? "Marcas desactivadas" : "Fabricantes y marcas registradas"}>
+            <CardTitle icon={Award} subtitle={showInactive ? "Marcas desactivadas" : "Fabricantes y marcas comerciales"}>
               {showInactive ? "Marcas Inactivas" : "Listado de Marcas"}
             </CardTitle>
             <CardBody>
               <DataTable
                 columns={marcaCols}
                 data={filterActive(marcas)}
-                keyExtractor={(m) => m.idMarca}
-                showSearch={true}
-                searchPlaceholder="Buscar marca..."
-                emptyMessage={showInactive ? "No hay marcas inactivas." : "No hay marcas registradas aún."}
+                emptyMessage="No hay marcas registradas"
               />
             </CardBody>
           </Card>
@@ -134,24 +206,25 @@ export function CatalogosView({
       {activeSubTab === 'modelos' && (
         <div className="grid-split-form">
           {!showInactive && (
-            <NuevoModeloForm
-              marcas={marcas.filter(m => m.activo !== false)}
-              onSubmit={onCreateModelo}
-              onCreateMarca={onCreateMarca}
-            />
+            <div>
+              {editingItem && (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', background: 'var(--brand-gold-bg)', padding: '0.5rem 0.8rem', borderRadius: 'var(--radius-md)' }}>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--brand-gold)', fontWeight: 700 }}>Modo Edición: {editingItem.nombre}</span>
+                  <button type="button" onClick={handleCancelEdit} style={{ background: 'none', border: 'none', color: 'var(--text-white)', cursor: 'pointer' }}><X size={14} /></button>
+                </div>
+              )}
+              <NuevoModeloForm onSubmit={handleSubmitForm} marcas={marcas} initialData={editingItem} key={editingItem?.idModelo || 'new-mod'} />
+            </div>
           )}
           <Card style={{ gridColumn: showInactive ? '1 / -1' : 'auto' }}>
-            <CardTitle icon={Layers} subtitle={showInactive ? "Modelos desactivados" : "Modelos activos vinculados a su marca"}>
+            <CardTitle icon={Box} subtitle={showInactive ? "Modelos desactivados" : "Dispositivos y versiones soportadas"}>
               {showInactive ? "Modelos Inactivos" : "Listado de Modelos"}
             </CardTitle>
             <CardBody>
               <DataTable
                 columns={modeloCols}
                 data={filterActive(modelos)}
-                keyExtractor={(m) => m.idModelo}
-                showSearch={true}
-                searchPlaceholder="Buscar modelo o marca..."
-                emptyMessage={showInactive ? "No hay modelos inactivos." : "No hay modelos registrados aún."}
+                emptyMessage="No hay modelos registrados"
               />
             </CardBody>
           </Card>
@@ -160,19 +233,26 @@ export function CatalogosView({
 
       {activeSubTab === 'materiales' && (
         <div className="grid-split-form">
-          {!showInactive && <NuevoMaterialForm onSubmit={onCreateMaterial} />}
+          {!showInactive && (
+            <div>
+              {editingItem && (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', background: 'var(--brand-gold-bg)', padding: '0.5rem 0.8rem', borderRadius: 'var(--radius-md)' }}>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--brand-gold)', fontWeight: 700 }}>Modo Edición: {editingItem.nombre}</span>
+                  <button type="button" onClick={handleCancelEdit} style={{ background: 'none', border: 'none', color: 'var(--text-white)', cursor: 'pointer' }}><X size={14} /></button>
+                </div>
+              )}
+              <NuevoMaterialForm onSubmit={handleSubmitForm} initialData={editingItem} key={editingItem?.idMaterial || 'new-mat'} />
+            </div>
+          )}
           <Card style={{ gridColumn: showInactive ? '1 / -1' : 'auto' }}>
-            <CardTitle icon={Layers} subtitle={showInactive ? "Materiales desactivados" : "Materiales activos en el catálogo"}>
+            <CardTitle icon={Tag} subtitle={showInactive ? "Materiales desactivados" : "Composición de productos (Silicona, Cuero, TPU...)"}>
               {showInactive ? "Materiales Inactivos" : "Listado de Materiales"}
             </CardTitle>
             <CardBody>
               <DataTable
                 columns={materialCols}
                 data={filterActive(materiales)}
-                keyExtractor={(m) => m.idMaterial}
-                showSearch={true}
-                searchPlaceholder="Buscar material..."
-                emptyMessage={showInactive ? "No hay materiales inactivos." : "No hay materiales registrados aún."}
+                emptyMessage="No hay materiales registrados"
               />
             </CardBody>
           </Card>
@@ -181,19 +261,26 @@ export function CatalogosView({
 
       {activeSubTab === 'colores' && (
         <div className="grid-split-form">
-          {!showInactive && <NuevoColorForm onSubmit={onCreateColor} />}
+          {!showInactive && (
+            <div>
+              {editingItem && (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', background: 'var(--brand-gold-bg)', padding: '0.5rem 0.8rem', borderRadius: 'var(--radius-md)' }}>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--brand-gold)', fontWeight: 700 }}>Modo Edición: {editingItem.nombre}</span>
+                  <button type="button" onClick={handleCancelEdit} style={{ background: 'none', border: 'none', color: 'var(--text-white)', cursor: 'pointer' }}><X size={14} /></button>
+                </div>
+              )}
+              <NuevoColorForm onSubmit={handleSubmitForm} initialData={editingItem} key={editingItem?.idColor || 'new-col'} />
+            </div>
+          )}
           <Card style={{ gridColumn: showInactive ? '1 / -1' : 'auto' }}>
-            <CardTitle icon={Palette} subtitle={showInactive ? "Colores desactivados" : "Colores disponibles para productos"}>
+            <CardTitle icon={Palette} subtitle={showInactive ? "Colores desactivados" : "Gama cromática de variantes"}>
               {showInactive ? "Colores Inactivos" : "Listado de Colores"}
             </CardTitle>
             <CardBody>
               <DataTable
                 columns={colorCols}
                 data={filterActive(colores)}
-                keyExtractor={(c) => c.idColor}
-                showSearch={true}
-                searchPlaceholder="Buscar color o código..."
-                emptyMessage={showInactive ? "No hay colores inactivos." : "No hay colores registrados aún."}
+                emptyMessage="No hay colores registrados"
               />
             </CardBody>
           </Card>
@@ -202,19 +289,26 @@ export function CatalogosView({
 
       {activeSubTab === 'propietarios' && (
         <div className="grid-split-form">
-          {!showInactive && <NuevoPropietarioForm onSubmit={onCreatePropietario} />}
+          {!showInactive && (
+            <div>
+              {editingItem && (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', background: 'var(--brand-gold-bg)', padding: '0.5rem 0.8rem', borderRadius: 'var(--radius-md)' }}>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--brand-gold)', fontWeight: 700 }}>Modo Edición: {editingItem.nombre}</span>
+                  <button type="button" onClick={handleCancelEdit} style={{ background: 'none', border: 'none', color: 'var(--text-white)', cursor: 'pointer' }}><X size={14} /></button>
+                </div>
+              )}
+              <NuevoPropietarioForm onSubmit={handleSubmitForm} initialData={editingItem} key={editingItem?.idPropietario || 'new-prop'} />
+            </div>
+          )}
           <Card style={{ gridColumn: showInactive ? '1 / -1' : 'auto' }}>
-            <CardTitle icon={Users} subtitle={showInactive ? "Propietarios desactivados" : "Dueños e inversores del inventario"}>
+            <CardTitle icon={Users} subtitle={showInactive ? "Propietarios desactivados" : "Dueños de consignación de productos"}>
               {showInactive ? "Propietarios Inactivos" : "Listado de Propietarios"}
             </CardTitle>
             <CardBody>
               <DataTable
                 columns={propietarioCols}
                 data={filterActive(propietarios)}
-                keyExtractor={(p) => p.idPropietario}
-                showSearch={true}
-                searchPlaceholder="Buscar propietario..."
-                emptyMessage={showInactive ? "No hay propietarios inactivos." : "No hay propietarios registrados aún."}
+                emptyMessage="No hay propietarios registrados"
               />
             </CardBody>
           </Card>

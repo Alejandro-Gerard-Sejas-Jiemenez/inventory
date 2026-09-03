@@ -32,7 +32,7 @@ export function ProductoModal({
     idProducto: null,
     nombre: '',
     descripcion: '',
-    imagenUrl: '',
+    imagenesUrls: [],
     idCategoria: '',
     idMaterial: '',
     idPropietario: '',
@@ -48,11 +48,18 @@ export function ProductoModal({
 
   useEffect(() => {
     if (producto) {
+      let imgs = [];
+      if (producto.imagenes && producto.imagenes.length > 0) {
+        imgs = producto.imagenes.map(i => typeof i === 'string' ? i : i.url).filter(Boolean);
+      } else if (producto.imagenUrl) {
+        imgs = [producto.imagenUrl];
+      }
+
       setFormData({
         idProducto: producto.idProducto,
         nombre: producto.nombre || '',
         descripcion: producto.descripcion || '',
-        imagenUrl: producto.imagenUrl || '',
+        imagenesUrls: imgs,
         idCategoria: producto.categoria?.idCategoria || '',
         idMaterial: producto.material?.idMaterial || '',
         idPropietario: producto.propietario?.idPropietario || '',
@@ -73,7 +80,7 @@ export function ProductoModal({
         idProducto: null,
         nombre: '',
         descripcion: '',
-        imagenUrl: '',
+        imagenesUrls: [],
         idCategoria: categorias[0]?.idCategoria || '',
         idMaterial: '',
         idPropietario: '',
@@ -143,7 +150,8 @@ export function ProductoModal({
         idProducto: formData.idProducto,
         nombre: formData.nombre.trim(),
         descripcion: formData.descripcion?.trim() || null,
-        imagenUrl: formData.imagenUrl?.trim() || null,
+        imagenUrl: formData.imagenesUrls[0] || null,
+        imagenesUrls: formData.imagenesUrls.filter(Boolean),
         idCategoria: Number(formData.idCategoria),
         idMaterial: formData.idMaterial ? Number(formData.idMaterial) : null,
         idPropietario: formData.idPropietario ? Number(formData.idPropietario) : null,
@@ -195,9 +203,8 @@ export function ProductoModal({
     >
       <form id="producto-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
         <ProductoFotoUploader
-          imagenUrl={formData.imagenUrl}
-          onImageChange={(newUrl) => setFormData(prev => ({ ...prev, imagenUrl: newUrl }))}
-          onRemoveImage={() => setFormData(prev => ({ ...prev, imagenUrl: '' }))}
+          imagenesUrls={formData.imagenesUrls}
+          onImagesChange={(newImgs) => setFormData(prev => ({ ...prev, imagenesUrls: newImgs }))}
         />
 
         <ProductoGeneralFields

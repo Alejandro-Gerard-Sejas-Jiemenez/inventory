@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
-import { Tag, Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Tag, Plus, Save } from 'lucide-react';
 import { Card, CardTitle, CardBody } from '../common/Card';
 import { InputField } from '../common/InputField';
 import { TextAreaField } from '../common/TextAreaField';
 import { Button } from '../common/Button';
 
-export function NuevoMaterialForm({ onSubmit }) {
+export function NuevoMaterialForm({ onSubmit, initialData }) {
   const [nuevoMaterial, setNuevoMaterial] = useState({ nombre: '', descripcion: '' });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (initialData) {
+      setNuevoMaterial({
+        nombre: initialData.nombre || '',
+        descripcion: initialData.descripcion || '',
+      });
+    } else {
+      setNuevoMaterial({ nombre: '', descripcion: '' });
+    }
+  }, [initialData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,7 +26,9 @@ export function NuevoMaterialForm({ onSubmit }) {
     try {
       setLoading(true);
       await onSubmit(nuevoMaterial);
-      setNuevoMaterial({ nombre: '', descripcion: '' });
+      if (!initialData) {
+        setNuevoMaterial({ nombre: '', descripcion: '' });
+      }
     } finally {
       setLoading(false);
     }
@@ -23,8 +36,8 @@ export function NuevoMaterialForm({ onSubmit }) {
 
   return (
     <Card>
-      <CardTitle icon={Tag} subtitle="Registrar nuevo tipo de material">
-        Nuevo Material
+      <CardTitle icon={Tag} subtitle={initialData ? "Editar material existente" : "Registrar nuevo tipo de material"}>
+        {initialData ? 'Editar Material' : 'Nuevo Material'}
       </CardTitle>
       <CardBody>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -42,8 +55,8 @@ export function NuevoMaterialForm({ onSubmit }) {
             value={nuevoMaterial.descripcion}
             onChange={(e) => setNuevoMaterial({ ...nuevoMaterial, descripcion: e.target.value })}
           />
-          <Button type="submit" variant="brand" icon={Plus} loading={loading}>
-            Guardar Material
+          <Button type="submit" variant="brand" icon={initialData ? Save : Plus} loading={loading}>
+            {initialData ? 'Guardar Cambios' : 'Guardar Material'}
           </Button>
         </form>
       </CardBody>

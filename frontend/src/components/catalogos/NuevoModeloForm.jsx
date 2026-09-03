@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Box, Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Box, Plus, Save } from 'lucide-react';
 import { Card, CardTitle, CardBody } from '../common/Card';
 import { InputField } from '../common/InputField';
 import { SelectField } from '../common/SelectField';
@@ -7,10 +7,22 @@ import { TextAreaField } from '../common/TextAreaField';
 import { Button } from '../common/Button';
 import { QuickCreateModal } from '../common/QuickCreateModal';
 
-export function NuevoModeloForm({ marcas = [], onSubmit, onCreateMarca }) {
+export function NuevoModeloForm({ marcas = [], onSubmit, onCreateMarca, initialData }) {
   const [nuevoModelo, setNuevoModelo] = useState({ nombre: '', idMarca: '', descripcion: '' });
   const [loading, setLoading] = useState(false);
   const [showQuickMarca, setShowQuickMarca] = useState(false);
+
+  useEffect(() => {
+    if (initialData) {
+      setNuevoModelo({
+        nombre: initialData.nombre || '',
+        idMarca: initialData.marca?.idMarca || '',
+        descripcion: initialData.descripcion || '',
+      });
+    } else {
+      setNuevoModelo({ nombre: '', idMarca: '', descripcion: '' });
+    }
+  }, [initialData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,7 +35,9 @@ export function NuevoModeloForm({ marcas = [], onSubmit, onCreateMarca }) {
         marca: nuevoModelo.idMarca ? { idMarca: parseInt(nuevoModelo.idMarca, 10) } : null,
       };
       await onSubmit(payload);
-      setNuevoModelo({ nombre: '', idMarca: '', descripcion: '' });
+      if (!initialData) {
+        setNuevoModelo({ nombre: '', idMarca: '', descripcion: '' });
+      }
     } finally {
       setLoading(false);
     }
@@ -38,8 +52,8 @@ export function NuevoModeloForm({ marcas = [], onSubmit, onCreateMarca }) {
 
   return (
     <Card>
-      <CardTitle icon={Box} subtitle="Registrar nueva variante o modelo de una marca">
-        Nuevo Modelo
+      <CardTitle icon={Box} subtitle={initialData ? "Editar variante o modelo existente" : "Registrar nueva variante o modelo de una marca"}>
+        {initialData ? 'Editar Modelo' : 'Nuevo Modelo'}
       </CardTitle>
       <CardBody>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -95,8 +109,8 @@ export function NuevoModeloForm({ marcas = [], onSubmit, onCreateMarca }) {
             onChange={(e) => setNuevoModelo({ ...nuevoModelo, descripcion: e.target.value })}
           />
 
-          <Button type="submit" variant="brand" icon={Plus} loading={loading}>
-            Guardar Modelo
+          <Button type="submit" variant="brand" icon={initialData ? Save : Plus} loading={loading}>
+            {initialData ? 'Guardar Cambios' : 'Guardar Modelo'}
           </Button>
         </form>
 

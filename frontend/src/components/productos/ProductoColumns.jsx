@@ -17,37 +17,40 @@ export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete, onDupli
     {
       header: 'Producto',
       accessor: 'nombre',
-      render: (p) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          {p.imagenUrl ? (
-            <img
-              src={p.imagenUrl}
-              alt={p.nombre}
-              style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: 'var(--radius-sm)',
-                objectFit: 'cover',
-                border: '1px solid var(--border-color)',
-                backgroundColor: 'var(--bg-secondary)',
-                flexShrink: 0,
-              }}
-              onError={(e) => {
-                e.target.style.display = 'none';
-              }}
-            />
-          ) : null}
-          <div>
-            <strong style={{ color: 'var(--text-white)' }}>{p.nombre}</strong>
-            {p.categoria?.nombre && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.2rem' }}>
-                <FolderTree size={12} style={{ color: 'var(--brand-gold)' }} />
-                <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>{p.categoria.nombre}</span>
-              </div>
-            )}
+      render: (p) => {
+        const mainImg = (p.imagenes && p.imagenes.length > 0 && p.imagenes[0]?.url) || p.imagenUrl;
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            {mainImg ? (
+              <img
+                src={mainImg}
+                alt={p.nombre}
+                style={{
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: 'var(--radius-sm)',
+                  objectFit: 'cover',
+                  border: '1px solid var(--border-color)',
+                  backgroundColor: 'var(--bg-secondary)',
+                  flexShrink: 0,
+                }}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
+              />
+            ) : null}
+            <div>
+              <strong style={{ color: 'var(--text-white)' }}>{p.nombre}</strong>
+              {p.categoria?.nombre && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.2rem' }}>
+                  <FolderTree size={12} style={{ color: 'var(--brand-gold)' }} />
+                  <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>{p.categoria.nombre}</span>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      ),
+        );
+      },
     },
     {
       header: 'Detalles (Variantes)',
@@ -140,9 +143,17 @@ export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete, onDupli
     {
       header: 'Acciones',
       align: 'right',
-      width: '130px',
+      width: '140px',
       render: (p) => (
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.3rem' }}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onOpenMovimiento(p)}
+            title="Ajuste Rápido de Stock (Entrada / Salida)"
+            icon={ArrowUpDown}
+            style={{ color: 'var(--brand-gold)' }}
+          />
           <Button
             variant="ghost"
             size="sm"

@@ -16,6 +16,8 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
     setTimeout(() => setAddedAnimation(false), 800);
   };
 
+  const mainImage = (producto.imagenes && producto.imagenes.length > 0 && producto.imagenes[0]?.url) || producto.imagenUrl;
+
   return (
     <div
       style={{
@@ -39,9 +41,9 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
           overflow: 'hidden',
         }}
       >
-        {producto.imagenUrl ? (
+        {mainImage ? (
           <img
-            src={producto.imagenUrl}
+            src={mainImage}
             alt={producto.nombre}
             style={{
               position: 'absolute',

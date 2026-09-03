@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
-import { Award, Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Award, Plus, Save } from 'lucide-react';
 import { Card, CardTitle, CardBody } from '../common/Card';
 import { InputField } from '../common/InputField';
 import { Button } from '../common/Button';
 
-export function NuevaMarcaForm({ onSubmit }) {
+export function NuevaMarcaForm({ onSubmit, initialData }) {
   const [nuevaMarca, setNuevaMarca] = useState({ nombre: '' });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (initialData) {
+      setNuevaMarca({ nombre: initialData.nombre || '' });
+    } else {
+      setNuevaMarca({ nombre: '' });
+    }
+  }, [initialData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,7 +22,9 @@ export function NuevaMarcaForm({ onSubmit }) {
     try {
       setLoading(true);
       await onSubmit(nuevaMarca);
-      setNuevaMarca({ nombre: '' });
+      if (!initialData) {
+        setNuevaMarca({ nombre: '' });
+      }
     } finally {
       setLoading(false);
     }
@@ -22,8 +32,8 @@ export function NuevaMarcaForm({ onSubmit }) {
 
   return (
     <Card>
-      <CardTitle icon={Award} subtitle="Registrar nueva marca o fabricante">
-        Nueva Marca
+      <CardTitle icon={Award} subtitle={initialData ? "Editar marca o fabricante existente" : "Registrar nueva marca o fabricante"}>
+        {initialData ? 'Editar Marca' : 'Nueva Marca'}
       </CardTitle>
       <CardBody>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -34,8 +44,8 @@ export function NuevaMarcaForm({ onSubmit }) {
             onChange={(e) => setNuevaMarca({ ...nuevaMarca, nombre: e.target.value })}
             required
           />
-          <Button type="submit" variant="brand" icon={Plus} loading={loading}>
-            Guardar Marca
+          <Button type="submit" variant="brand" icon={initialData ? Save : Plus} loading={loading}>
+            {initialData ? 'Guardar Cambios' : 'Guardar Marca'}
           </Button>
         </form>
       </CardBody>

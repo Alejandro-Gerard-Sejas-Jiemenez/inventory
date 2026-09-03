@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trash2, RefreshCw } from 'lucide-react';
+import { Edit, Trash2, RefreshCw } from 'lucide-react';
 import { Button } from '../common/Button';
 import { Badge } from '../common/Badge';
 
@@ -7,8 +7,19 @@ export const renderStatus = (isActive) => (
   <Badge variant={isActive ? 'success' : 'neutral'}>{isActive ? 'Activo' : 'Inactivo'}</Badge>
 );
 
-export const renderActions = (id, isActive, onDelete, onRestore) => (
-  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+export const renderActions = (id, isActive, onDelete, onRestore, onEdit, item) => (
+  <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
+    {isActive && onEdit && (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => onEdit(item)}
+        style={{ color: 'var(--brand-gold)' }}
+        icon={Edit}
+        aria-label="Editar"
+        title="Editar"
+      />
+    )}
     {isActive ? (
       <Button
         variant="ghost"
@@ -17,6 +28,7 @@ export const renderActions = (id, isActive, onDelete, onRestore) => (
         style={{ color: 'var(--brand-red)' }}
         icon={Trash2}
         aria-label="Desactivar"
+        title="Desactivar"
       />
     ) : (
       <Button
@@ -26,12 +38,13 @@ export const renderActions = (id, isActive, onDelete, onRestore) => (
         style={{ color: 'var(--brand-green)' }}
         icon={RefreshCw}
         aria-label="Restaurar"
+        title="Restaurar"
       />
     )}
   </div>
 );
 
-export function getCategoriaColumns(onDelete, onRestore) {
+export function getCategoriaColumns(onDelete, onRestore, onEdit) {
   return [
     { header: 'ID', accessor: 'idCategoria', width: '70px', render: (cat) => <span style={{ color: 'var(--text-muted)' }}>#{cat.idCategoria}</span> },
     { header: 'Categoría', accessor: 'nombre', render: (cat) => <strong style={{ color: 'var(--text-white)' }}>{cat.nombre}</strong> },
@@ -40,13 +53,13 @@ export function getCategoriaColumns(onDelete, onRestore) {
     {
       header: 'Acción',
       align: 'right',
-      width: '100px',
-      render: (cat) => renderActions(cat.idCategoria, cat.activo !== false, onDelete, onRestore),
+      width: '110px',
+      render: (cat) => renderActions(cat.idCategoria, cat.activo !== false, onDelete, onRestore, onEdit, cat),
     },
   ];
 }
 
-export function getMarcaColumns(onDelete, onRestore) {
+export function getMarcaColumns(onDelete, onRestore, onEdit) {
   return [
     { header: 'ID', accessor: 'idMarca', width: '70px', render: (m) => <span style={{ color: 'var(--text-muted)' }}>#{m.idMarca}</span> },
     { header: 'Marca / Fabricante', accessor: 'nombre', render: (m) => <strong style={{ color: 'var(--text-white)' }}>{m.nombre}</strong> },
@@ -54,13 +67,13 @@ export function getMarcaColumns(onDelete, onRestore) {
     {
       header: 'Acción',
       align: 'right',
-      width: '100px',
-      render: (m) => renderActions(m.idMarca, m.activo !== false, onDelete, onRestore),
+      width: '110px',
+      render: (m) => renderActions(m.idMarca, m.activo !== false, onDelete, onRestore, onEdit, m),
     },
   ];
 }
 
-export function getModeloColumns(onDelete, onRestore) {
+export function getModeloColumns(onDelete, onRestore, onEdit) {
   return [
     { header: 'ID', accessor: 'idModelo', width: '70px', render: (m) => <span style={{ color: 'var(--text-muted)' }}>#{m.idModelo}</span> },
     { header: 'Modelo', accessor: 'nombre', render: (m) => <strong style={{ color: 'var(--text-white)' }}>{m.nombre}</strong> },
@@ -73,13 +86,13 @@ export function getModeloColumns(onDelete, onRestore) {
     {
       header: 'Acción',
       align: 'right',
-      width: '100px',
-      render: (m) => renderActions(m.idModelo, m.activo !== false, onDelete, onRestore),
+      width: '110px',
+      render: (m) => renderActions(m.idModelo, m.activo !== false, onDelete, onRestore, onEdit, m),
     },
   ];
 }
 
-export function getMaterialColumns(onDelete, onRestore) {
+export function getMaterialColumns(onDelete, onRestore, onEdit) {
   return [
     { header: 'ID', accessor: 'idMaterial', width: '70px', render: (m) => <span style={{ color: 'var(--text-muted)' }}>#{m.idMaterial}</span> },
     { header: 'Material', accessor: 'nombre', render: (m) => <strong style={{ color: 'var(--text-white)' }}>{m.nombre}</strong> },
@@ -88,13 +101,13 @@ export function getMaterialColumns(onDelete, onRestore) {
     {
       header: 'Acción',
       align: 'right',
-      width: '100px',
-      render: (m) => renderActions(m.idMaterial, m.activo !== false, onDelete, onRestore),
+      width: '110px',
+      render: (m) => renderActions(m.idMaterial, m.activo !== false, onDelete, onRestore, onEdit, m),
     },
   ];
 }
 
-export function getColorColumns(onDelete, onRestore) {
+export function getColorColumns(onDelete, onRestore, onEdit) {
   return [
     { header: 'ID', accessor: 'idColor', width: '70px', render: (c) => <span style={{ color: 'var(--text-muted)' }}>#{c.idColor}</span> },
     {
@@ -119,13 +132,13 @@ export function getColorColumns(onDelete, onRestore) {
     {
       header: 'Acción',
       align: 'right',
-      width: '100px',
-      render: (c) => renderActions(c.idColor, c.activo !== false, onDelete, onRestore),
+      width: '110px',
+      render: (c) => renderActions(c.idColor, c.activo !== false, onDelete, onRestore, onEdit, c),
     },
   ];
 }
 
-export function getPropietarioColumns(onDelete, onRestore) {
+export function getPropietarioColumns(onDelete, onRestore, onEdit) {
   return [
     { header: 'ID', accessor: 'idPropietario', width: '70px', render: (p) => <span style={{ color: 'var(--text-muted)' }}>#{p.idPropietario}</span> },
     { header: 'Propietario / Dueño', accessor: 'nombre', render: (p) => <strong style={{ color: 'var(--text-white)' }}>{p.nombre}</strong> },
@@ -133,8 +146,8 @@ export function getPropietarioColumns(onDelete, onRestore) {
     {
       header: 'Acción',
       align: 'right',
-      width: '100px',
-      render: (p) => renderActions(p.idPropietario, p.activo !== false, onDelete, onRestore),
+      width: '110px',
+      render: (p) => renderActions(p.idPropietario, p.activo !== false, onDelete, onRestore, onEdit, p),
     },
   ];
 }

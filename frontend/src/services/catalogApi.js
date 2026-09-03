@@ -25,18 +25,21 @@ export const catalogApi = {
   // Colores
   getColores: () => http.get('/colores'),
   createColor: (data) => http.post('/colores', data),
+  updateColor: (id, data) => http.put(`/colores/${id}`, data),
   deleteColor: (id) => http.delete(`/colores/${id}`),
   restaurarColor: (id) => http.put(`/colores/${id}/restaurar`),
 
   // Materiales
   getMateriales: () => http.get('/materiales'),
   createMaterial: (data) => http.post('/materiales', data),
+  updateMaterial: (id, data) => http.put(`/materiales/${id}`, data),
   deleteMaterial: (id) => http.delete(`/materiales/${id}`),
   restaurarMaterial: (id) => http.put(`/materiales/${id}/restaurar`),
 
   // Propietarios
   getPropietarios: () => http.get('/propietarios'),
   createPropietario: (data) => http.post('/propietarios', data),
+  updatePropietario: (id, data) => http.put(`/propietarios/${id}`, data),
   deletePropietario: (id) => http.delete(`/propietarios/${id}`),
   restaurarPropietario: (id) => http.put(`/propietarios/${id}/restaurar`),
 

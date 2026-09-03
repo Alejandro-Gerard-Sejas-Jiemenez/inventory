@@ -1,14 +1,25 @@
-import React, { useState } from 'react';
-import { Palette, Plus, Sparkles, Sliders } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Palette, Plus, Sparkles, Sliders, Save } from 'lucide-react';
 import { Card, CardTitle, CardBody } from '../common/Card';
 import { InputField } from '../common/InputField';
 import { Button } from '../common/Button';
 import { COLOR_PRESETS } from '../../data/colorPresets';
 
-export function NuevoColorForm({ onSubmit }) {
+export function NuevoColorForm({ onSubmit, initialData }) {
   const [nuevoColor, setNuevoColor] = useState({ nombre: 'Negro Medianoche', codigoHex: '#111827' });
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (initialData) {
+      setNuevoColor({
+        nombre: initialData.nombre || '',
+        codigoHex: initialData.codigoHex || '#111827',
+      });
+    } else {
+      setNuevoColor({ nombre: 'Negro Medianoche', codigoHex: '#111827' });
+    }
+  }, [initialData]);
 
   const handleSelectPreset = (preset) => {
     setNuevoColor({
@@ -23,7 +34,9 @@ export function NuevoColorForm({ onSubmit }) {
     try {
       setLoading(true);
       await onSubmit(nuevoColor);
-      setNuevoColor({ nombre: '', codigoHex: '#111827' });
+      if (!initialData) {
+        setNuevoColor({ nombre: '', codigoHex: '#111827' });
+      }
     } finally {
       setLoading(false);
     }
@@ -31,8 +44,8 @@ export function NuevoColorForm({ onSubmit }) {
 
   return (
     <Card>
-      <CardTitle icon={Palette} subtitle="Selecciona una muestra comercial lista o personaliza el tono">
-        Nuevo Color
+      <CardTitle icon={Palette} subtitle={initialData ? "Editar tono o muestra de color existente" : "Selecciona una muestra comercial lista o personaliza el tono"}>
+        {initialData ? 'Editar Color' : 'Nuevo Color'}
       </CardTitle>
       <CardBody>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
@@ -156,8 +169,8 @@ export function NuevoColorForm({ onSubmit }) {
             </div>
           )}
 
-          <Button type="submit" variant="brand" icon={Plus} loading={loading}>
-            Guardar Color en Catálogo
+          <Button type="submit" variant="brand" icon={initialData ? Save : Plus} loading={loading}>
+            {initialData ? 'Guardar Cambios' : 'Guardar Color en Catálogo'}
           </Button>
         </form>
       </CardBody>
