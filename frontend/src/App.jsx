@@ -145,11 +145,11 @@ export function App() {
           <VentasView
             ventas={inventory.ventas}
             productos={inventory.productos}
-            clientes={inventory.clientes}
+
             usuarios={inventory.usuarios}
             currentUser={currentUser}
             onRegistrarVenta={inventory.registrarVenta}
-            onCreateCliente={inventory.createCliente}
+
           />
         )}
 
@@ -173,7 +173,7 @@ export function App() {
             materiales={inventory.materiales}
             colores={inventory.colores}
             proveedores={inventory.proveedores}
-            clientes={inventory.clientes}
+
             onCreateCategoria={inventory.createCategoria}
             onDeleteCategoria={inventory.deleteCategoria}
             onCreateMarca={inventory.createMarca}
@@ -185,7 +185,7 @@ export function App() {
             onCreateMaterial={inventory.createMaterial}
             onDeleteMaterial={inventory.deleteMaterial}
             onCreateProveedor={inventory.createProveedor}
-            onCreateCliente={inventory.createCliente}
+
           />
         )}
 

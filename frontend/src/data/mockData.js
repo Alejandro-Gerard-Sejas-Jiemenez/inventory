@@ -45,22 +45,6 @@ export const MOCK_PROVEEDORES = [
   },
 ];
 
-export const MOCK_CLIENTES = [
-  {
-    idCliente: 1,
-    nombre: 'Empresa Constructora Alpha',
-    telefono: '+591 76543210',
-    email: 'adquisiciones@constructora-alpha.bo',
-    direccion: 'Av. Las Palmas #320, Santa Cruz',
-  },
-  {
-    idCliente: 2,
-    nombre: 'Dr. Roberto Suárez',
-    telefono: '+591 70123456',
-    email: 'rsuarez@gmail.com',
-    direccion: 'Zona Sur, Calle 15 #89, La Paz',
-  },
-];
 
 export const MOCK_PRODUCTOS = [
   {
@@ -116,6 +100,5 @@ export const MOCK_DASHBOARD_STATS = {
   totalComprasMonto: 89400.0,
   totalModelos: 5,
   totalProveedores: 2,
-  totalClientes: 2,
   totalMovimientos: 24,
 };

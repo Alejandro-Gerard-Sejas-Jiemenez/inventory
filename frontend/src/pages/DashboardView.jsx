@@ -186,41 +186,6 @@ export function DashboardView({ stats, productos = [], onSelectTab }) {
           </div>
         </Card>
 
-        <Card
-          style={{ cursor: 'pointer' }}
-          onClick={() => onSelectTab('ventas')}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div
-              style={{
-                width: '42px',
-                height: '42px',
-                borderRadius: 'var(--radius-md)',
-                background: 'rgba(16, 185, 129, 0.15)',
-                color: '#10B981',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Users size={22} />
-            </div>
-            <div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                Clientes Registrados
-              </div>
-              <div
-                style={{
-                  fontSize: '1.3rem',
-                  fontWeight: 800,
-                  color: 'var(--text-white)',
-                }}
-              >
-                {stats?.totalClientes ?? 0}
-              </div>
-            </div>
-          </div>
-        </Card>
 
         <Card
           style={{ cursor: 'pointer' }}

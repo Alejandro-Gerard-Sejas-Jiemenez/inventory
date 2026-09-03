@@ -63,12 +63,6 @@ export const api = {
   updateProveedor: (id, data) => fetch(`${API_BASE_URL}/proveedores/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
   deleteProveedor: (id) => fetch(`${API_BASE_URL}/proveedores/${id}`, { method: 'DELETE' }).then(handleResponse),
 
-  // Clientes
-  getClientes: () => fetch(`${API_BASE_URL}/clientes`).then(handleResponse),
-  createCliente: (data) => fetch(`${API_BASE_URL}/clientes`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
-  updateCliente: (id, data) => fetch(`${API_BASE_URL}/clientes/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(handleResponse),
-  deleteCliente: (id) => fetch(`${API_BASE_URL}/clientes/${id}`, { method: 'DELETE' }).then(handleResponse),
-
   // Usuarios
   getUsuarios: () => fetch(`${API_BASE_URL}/usuarios`).then(handleResponse),
 

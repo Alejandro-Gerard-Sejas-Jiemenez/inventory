@@ -15,7 +15,7 @@ import {
 export const SIDEBAR_MENU_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, badgeKey: null },
   { id: 'productos', label: 'Productos & Stock', icon: Package, badgeKey: 'totalProductos' },
-  { id: 'ventas', label: 'Ventas & Clientes', icon: ShoppingCart, badgeKey: 'totalVentas' },
+  { id: 'ventas', label: 'Ventas', icon: ShoppingCart, badgeKey: 'totalVentas' },
   { id: 'compras', label: 'Compras & Proveedores', icon: Truck, badgeKey: 'totalProveedores' },
   { id: 'catalogos', label: 'Catálogos & Atributos', icon: Layers, badgeKey: 'totalModelos' },
   { id: 'movimientos', label: 'Kardex / Movimientos', icon: ArrowLeftRight, badgeKey: null },

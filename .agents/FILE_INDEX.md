@@ -58,7 +58,6 @@ backend/
     │           │   ├── model/
     │           │   │   ├── Categoria.java
     │           │   │   ├── Color.java
-    │           │   │   ├── DescuentoPorCantidad.java
     │           │   │   ├── ImagenProducto.java
     │           │   │   ├── Marca.java
     │           │   │   ├── Material.java
@@ -67,7 +66,6 @@ backend/
     │           │   ├── repository/
     │           │   │   ├── CategoriaRepository.java
     │           │   │   ├── ColorRepository.java
-    │           │   │   ├── DescuentoPorCantidadRepository.java
     │           │   │   ├── ImagenProductoRepository.java
     │           │   │   ├── MarcaRepository.java
     │           │   │   ├── MaterialRepository.java

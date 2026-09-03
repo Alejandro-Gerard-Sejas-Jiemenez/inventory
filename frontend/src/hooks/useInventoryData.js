@@ -14,7 +14,6 @@ export function useInventoryData() {
   const [materiales, setMateriales] = useState([]);
   const [colores, setColores] = useState([]);
   const [proveedores, setProveedores] = useState([]);
-  const [clientes, setClientes] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [ventas, setVentas] = useState([]);
   const [compras, setCompras] = useState([]);
@@ -39,7 +38,6 @@ export function useInventoryData() {
         materialesData,
         coloresData,
         proveedoresData,
-        clientesData,
         usuariosData,
         ventasData,
         comprasData,
@@ -53,7 +51,6 @@ export function useInventoryData() {
         api.getMateriales().catch(() => []),
         api.getColores().catch(() => []),
         api.getProveedores().catch(() => []),
-        api.getClientes().catch(() => []),
         api.getUsuarios().catch(() => []),
         api.getVentas().catch(() => []),
         api.getCompras().catch(() => []),
@@ -68,7 +65,6 @@ export function useInventoryData() {
       setMateriales(materialesData);
       setColores(coloresData);
       setProveedores(proveedoresData);
-      setClientes(clientesData);
       setUsuarios(usuariosData);
       setVentas(ventasData);
       setCompras(comprasData);
@@ -140,10 +136,6 @@ export function useInventoryData() {
     await loadData();
   };
 
-  const createCliente = async (clienteData) => {
-    await api.createCliente(clienteData);
-    await loadData();
-  };
 
   const createProveedor = async (provData) => {
     await api.createProveedor(provData);
@@ -219,7 +211,6 @@ export function useInventoryData() {
     materiales,
     colores,
     proveedores,
-    clientes,
     usuarios,
     ventas,
     compras,
@@ -241,7 +232,6 @@ export function useInventoryData() {
     saveMovimiento,
     registrarVenta,
     registrarCompra,
-    createCliente,
     createProveedor,
     createCategoria,
     deleteCategoria,

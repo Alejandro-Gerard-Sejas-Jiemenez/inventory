@@ -964,3 +964,31 @@
 - Git Commit & Push (Conventional Commits):
   - Commit: 'refactor(backend): decouple test mock data and add complete services API documentation'
 
+
+---
+
+## Bloque 26: Eliminación Total de Módulo Cliente en Frontend
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | 'FEAT-REF-1' |
+| **Fecha** | 2026-09-03 |
+| **Módulos Afectados** | Frontend (Ventas, Dashboard, Catálogos) |
+| **Skills Aplicadas** | 'react-modern-frontend' |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Remover todas las llamadas a la API, componentes UI, estados, props y mock data relacionadas con el módulo 'Clientes' que fue eliminado del backend, resolviendo desincronizaciones.
+
+### Fase 2: IMPLEMENTACIÓN
+- Se limpió 'services/api.js' eliminando los métodos de clientes.
+- Se removió del hook principal 'useInventoryData.js' toda carga y estado de clientes.
+- En 'DashboardView.jsx', se eliminó la StatCard de clientes.
+- En 'VentasView.jsx', se eliminó la funcionalidad de múltiples pestañas, dejando solo el Historial de Ventas.
+- Se eliminó el archivo obsoleto 'NuevoClienteForm.jsx'.
+- En 'NuevaVentaPOSForm.jsx', se retiró el selector de cliente, permitiendo ventas anónimas/directas según diseño lógico.
+- Se limpiaron los menús y el 'databaseSchema.js'.
+
+### Fase 3: VERIFICACIÓN
+- Compilación exitosa en Vite ('npm run build'). UI 100% alineada a la nueva estructura de BD.
+

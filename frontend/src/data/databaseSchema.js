@@ -60,13 +60,6 @@ export const DATABASE_SCHEMA_TABLES = [
     modulo: 'catalogo',
   },
   {
-    name: 'clientes',
-    pk: 'id_cliente',
-    fks: '-',
-    desc: 'Directorio de compradores y empresas',
-    modulo: 'ventas',
-  },
-  {
     name: 'usuarios',
     pk: 'id_usuario',
     fks: '-',
@@ -76,7 +69,7 @@ export const DATABASE_SCHEMA_TABLES = [
   {
     name: 'ventas',
     pk: 'id_venta',
-    fks: 'id_usuario, id_cliente',
+    fks: 'id_usuario',
     desc: 'Cabecera de ventas y estado de transacción',
     modulo: 'ventas',
   },

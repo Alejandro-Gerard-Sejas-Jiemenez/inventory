@@ -12,13 +12,11 @@ import { VentaDetalleRow } from './VentaDetalleRow';
  * Responsabilidad: Gestión del encabezado de venta, método de pago, cliente y totales.
  */
 export function NuevaVentaPOSForm({
-  clientes = [],
   productos = [],
   usuarios = [],
   onSubmit,
   onClose,
 }) {
-  const [selectedCliente, setSelectedCliente] = useState('');
   const [selectedMetodo, setSelectedMetodo] = useState('EFECTIVO');
   const [observaciones, setObservaciones] = useState('');
   const [itemsVenta, setItemsVenta] = useState([{ idProducto: '', cantidad: 1, precioUnitario: 0 }]);
@@ -67,7 +65,6 @@ export function NuevaVentaPOSForm({
       setLoading(true);
       const payload = {
         idUsuario: usuarios.length > 0 ? usuarios[0].idUsuario : 1,
-        idCliente: selectedCliente ? parseInt(selectedCliente, 10) : null,
         metodoPago: selectedMetodo,
         observaciones,
         detalles: itemsVenta.map((i) => ({
@@ -90,19 +87,7 @@ export function NuevaVentaPOSForm({
       </CardTitle>
       <CardBody>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          {/* Cliente y Método de Pago */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
-            <SelectField
-              label="Cliente"
-              value={selectedCliente}
-              onChange={(e) => setSelectedCliente(e.target.value)}
-              placeholder="Venta Rápida (Sin registrar cliente)"
-              options={clientes.map((c) => ({
-                value: c.idCliente,
-                label: `${c.nombre} ${c.telefono ? `(${c.telefono})` : ''}`,
-              }))}
-            />
-
             <SelectField
               label="Método de Pago"
               value={selectedMetodo}
