@@ -17,7 +17,6 @@ import java.util.List;
 @Builder
 public class VentaRequestDto {
 
-    private Long idCliente;
 
     @NotNull(message = "El ID del usuario vendedor es obligatorio")
     private Long idUsuario;

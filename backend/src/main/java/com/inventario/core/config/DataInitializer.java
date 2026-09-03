@@ -7,12 +7,11 @@ import com.inventario.modules.catalogo.service.ProductoService;
 import com.inventario.modules.compras.model.Proveedor;
 import com.inventario.modules.compras.repository.ProveedorRepository;
 import com.inventario.modules.sistema.model.Configuracion;
-import com.inventario.modules.sistema.model.RolUsuario;
+import com.inventario.modules.sistema.model.Rol;
 import com.inventario.modules.sistema.model.Usuario;
 import com.inventario.modules.sistema.repository.ConfiguracionRepository;
+import com.inventario.modules.sistema.repository.RolRepository;
 import com.inventario.modules.sistema.repository.UsuarioRepository;
-import com.inventario.modules.ventas.model.Cliente;
-import com.inventario.modules.ventas.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -26,13 +25,13 @@ import java.math.BigDecimal;
 public class DataInitializer implements CommandLineRunner {
 
     private final UsuarioRepository usuarioRepository;
+    private final RolRepository rolRepository;
     private final MarcaRepository marcaRepository;
     private final CategoriaRepository categoriaRepository;
     private final ModeloRepository modeloRepository;
     private final ColorRepository colorRepository;
     private final MaterialRepository materialRepository;
     private final ProveedorRepository proveedorRepository;
-    private final ClienteRepository clienteRepository;
     private final ProductoRepository productoRepository;
     private final ProductoService productoService;
     private final ConfiguracionRepository configuracionRepository;
@@ -41,13 +40,23 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         if (usuarioRepository.count() == 0) {
             log.info("Inicializando datos maestros del sistema...");
+            // 0. Roles
+            Rol rolAdmin = rolRepository.save(Rol.builder()
+                    .nombre("ADMIN")
+                    .descripcion("Administrador con acceso total")
+                    .build());
+
+            Rol rolVendedor = rolRepository.save(Rol.builder()
+                    .nombre("VENDEDOR")
+                    .descripcion("Vendedor con acceso limitado a caja y ventas")
+                    .build());
 
             // 1. Usuarios
             Usuario admin = usuarioRepository.save(Usuario.builder()
                     .nombre("Administrador Principal")
                     .email("admin@inventario.com")
                     .password("admin123")
-                    .rol(RolUsuario.ADMIN)
+                    .rol(rolAdmin)
                     .activo(true)
                     .build());
 
@@ -55,7 +64,7 @@ public class DataInitializer implements CommandLineRunner {
                     .nombre("Carlos Vendedor")
                     .email("carlos@inventario.com")
                     .password("vendedor123")
-                    .rol(RolUsuario.VENDEDOR)
+                    .rol(rolVendedor)
                     .activo(true)
                     .build());
 
@@ -184,23 +193,6 @@ public class DataInitializer implements CommandLineRunner {
                     .telefono("+591 78901234")
                     .email("contacto@globalhardware.com")
                     .direccion("Zona Industrial Norte #12")
-                    .activo(true)
-                    .build());
-
-            // 8. Clientes
-            clienteRepository.save(Cliente.builder()
-                    .nombre("Innovatech Solutions")
-                    .telefono("+591 76543210")
-                    .email("compras@innovatech.com")
-                    .direccion("Edificio Nexus, Piso 4")
-                    .activo(true)
-                    .build());
-
-            clienteRepository.save(Cliente.builder()
-                    .nombre("Estudio Creativo Pixel")
-                    .telefono("+591 72345678")
-                    .email("contacto@pixelestudio.com")
-                    .direccion("Calle Los Ilustradores 88")
                     .activo(true)
                     .build());
 

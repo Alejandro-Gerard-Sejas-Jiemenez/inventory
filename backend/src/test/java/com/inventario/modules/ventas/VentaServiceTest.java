@@ -7,16 +7,16 @@ import com.inventario.modules.catalogo.service.ProductoService;
 import com.inventario.modules.inventario.model.MovimientoStock;
 import com.inventario.modules.inventario.model.TipoMovimiento;
 import com.inventario.modules.inventario.repository.MovimientoStockRepository;
-import com.inventario.modules.sistema.model.RolUsuario;
+import com.inventario.modules.sistema.model.Rol;
 import com.inventario.modules.sistema.model.Usuario;
+import com.inventario.modules.sistema.repository.RolRepository;
 import com.inventario.modules.sistema.repository.UsuarioRepository;
 import com.inventario.modules.ventas.dto.DetalleVentaRequestDto;
 import com.inventario.modules.ventas.dto.VentaRequestDto;
-import com.inventario.modules.ventas.model.Cliente;
+import com.inventario.utils.TestMockDataFactory;
 import com.inventario.modules.ventas.model.EstadoVenta;
 import com.inventario.modules.ventas.model.MetodoPago;
 import com.inventario.modules.ventas.model.Venta;
-import com.inventario.modules.ventas.repository.ClienteRepository;
 import com.inventario.modules.ventas.service.VentaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,42 +45,21 @@ class VentaServiceTest {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-
     @Autowired
-    private ClienteRepository clienteRepository;
+    private RolRepository rolRepository;
 
     @Autowired
     private MovimientoStockRepository movimientoStockRepository;
 
     private Usuario usuarioTest;
-    private Cliente clienteTest;
+    private Rol rolTest;
     private Producto productoTest;
 
     @BeforeEach
     void setUp() {
-        usuarioTest = usuarioRepository.save(Usuario.builder()
-                .nombre("Vendedor Test")
-                .email("vendedor.test@inventario.com")
-                .password("123456")
-                .rol(RolUsuario.VENDEDOR)
-                .activo(true)
-                .build());
-
-        clienteTest = clienteRepository.save(Cliente.builder()
-                .nombre("Cliente Test")
-                .email("cliente.test@empresa.com")
-                .activo(true)
-                .build());
-
-        productoTest = productoService.create(ProductoRequestDto.builder()
-                .sku("SKU-VENTA-TEST")
-                .nombre("Monitor 27 Pulgadas")
-                .stockActual(20)
-                .stockMinimo(5)
-                .precioCompra(new BigDecimal("180.00"))
-                .precioUnitario(new BigDecimal("250.00"))
-                .activo(true)
-                .build());
+        rolTest = rolRepository.save(TestMockDataFactory.crearRolVendedor());
+        usuarioTest = usuarioRepository.save(TestMockDataFactory.crearUsuarioVendedor(rolTest));
+        productoTest = productoService.create(TestMockDataFactory.crearProductoTest());
     }
 
     @Test
@@ -88,7 +67,6 @@ class VentaServiceTest {
     void testRegistrarVenta() {
         VentaRequestDto ventaDto = VentaRequestDto.builder()
                 .idUsuario(usuarioTest.getIdUsuario())
-                .idCliente(clienteTest.getIdCliente())
                 .metodoPago(MetodoPago.TRANSFERENCIA)
                 .observaciones("Venta de prueba unitaria")
                 .detalles(List.of(

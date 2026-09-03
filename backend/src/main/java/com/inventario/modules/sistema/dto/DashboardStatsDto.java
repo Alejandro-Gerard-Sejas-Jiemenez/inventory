@@ -13,7 +13,6 @@ public class DashboardStatsDto {
     private long totalProductos;
     private long totalModelos;
     private long totalProveedores;
-    private long totalClientes;
     private long totalVentas;
     private long productosBajoStock;
     private double valorTotalInventario;

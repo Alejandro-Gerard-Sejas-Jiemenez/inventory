@@ -26,6 +26,7 @@ backend/
 ├── pom.xml                                      ← Dependencias Maven (Spring Boot 3.4.2, Java 21, JPA, H2, Lombok)
 ├── mvnw / mvnw.cmd                              ← Maven Wrapper
 ├── HELP.md                                      ← Guía Spring Boot
+├── SERVICES_DOC.md                              ← Documentación técnica de las funciones de Servicios
 └── src/
     ├── main/
     │   ├── resources/
@@ -180,6 +181,8 @@ backend/
     │
     └── test/java/com/inventario/                ← Pruebas Automatizadas
         ├── InventarioBackendApplicationTests.java
+        ├── utils/
+        │   └── TestMockDataFactory.java         ← Factoría de datos mock (Usuarios, Productos) para test
         └── modules/
             ├── catalogo/
             │   └── ProductoServiceTest.java     ← Tests unitarios de ProductoService
@@ -322,3 +325,4 @@ frontend/
 | 2026-08-30 | ACTUALIZADO | `FILE_INDEX.md` | .agents | Actualización total del índice de archivos adaptado a Inventario |
 | 2026-08-30 | CREADO | `skills/*` | .agents/skills | Creación de skills basadas en la literatura de referencia y el stack del proyecto |
 | 2026-08-30 | COMPONENTIZADO | `frontend/src/*` | Frontend UI / Design System | Creación de `components/common/`, paleta oficial de 5 colores del logo Los Caseritos y responsividad |
+| 2026-09-03 | CREADO | `TestMockDataFactory.java`, `SERVICES_DOC.md` | Backend / Tests | Extracción de datos mockup a factoría de pruebas y creación de documento de APIs |

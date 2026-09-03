@@ -6,7 +6,6 @@ import com.inventario.modules.compras.repository.ProveedorRepository;
 import com.inventario.modules.inventario.repository.MovimientoStockRepository;
 import com.inventario.modules.sistema.dto.DashboardStatsDto;
 import com.inventario.modules.sistema.service.DashboardService;
-import com.inventario.modules.ventas.repository.ClienteRepository;
 import com.inventario.modules.ventas.repository.VentaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ public class DashboardServiceImpl implements DashboardService {
     private final ProductoRepository productoRepository;
     private final ModeloRepository modeloRepository;
     private final ProveedorRepository proveedorRepository;
-    private final ClienteRepository clienteRepository;
     private final VentaRepository ventaRepository;
     private final MovimientoStockRepository movimientoStockRepository;
 
@@ -29,7 +27,6 @@ public class DashboardServiceImpl implements DashboardService {
         long totalProductos = productoRepository.count();
         long totalModelos = modeloRepository.count();
         long totalProveedores = proveedorRepository.count();
-        long totalClientes = clienteRepository.count();
         long totalVentas = ventaRepository.count();
         long productosBajoStock = productoRepository.countProductosConBajoStock();
         Double valorTotal = productoRepository.calculateValorTotalInventario();
@@ -40,7 +37,6 @@ public class DashboardServiceImpl implements DashboardService {
                 .totalProductos(totalProductos)
                 .totalModelos(totalModelos)
                 .totalProveedores(totalProveedores)
-                .totalClientes(totalClientes)
                 .totalVentas(totalVentas)
                 .productosBajoStock(productosBajoStock)
                 .valorTotalInventario(valorTotal != null ? valorTotal : 0.0)

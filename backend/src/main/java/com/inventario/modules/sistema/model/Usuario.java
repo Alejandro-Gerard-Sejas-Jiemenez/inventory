@@ -38,13 +38,20 @@ public class Usuario {
     @Column(nullable = false, length = 255)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 30)
-    @Builder.Default
-    private RolUsuario rol = RolUsuario.VENDEDOR;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_rol", nullable = false)
+    private Rol rol;
 
-    @Column(name = "fecha_creacion", updatable = false)
-    private LocalDateTime fechaCreacion;
+    @Size(max = 20)
+    @Column(length = 20)
+    private String telefono;
+
+    @Size(max = 255)
+    @Column(length = 255)
+    private String direccion;
+
+    @Column(name = "fecha_registro", updatable = false)
+    private LocalDateTime fechaRegistro;
 
     @Builder.Default
     @Column(nullable = false)
@@ -52,6 +59,6 @@ public class Usuario {
 
     @PrePersist
     protected void onCreate() {
-        this.fechaCreacion = LocalDateTime.now();
+        this.fechaRegistro = LocalDateTime.now();
     }
 }

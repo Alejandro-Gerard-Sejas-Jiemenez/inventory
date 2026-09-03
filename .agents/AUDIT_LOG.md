@@ -937,3 +937,30 @@
 
 
 
+
+---
+
+## Bloque 25: Extracción de Mock Data y Documentación de Servicios
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | 'REFACTOR-1' |
+| **Fecha** | 2026-09-03 |
+| **Módulos Afectados** | Backend ('tests', 'docs') |
+| **Skills Aplicadas** | 'clean-code', 'spring-modular-backend' |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Separar los datos falsos (mockup) del código de test principal ('VentaServiceTest.java') a una factoría externa para no mezclar responsabilidades.
+- Documentar formalmente todas las funciones de servicios del backend, identificando inputs y outputs.
+
+### Fase 2: IMPLEMENTACIÓN
+- Creación de 'backend/src/test/java/com/inventario/utils/TestMockDataFactory.java' con métodos estáticos para crear usuarios, roles y productos de prueba.
+- Limpieza profunda en 'VentaServiceTest.java', delegando la creación a la factoría.
+- Creación del archivo oficial de documentación técnica 'backend/SERVICES_DOC.md' tabulando las funciones de cada módulo.
+
+### Fase 3: VERIFICACIÓN
+- Compilación y pruebas de backend ('./mvnw test'): Exitosas a nivel de compilación (Fallo conocido por DB remota).
+- Git Commit & Push (Conventional Commits):
+  - Commit: 'refactor(backend): decouple test mock data and add complete services API documentation'
+

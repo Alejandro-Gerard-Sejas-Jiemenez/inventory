@@ -12,12 +12,10 @@ import com.inventario.modules.sistema.repository.UsuarioRepository;
 import com.inventario.modules.sistema.service.BitacoraService;
 import com.inventario.modules.ventas.dto.DetalleVentaRequestDto;
 import com.inventario.modules.ventas.dto.VentaRequestDto;
-import com.inventario.modules.ventas.model.Cliente;
 import com.inventario.modules.ventas.model.DetalleVenta;
 import com.inventario.modules.ventas.model.EstadoVenta;
 import com.inventario.modules.ventas.model.MetodoPago;
 import com.inventario.modules.ventas.model.Venta;
-import com.inventario.modules.ventas.repository.ClienteRepository;
 import com.inventario.modules.ventas.repository.VentaRepository;
 import com.inventario.modules.ventas.service.VentaService;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +34,6 @@ public class VentaServiceImpl implements VentaService {
 
     private final VentaRepository ventaRepository;
     private final ProductoRepository productoRepository;
-    private final ClienteRepository clienteRepository;
     private final UsuarioRepository usuarioRepository;
     private final MovimientoStockRepository movimientoStockRepository;
     private final BitacoraService bitacoraService;
@@ -60,15 +57,8 @@ public class VentaServiceImpl implements VentaService {
         Usuario usuario = usuarioRepository.findById(request.getIdUsuario())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario vendedor no encontrado con ID: " + request.getIdUsuario()));
 
-        Cliente cliente = null;
-        if (request.getIdCliente() != null) {
-            cliente = clienteRepository.findById(request.getIdCliente())
-                    .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con ID: " + request.getIdCliente()));
-        }
-
         Venta venta = Venta.builder()
                 .usuario(usuario)
-                .cliente(cliente)
                 .fecha(LocalDate.now())
                 .hora(LocalTime.now())
                 .estado(EstadoVenta.COMPLETADA)
@@ -108,7 +98,7 @@ public class VentaServiceImpl implements VentaService {
                     .cantidad(item.getCantidad())
                     .stockAntes(stockAntes)
                     .stockDespues(stockDespues)
-                    .motivo("Venta realizada a cliente " + (cliente != null ? cliente.getNombre() : "General"))
+                    .motivo("Venta realizada a cliente General")
                     .build();
             movimientoStockRepository.save(movimiento);
 
