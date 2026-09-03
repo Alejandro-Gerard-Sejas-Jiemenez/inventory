@@ -59,9 +59,13 @@ public class DataInitializer implements CommandLineRunner {
         executeSqlQuietly("ALTER TABLE public.movimientos_stock ADD COLUMN IF NOT EXISTS id_variante BIGINT");
         executeSqlQuietly("ALTER TABLE public.movimientos_stock ALTER COLUMN id_producto DROP NOT NULL");
 
+        executeSqlQuietly("ALTER TABLE public.detalle_ventas ADD COLUMN IF NOT EXISTS id_variante BIGINT");
+        executeSqlQuietly("ALTER TABLE public.detalle_ventas ALTER COLUMN id_producto DROP NOT NULL");
         executeSqlQuietly("ALTER TABLE public.detalles_venta ADD COLUMN IF NOT EXISTS id_variante BIGINT");
         executeSqlQuietly("ALTER TABLE public.detalles_venta ALTER COLUMN id_producto DROP NOT NULL");
 
+        executeSqlQuietly("ALTER TABLE public.detalle_compras ADD COLUMN IF NOT EXISTS id_variante BIGINT");
+        executeSqlQuietly("ALTER TABLE public.detalle_compras ALTER COLUMN id_producto DROP NOT NULL");
         executeSqlQuietly("ALTER TABLE public.detalles_compra ADD COLUMN IF NOT EXISTS id_variante BIGINT");
         executeSqlQuietly("ALTER TABLE public.detalles_compra ALTER COLUMN id_producto DROP NOT NULL");
 

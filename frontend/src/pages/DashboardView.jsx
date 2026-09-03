@@ -10,6 +10,7 @@ import {
   Layers,
   ArrowRight,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardHeader, CardTitle, CardBody } from '../components/common/Card';
 import { StatCard } from '../components/common/StatCard';
@@ -18,6 +19,14 @@ import { Button } from '../components/common/Button';
 import { DataTable } from '../components/common/DataTable';
 
 export function DashboardView({ stats, productos = [], onSelectTab }) {
+  const navigate = useNavigate();
+
+  const handleNavigate = (target) => {
+    if (typeof onSelectTab === 'function') {
+      onSelectTab(target);
+    }
+    navigate(`/admin/${target}`);
+  };
   const lowStockProducts = productos.filter((p) => p.stockActual <= p.stockMinimo);
 
   const alertColumns = [
@@ -58,7 +67,7 @@ export function DashboardView({ stats, productos = [], onSelectTab }) {
         title="Panel de Control General"
         subtitle="Resumen integral y métricas en tiempo real de Los Caseritos"
         actions={
-          <Button variant="brand" onClick={() => onSelectTab('productos')} icon={Package}>
+          <Button variant="brand" onClick={() => handleNavigate('productos')} icon={Package}>
             Gestionar Productos
           </Button>
         }
@@ -72,7 +81,7 @@ export function DashboardView({ stats, productos = [], onSelectTab }) {
           subtitle="Ítems activos en catálogo"
           icon={Package}
           color="brand"
-          onClick={() => onSelectTab('productos')}
+          onClick={() => handleNavigate('productos')}
         />
         <StatCard
           title="Alertas de Stock Crítico"
@@ -84,7 +93,7 @@ export function DashboardView({ stats, productos = [], onSelectTab }) {
           }
           icon={AlertTriangle}
           color={(stats?.productosBajoStock ?? 0) > 0 ? 'danger' : 'neutral'}
-          onClick={() => onSelectTab('productos')}
+          onClick={() => handleNavigate('productos')}
         />
         <StatCard
           title="Ventas Totales"
@@ -94,7 +103,7 @@ export function DashboardView({ stats, productos = [], onSelectTab }) {
           subtitle="Ingresos brutos acumulados"
           icon={DollarSign}
           color="brand"
-          onClick={() => onSelectTab('ventas')}
+          onClick={() => handleNavigate('ventas')}
         />
         <StatCard
           title="Órdenes de Venta"
@@ -102,7 +111,7 @@ export function DashboardView({ stats, productos = [], onSelectTab }) {
           subtitle="Transacciones completadas"
           icon={ShoppingCart}
           color="brand"
-          onClick={() => onSelectTab('ventas')}
+          onClick={() => handleNavigate('ventas')}
         />
       </div>
 
@@ -116,7 +125,7 @@ export function DashboardView({ stats, productos = [], onSelectTab }) {
       >
         <Card
           style={{ cursor: 'pointer' }}
-          onClick={() => onSelectTab('catalogos')}
+          onClick={() => handleNavigate('catalogos')}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div
@@ -152,7 +161,7 @@ export function DashboardView({ stats, productos = [], onSelectTab }) {
 
         <Card
           style={{ cursor: 'pointer' }}
-          onClick={() => onSelectTab('compras')}
+          onClick={() => handleNavigate('compras')}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div
@@ -189,7 +198,7 @@ export function DashboardView({ stats, productos = [], onSelectTab }) {
 
         <Card
           style={{ cursor: 'pointer' }}
-          onClick={() => onSelectTab('movimientos')}
+          onClick={() => handleNavigate('movimientos')}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div
@@ -231,7 +240,7 @@ export function DashboardView({ stats, productos = [], onSelectTab }) {
             <Button
               variant="secondary"
               size="sm"
-              onClick={() => onSelectTab('productos')}
+              onClick={() => handleNavigate('productos')}
               icon={ArrowRight}
             >
               Ver Todo el Catálogo
