@@ -72,6 +72,8 @@ public class GlobalExceptionHandler {
             message = "Ya existe un registro con la misma clave o valor único (ej. SKU o nombre duplicado).";
         } else if (fullDetails.contains("null value") || fullDetails.contains("not-null")) {
             message = "Error de datos: Falta proporcionar un campo obligatorio requerido por la base de datos.";
+        } else if (fullDetails.contains("value too long") || fullDetails.contains("too long") || fullDetails.contains("truncation") || fullDetails.contains("varying")) {
+            message = "El texto o la imagen cargada excede la longitud máxima permitida por la base de datos.";
         }
 
         response.put("message", message);

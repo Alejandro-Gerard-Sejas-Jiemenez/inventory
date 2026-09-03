@@ -28,7 +28,7 @@ public class ImagenProducto {
     private Producto producto;
 
     @NotBlank(message = "La URL de la imagen es obligatoria")
-    @Column(nullable = false, length = 500)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String url;
 
     @Column(name = "es_principal")

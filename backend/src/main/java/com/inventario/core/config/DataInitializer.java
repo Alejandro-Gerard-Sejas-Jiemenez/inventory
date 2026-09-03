@@ -65,6 +65,8 @@ public class DataInitializer implements CommandLineRunner {
         executeSqlQuietly("ALTER TABLE public.detalles_compra ADD COLUMN IF NOT EXISTS id_variante BIGINT");
         executeSqlQuietly("ALTER TABLE public.detalles_compra ALTER COLUMN id_producto DROP NOT NULL");
 
+        executeSqlQuietly("ALTER TABLE public.imagenes_producto ALTER COLUMN url TYPE TEXT");
+
         log.info("Migración de esquema (variantes, movimientos, compras, ventas) verificada exitosamente.");
 
         if (usuarioRepository.count() == 0) {

@@ -219,9 +219,62 @@ public class ProductoServiceImpl implements ProductoService {
             }
         }
 
-        // TODO: Update logic for variants (syncing existing, creating new, disabling old)
-        // For simplicity in this iteration, we keep existing variants and add new ones if idVariante is null
-        
+        // Actualizar / sincronizar variantes del producto
+        if (request.getVariantes() != null && !request.getVariantes().isEmpty()) {
+            java.util.Map<Long, ProductoVariante> existingMap = producto.getVariantes().stream()
+                    .filter(v -> v.getIdVariante() != null)
+                    .collect(Collectors.toMap(ProductoVariante::getIdVariante, java.util.function.Function.identity()));
+
+            List<ProductoVariante> updatedList = new ArrayList<>();
+
+            for (ProductoVarianteDto vDto : request.getVariantes()) {
+                Modelo modelo = modeloRepository.findById(vDto.getIdModelo())
+                        .orElseThrow(() -> new ResourceNotFoundException("Modelo no encontrado"));
+                Color color = colorRepository.findById(vDto.getIdColor())
+                        .orElseThrow(() -> new ResourceNotFoundException("Color no encontrado"));
+
+                String sku = vDto.getSku();
+                if (sku == null || sku.trim().isEmpty()) {
+                    sku = generateUniqueSku();
+                }
+
+                if (vDto.getIdVariante() != null && existingMap.containsKey(vDto.getIdVariante())) {
+                    ProductoVariante vExistente = existingMap.get(vDto.getIdVariante());
+                    vExistente.setModelo(modelo);
+                    vExistente.setColor(color);
+                    if (!vExistente.getSku().equalsIgnoreCase(sku.trim())) {
+                        if (varianteRepository.existsBySku(sku.toUpperCase().trim())) {
+                            throw new BadRequestException("Ya existe una variante con el SKU: " + sku);
+                        }
+                        vExistente.setSku(sku.toUpperCase().trim());
+                    }
+                    if (vDto.getStockMinimo() != null) {
+                        vExistente.setStockMinimo(vDto.getStockMinimo());
+                    }
+                    if (vDto.getActivo() != null) {
+                        vExistente.setActivo(vDto.getActivo());
+                    }
+                    updatedList.add(vExistente);
+                } else {
+                    if (varianteRepository.existsBySku(sku.toUpperCase().trim())) {
+                        throw new BadRequestException("Ya existe una variante con el SKU: " + sku);
+                    }
+                    ProductoVariante nueva = ProductoVariante.builder()
+                            .producto(producto)
+                            .modelo(modelo)
+                            .color(color)
+                            .sku(sku.toUpperCase().trim())
+                            .stockActual(vDto.getStockActual() != null ? vDto.getStockActual() : 0)
+                            .stockMinimo(vDto.getStockMinimo() != null ? vDto.getStockMinimo() : 5)
+                            .activo(vDto.getActivo() != null ? vDto.getActivo() : true)
+                            .build();
+                    updatedList.add(nueva);
+                }
+            }
+            producto.getVariantes().clear();
+            producto.getVariantes().addAll(updatedList);
+        }
+
         return productoRepository.save(producto);
     }
 
