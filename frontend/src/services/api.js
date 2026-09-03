@@ -19,10 +19,11 @@ async function handleResponse(response) {
     }
     throw new Error(errorMessage);
   }
-  if (response.status === 204) {
+  if (response.status === 204 || response.headers.get('content-length') === '0') {
     return null;
   }
-  return response.json();
+  const text = await response.text();
+  return text ? JSON.parse(text) : null;
 }
 
 export const api = {
