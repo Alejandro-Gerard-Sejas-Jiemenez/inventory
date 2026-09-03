@@ -3,8 +3,10 @@
  */
 export const METODOS_PAGO = [
   { value: 'EFECTIVO', label: 'Efectivo en Caja' },
-  { value: 'QR', label: 'Pago QR / Transferencia' },
-  { value: 'TARJETA', label: 'Tarjeta Débito / Crédito' },
+  { value: 'TRANSFERENCIA', label: 'Pago QR / Transferencia' },
+  { value: 'TARJETA_DEBITO', label: 'Tarjeta Débito' },
+  { value: 'TARJETA_CREDITO', label: 'Tarjeta Crédito' },
+  { value: 'OTRO', label: 'Otro Medio de Pago' },
 ];
 
 export const ESTADOS_VENTA = [

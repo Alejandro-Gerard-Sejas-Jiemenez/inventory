@@ -93,8 +93,8 @@ export function NuevaVentaPOSForm({
               value={selectedMetodo}
               onChange={(e) => setSelectedMetodo(e.target.value)}
               options={METODOS_PAGO.map((m) => ({
-                value: m.id,
-                label: `${m.icono} ${m.nombre}`,
+                value: m.value,
+                label: m.label,
               }))}
               required
             />
