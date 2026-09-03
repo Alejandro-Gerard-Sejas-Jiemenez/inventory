@@ -47,7 +47,6 @@ public class Producto {
     @Column(length = 500)
     private String descripcion;
 
-    @Lob
     @Column(name = "imagen_url", columnDefinition = "TEXT")
     private String imagenUrl;
 
