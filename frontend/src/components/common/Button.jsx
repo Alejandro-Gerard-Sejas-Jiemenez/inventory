@@ -12,6 +12,7 @@ export function Button({
   icon: Icon,
   className = '',
   style = {},
+  ...props
 }) {
   return (
     <button
@@ -20,6 +21,7 @@ export function Button({
       disabled={disabled || loading}
       className={`custom-btn btn-${variant} btn-${size} ${loading ? 'is-loading' : ''} ${className}`}
       style={style}
+      {...props}
     >
       {loading ? (
         <Loader2 size={size === 'sm' ? 14 : 18} className="spin-icon" />
