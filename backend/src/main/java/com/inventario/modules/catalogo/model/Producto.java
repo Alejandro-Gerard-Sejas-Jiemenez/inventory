@@ -91,4 +91,15 @@ public class Producto {
     protected void onUpdate() {
         this.fechaActualizacion = LocalDateTime.now();
     }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("stockActual")
+    public Integer getStockActual() {
+        if (variantes == null || variantes.isEmpty()) {
+            return 0;
+        }
+        return variantes.stream()
+                .filter(v -> v.getActivo() == null || v.getActivo())
+                .mapToInt(v -> v.getStockActual() != null ? v.getStockActual() : 0)
+                .sum();
+    }
 }

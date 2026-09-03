@@ -4,7 +4,9 @@ import { ShoppingCart, Check, XCircle, Image as ImageIcon } from 'lucide-react';
 export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
   const [addedAnimation, setAddedAnimation] = useState(false);
 
-  const stockActual = producto.stockActual ?? 0;
+  const stockActual = (producto.variantes && producto.variantes.length > 0)
+    ? producto.variantes.reduce((sum, v) => sum + (v.stockActual || 0), 0)
+    : (producto.stockActual ?? 0);
   const isOutOfStock = stockActual <= 0;
   const remainingStock = Math.max(0, stockActual - cartQuantity);
 

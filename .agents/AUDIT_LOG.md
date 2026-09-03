@@ -1022,3 +1022,39 @@
 - **Build Frontend:** `npm run build` → Exitoso en 1.31s con 0 errores.
 - **Git Push:** Merge y push a la rama `main` en GitHub (`c6fc085`).
 
+---
+
+## Bloque 33: Edición de Catálogos Maestros, Galería Multi-Imagen y Atajo de Ajuste Rápido de Stock
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-EDIT-CATALOGS` / `FEAT-MULTI-IMAGE` / `FEAT-STOCK-SHORTCUT` |
+| **Fecha** | 2026-09-03 |
+| **Módulos Afectados** | Frontend (`CatalogosView`, `ProductoModal`, `ProductoFotoUploader`, `ProductoColumns`, `ProductoCard`, `MovimientoModal`, `catalogApi`, `useMasterCatalogData`) & Backend (`DataInitializer`) |
+| **Skills Aplicadas** | `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Habilitar edición completa para los 6 catálogos del sistema: Categorías, Marcas, Modelos, Materiales, Colores y Propietarios.
+- Permitir la adición y gestión de múltiples imágenes por producto (Galería de Fotos) en `ProductoFotoUploader.jsx`, sincronizando la imagen principal (`⭐ Principal`) con las tarjetas y tablas.
+- Restaurar y mejorar el atajo rápido de ajuste de stock (`ArrowUpDown`) en la tabla de productos con soporte para selección de variante en `MovimientoModal.jsx`.
+- Corregir falta del atributo `configuracionRepository` en `DataInitializer.java` que causaba falla de compilación Docker en Render.
+
+### Fase 2: IMPLEMENTACIÓN
+- Backend: Se restauró la declaración `private final ConfiguracionRepository configuracionRepository` en `DataInitializer.java`.
+- API Frontend: Métodos `updateColor`, `updateMaterial`, `updatePropietario` añadidos a `catalogApi.js` y expuestos a través de `useMasterCatalogData.js` y `useInventoryData.js`.
+- Vistas y Formularios:
+  - `CatalogosView.jsx` y `catalogosColumns.jsx`: Botón de edición (`Edit`) implementado en las 6 pestañas, precargando los formularios (`NuevaCategoriaForm`, `NuevaMarcaForm`, `NuevoModeloForm`, `NuevoMaterialForm`, `NuevoColorForm`, `NuevoPropietarioForm`).
+  - `ProductoFotoUploader.jsx` & `ProductoModal.jsx`: Soporte de `imagenesUrls` (galería múltiple, carga local/URL, selección de imagen principal).
+  - `ProductoColumns.jsx` & `ProductoCard.jsx`: Renderizado de imagen principal desde `p.imagenes` o `p.imagenUrl`.
+  - `MovimientoModal.jsx`: Selector de variantes con SKU y stock actual para ajustes de inventario.
+
+### Fase 3: VERIFICACIÓN
+- **Compilación Maven local:** `./mvnw clean package -DskipTests` → **`BUILD SUCCESS`** en 20s.
+- **Build Frontend local:** `npm run build` → **`0 ERRORS`** en 1.67s.
+- **Git Commit & Push (Conventional Commits):**
+  - Commits:
+    - `fix(backend): restore configuracionRepository field in DataInitializer` (`45216c9`)
+    - `feat(frontend): add edit capabilities for master catalogs multi-image gallery and quick stock button` (`df36316`)
+  - Subido exitosamente a GitHub (`origin/main`).
+
