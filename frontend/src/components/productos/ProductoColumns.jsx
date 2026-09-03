@@ -1,9 +1,9 @@
 import React from 'react';
-import { Edit, Trash2, ArrowUpDown, FolderTree } from 'lucide-react';
+import { Edit, Trash2, ArrowUpDown, FolderTree, Copy } from 'lucide-react';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
 
-export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete }) {
+export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete, onDuplicate }) {
   return [
     {
       header: 'SKU',
@@ -143,6 +143,13 @@ export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete }) {
             title="Ajuste de Stock (Kardex)"
             icon={ArrowUpDown}
             style={{ color: 'var(--brand-gold)' }}
+          />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onDuplicate && onDuplicate(p)}
+            title="Duplicar Producto"
+            icon={Copy}
           />
           <Button
             variant="ghost"

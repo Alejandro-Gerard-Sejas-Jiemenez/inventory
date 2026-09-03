@@ -43,10 +43,16 @@ export function ProductosView({
     setModalOpen(true);
   };
 
+  const handleDuplicate = (prod) => {
+    setEditingProducto({ ...prod, idProducto: null, sku: '', stockActual: 0 });
+    setModalOpen(true);
+  };
+
   const columns = getProductoColumns({
     onOpenMovimiento,
     onEdit: handleEdit,
     onDelete: onDeleteProducto,
+    onDuplicate: handleDuplicate,
   });
 
   return (
