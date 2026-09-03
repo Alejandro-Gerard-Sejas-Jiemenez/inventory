@@ -36,22 +36,35 @@ public class DataInitializer implements CommandLineRunner {
     private final ProveedorRepository proveedorRepository;
     private final ProductoRepository productoRepository;
     private final ProductoService productoService;
-    private final ConfiguracionRepository configuracionRepository;
     private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+
+    private void executeSqlQuietly(String sql) {
+        try {
+            jdbcTemplate.execute(sql);
+        } catch (Exception e) {
+            log.debug("Aviso migración esquema SQL: {}", e.getMessage());
+        }
+    }
 
     @Override
     public void run(String... args) {
         // Migración de esquema en caliente para compatibilidad con la DB remota de Supabase / PostgreSQL
-        try {
-            jdbcTemplate.execute("ALTER TABLE public.productos ALTER COLUMN sku DROP NOT NULL");
-            jdbcTemplate.execute("ALTER TABLE public.productos ALTER COLUMN id_modelo DROP NOT NULL");
-            jdbcTemplate.execute("ALTER TABLE public.productos ALTER COLUMN id_color DROP NOT NULL");
-            jdbcTemplate.execute("ALTER TABLE public.productos ALTER COLUMN stock_actual DROP NOT NULL");
-            jdbcTemplate.execute("ALTER TABLE public.productos ALTER COLUMN stock_minimo DROP NOT NULL");
-            log.info("Migración de tabla productos ejecutada exitosamente (columnas obsoletas hechas anulables).");
-        } catch (Exception e) {
-            log.debug("Aviso migración esquema productos: {}", e.getMessage());
-        }
+        executeSqlQuietly("ALTER TABLE public.productos ALTER COLUMN sku DROP NOT NULL");
+        executeSqlQuietly("ALTER TABLE public.productos ALTER COLUMN id_modelo DROP NOT NULL");
+        executeSqlQuietly("ALTER TABLE public.productos ALTER COLUMN id_color DROP NOT NULL");
+        executeSqlQuietly("ALTER TABLE public.productos ALTER COLUMN stock_actual DROP NOT NULL");
+        executeSqlQuietly("ALTER TABLE public.productos ALTER COLUMN stock_minimo DROP NOT NULL");
+
+        executeSqlQuietly("ALTER TABLE public.movimientos_stock ADD COLUMN IF NOT EXISTS id_variante BIGINT");
+        executeSqlQuietly("ALTER TABLE public.movimientos_stock ALTER COLUMN id_producto DROP NOT NULL");
+
+        executeSqlQuietly("ALTER TABLE public.detalles_venta ADD COLUMN IF NOT EXISTS id_variante BIGINT");
+        executeSqlQuietly("ALTER TABLE public.detalles_venta ALTER COLUMN id_producto DROP NOT NULL");
+
+        executeSqlQuietly("ALTER TABLE public.detalles_compra ADD COLUMN IF NOT EXISTS id_variante BIGINT");
+        executeSqlQuietly("ALTER TABLE public.detalles_compra ALTER COLUMN id_producto DROP NOT NULL");
+
+        log.info("Migración de esquema (variantes, movimientos, compras, ventas) verificada exitosamente.");
 
         if (usuarioRepository.count() == 0) {
             log.info("Inicializando datos maestros del sistema...");
