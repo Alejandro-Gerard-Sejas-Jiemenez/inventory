@@ -58,7 +58,23 @@ public class GlobalExceptionHandler {
         response.put("timestamp", LocalDateTime.now());
         response.put("status", HttpStatus.CONFLICT.value());
         response.put("error", "Conflicto de datos");
-        response.put("message", "No se puede eliminar este registro porque está siendo utilizado en otras partes del sistema (ej. tiene modelos o productos asociados).");
+
+        String message = "Violación de integridad de datos en la base de datos.";
+        String fullDetails = ex.getMessage() != null ? ex.getMessage() : "";
+        if (ex.getCause() != null && ex.getCause().getMessage() != null) {
+            fullDetails += " " + ex.getCause().getMessage();
+        }
+        fullDetails = fullDetails.toLowerCase();
+
+        if (fullDetails.contains("foreign key") || fullDetails.contains("fk_")) {
+            message = "No se puede eliminar este registro porque está siendo utilizado en otras partes del sistema (ej. tiene modelos, ventas o productos asociados).";
+        } else if (fullDetails.contains("unique constraint") || fullDetails.contains("duplicate key") || fullDetails.contains("uk_")) {
+            message = "Ya existe un registro con la misma clave o valor único (ej. SKU o nombre duplicado).";
+        } else if (fullDetails.contains("null value") || fullDetails.contains("not-null")) {
+            message = "Error de datos: Falta proporcionar un campo obligatorio requerido por la base de datos.";
+        }
+
+        response.put("message", message);
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 

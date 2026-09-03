@@ -37,9 +37,22 @@ public class DataInitializer implements CommandLineRunner {
     private final ProductoRepository productoRepository;
     private final ProductoService productoService;
     private final ConfiguracionRepository configuracionRepository;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
     @Override
     public void run(String... args) {
+        // Migración de esquema en caliente para compatibilidad con la DB remota de Supabase / PostgreSQL
+        try {
+            jdbcTemplate.execute("ALTER TABLE public.productos ALTER COLUMN sku DROP NOT NULL");
+            jdbcTemplate.execute("ALTER TABLE public.productos ALTER COLUMN id_modelo DROP NOT NULL");
+            jdbcTemplate.execute("ALTER TABLE public.productos ALTER COLUMN id_color DROP NOT NULL");
+            jdbcTemplate.execute("ALTER TABLE public.productos ALTER COLUMN stock_actual DROP NOT NULL");
+            jdbcTemplate.execute("ALTER TABLE public.productos ALTER COLUMN stock_minimo DROP NOT NULL");
+            log.info("Migración de tabla productos ejecutada exitosamente (columnas obsoletas hechas anulables).");
+        } catch (Exception e) {
+            log.debug("Aviso migración esquema productos: {}", e.getMessage());
+        }
+
         if (usuarioRepository.count() == 0) {
             log.info("Inicializando datos maestros del sistema...");
             // 0. Roles
