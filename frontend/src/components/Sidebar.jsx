@@ -7,7 +7,7 @@ export function Sidebar({
   currentTab,
   onSelectTab,
   stats,
-  onSwitchToTienda,
+  onGoToTienda,
   currentUser,
   onLogout,
 }) {
@@ -24,11 +24,11 @@ export function Sidebar({
       </div>
 
       {/* Botón de acceso a la Tienda de Clientes */}
-      {onSwitchToTienda && (
+      {onGoToTienda && (
         <div style={{ padding: '0.8rem 1rem 0.4rem' }}>
           <button
             type="button"
-            onClick={onSwitchToTienda}
+            onClick={onGoToTienda}
             style={{
               width: '100%',
               display: 'flex',
