@@ -11,7 +11,6 @@ import java.util.List;
 
 @Repository
 public interface VentaRepository extends JpaRepository<Venta, Long> {
-    List<Venta> findByClienteIdCliente(Long idCliente);
     List<Venta> findByUsuarioIdUsuario(Long idUsuario);
     List<Venta> findByEstado(EstadoVenta estado);
     List<Venta> findByFechaBetweenOrderByFechaDescHoraDesc(LocalDate inicio, LocalDate fin);
