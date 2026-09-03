@@ -41,6 +41,6 @@ public class Proveedor {
     private String direccion;
 
     @Builder.Default
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "boolean default true")
     private Boolean activo = true;
 }
