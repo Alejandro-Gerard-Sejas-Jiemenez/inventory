@@ -33,7 +33,7 @@ export function SelectField({
           disabled={disabled}
           className="form-field-select"
         >
-          <option value="">{placeholder}</option>
+          <option value="" disabled>{placeholder}</option>
           {options.map((opt) => {
             const val = typeof opt === 'object' ? opt.value : opt;
             const text = typeof opt === 'object' ? opt.label : opt;
