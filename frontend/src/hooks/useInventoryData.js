@@ -119,19 +119,19 @@ export function useInventoryData() {
   };
 
   const saveMovimiento = async (movData) => {
-    await api.createMovimiento(movData);
+    await api.registrarMovimiento(movData);
     await loadProductos();
     await loadData();
   };
 
   const registrarVenta = async (ventaData) => {
-    await api.createVenta(ventaData);
+    await api.registrarVenta(ventaData);
     await loadProductos();
     await loadData();
   };
 
   const registrarCompra = async (compraData) => {
-    await api.createCompra(compraData);
+    await api.registrarCompra(compraData);
     await loadProductos();
     await loadData();
   };
