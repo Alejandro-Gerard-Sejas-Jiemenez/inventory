@@ -992,3 +992,33 @@
 ### Fase 3: VERIFICACIÓN
 - Compilación exitosa en Vite ('npm run build'). UI 100% alineada a la nueva estructura de BD.
 
+
+---
+
+## Bloque 27: Implementación de Variantes, React Router, Atajos en Modales y Refactorización Clean Code
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-VAR-1` / `ARCH-FE-1` |
+| **Fecha** | 2026-09-03 |
+| **Módulos Afectados** | Fullstack (Backend `catalogo`/`ventas`/`compras`, Frontend completo) |
+| **Skills Aplicadas** | `spring-modular-backend`, `react-modern-frontend`, `clean-code`, `ui-ux-usability`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Migrar modelo de datos de `Producto` único a `Producto` 1-N `ProductoVariante` (SKU, Modelo, Color, Stock).
+- Reemplazar enrutamiento por estado en `App.jsx` por `react-router-dom` con `<Routes>` y `<NavLink>`.
+- Agregar atajos de creación rápida (`+ Crear`) en modales de Producto, Compra y Modelo.
+- Refactorizar hooks (`useMasterCatalogData`, `useTransactionData`, `useTiendaCatalog`, `useInventoryData`), servicios API (`httpClient`, `catalogApi`, `productApi`, `transactionApi`, `systemApi`) y CSS (`src/styles/`).
+
+### Fase 2: IMPLEMENTACIÓN
+- Backend: Creación de `ProductoVariante.java`, `ProductoVarianteRepository.java`, `ProductoVarianteDto.java`. Actualización de `ProductoServiceImpl`, `VentaServiceImpl`, `CompraServiceImpl`.
+- Frontend: Refactorización de `ProductoModal.jsx` (`ProductoGeneralFields`, `ProductoVariantesList`), `QuickCreateModal.jsx`, `NuevaCompraForm.jsx`, `NuevoModeloForm.jsx`.
+- Enrutamiento con `react-router-dom` en `main.jsx`, `App.jsx` y `Sidebar.jsx`.
+- Descomposición de `api.js` (Facade) e `index.css` (`tokens.css`, `layout.css`, `components.css`, `tienda.css`).
+
+### Fase 3: VERIFICACIÓN
+- **Tests Backend:** `./mvnw test` → 100% pasados (4/4 tests exitosos).
+- **Build Frontend:** `npm run build` → Exitoso en 1.31s con 0 errores.
+- **Git Push:** Merge y push a la rama `main` en GitHub (`c6fc085`).
+
