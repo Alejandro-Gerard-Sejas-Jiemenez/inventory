@@ -1,7 +1,7 @@
 package com.inventario.modules.catalogo.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -17,27 +19,15 @@ import java.math.BigDecimal;
 @Builder
 public class ProductoRequestDto {
 
+    @NotNull(message = "La categoría es obligatoria")
     private Long idCategoria;
-    private Long idModelo;
     private Long idMaterial;
-    private Long idColor;
     private Long idPropietario;
 
     @NotBlank(message = "El nombre del producto es obligatorio")
     private String nombre;
 
     private String descripcion;
-
-    private String imagenUrl;
-
-    private String sku;
-
-    @NotNull(message = "El stock actual es obligatorio")
-    @Min(value = 0, message = "El stock no puede ser negativo")
-    private Integer stockActual;
-
-    @Min(value = 0, message = "El stock mínimo no puede ser negativo")
-    private Integer stockMinimo;
 
     @NotNull(message = "El precio de compra es obligatorio")
     @DecimalMin(value = "0.0", message = "El precio de compra no puede ser negativo")
@@ -51,4 +41,11 @@ public class ProductoRequestDto {
 
     @Builder.Default
     private Boolean activo = true;
+
+    @Valid
+    @Builder.Default
+    private List<ProductoVarianteDto> variantes = new ArrayList<>();
+
+    @Builder.Default
+    private List<String> imagenesUrls = new ArrayList<>();
 }

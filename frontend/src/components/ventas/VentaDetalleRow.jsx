@@ -6,20 +6,20 @@ import { Button } from '../common/Button';
 
 /**
  * Fila individual de ítem dentro del formulario POS de Venta.
- * Responsabilidad: Selección de producto, cantidad, precio unitario y cálculo de subtotal.
+ * Responsabilidad: Selección de variante, cantidad, precio unitario y cálculo de subtotal.
  */
 export function VentaDetalleRow({
   item,
   index,
-  productos = [],
-  onProductChange,
+  variantesDisponibles = [],
+  onVarianteChange,
   onCantidadChange,
   onPrecioChange,
   onRemove,
   canRemove,
 }) {
-  const prod = productos.find((p) => String(p.idProducto) === String(item.idProducto));
-  const maxStock = prod ? prod.stockActual ?? 0 : null;
+  const varSelec = variantesDisponibles.find((v) => String(v.idVariante) === String(item.idVariante));
+  const maxStock = varSelec ? varSelec.stockActual ?? 0 : null;
 
   return (
     <div
@@ -35,13 +35,13 @@ export function VentaDetalleRow({
       }}
     >
       <SelectField
-        label={index === 0 ? 'Producto' : ''}
-        value={item.idProducto}
-        onChange={(e) => onProductChange(index, e.target.value)}
+        label={index === 0 ? 'Producto (Variante)' : ''}
+        value={item.idVariante}
+        onChange={(e) => onVarianteChange(index, e.target.value)}
         placeholder="Seleccionar producto..."
-        options={productos.map((p) => ({
-          value: p.idProducto,
-          label: `${p.nombre} (Stock: ${p.stockActual})`,
+        options={variantesDisponibles.map((v) => ({
+          value: v.idVariante,
+          label: `${v.nombreCompuesto} (Stock: ${v.stockActual})`,
         }))}
         required
       />

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ShoppingBag, Plus, Trash2, CheckCircle } from 'lucide-react';
 import { Card, CardTitle, CardBody } from '../common/Card';
 import { InputField } from '../common/InputField';
 import { SelectField } from '../common/SelectField';
 import { Button } from '../common/Button';
+import { QuickCreateModal } from '../common/QuickCreateModal';
 
 export function NuevaCompraForm({
   proveedores = [],
@@ -11,25 +12,41 @@ export function NuevaCompraForm({
   usuarios = [],
   onSubmit,
   onClose,
+  onCreateProveedor,
 }) {
   const [selectedProveedor, setSelectedProveedor] = useState('');
   const [observaciones, setObservaciones] = useState('');
-  const [itemsCompra, setItemsCompra] = useState([{ idProducto: '', cantidad: 5, precioCompra: 0 }]);
+  const [itemsCompra, setItemsCompra] = useState([{ idVariante: '', cantidad: 5, precioCompra: 0 }]);
   const [loading, setLoading] = useState(false);
+  const [showQuickProveedor, setShowQuickProveedor] = useState(false);
+
+  // Aplanar productos -> variantes para el selector
+  const variantesDisponibles = useMemo(() => {
+    return productos.flatMap(p => 
+      (p.variantes || []).map(v => ({
+        idVariante: v.idVariante,
+        idProducto: p.idProducto,
+        nombreCompuesto: `${p.nombre} ${v.modelo?.nombre ? `- ${v.modelo.nombre}` : ''} ${v.color?.nombre ? `(${v.color.nombre})` : ''}`,
+        sku: v.sku,
+        stockActual: v.stockActual,
+        precioCompra: p.precioCompra
+      }))
+    );
+  }, [productos]);
 
   const handleAddItem = () => {
-    setItemsCompra([...itemsCompra, { idProducto: '', cantidad: 5, precioCompra: 0 }]);
+    setItemsCompra([...itemsCompra, { idVariante: '', cantidad: 5, precioCompra: 0 }]);
   };
 
   const handleRemoveItem = (index) => {
     setItemsCompra(itemsCompra.filter((_, i) => i !== index));
   };
 
-  const handleProductChange = (index, prodId) => {
-    const prod = productos.find((p) => p.idProducto === parseInt(prodId, 10));
+  const handleVarianteChange = (index, varId) => {
+    const variante = variantesDisponibles.find((v) => String(v.idVariante) === String(varId));
     const newItems = [...itemsCompra];
-    newItems[index].idProducto = prodId;
-    newItems[index].precioCompra = prod ? prod.precioCompra : 0;
+    newItems[index].idVariante = varId;
+    newItems[index].precioCompra = variante ? variante.precioCompra : 0;
     setItemsCompra(newItems);
   };
 
@@ -49,14 +66,21 @@ export function NuevaCompraForm({
     return acc + item.cantidad * (parseFloat(item.precioCompra) || 0);
   }, 0);
 
+  const handleQuickProveedorComplete = (created) => {
+    setShowQuickProveedor(false);
+    if (created && created.idProveedor) {
+      setSelectedProveedor(created.idProveedor);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedProveedor) {
       alert('Por favor selecciona un proveedor');
       return;
     }
-    if (itemsCompra.some((i) => !i.idProducto)) {
-      alert('Selecciona un producto para cada línea de compra');
+    if (itemsCompra.some((i) => !i.idVariante)) {
+      alert('Selecciona un producto (variante) para cada línea de compra');
       return;
     }
 
@@ -67,7 +91,7 @@ export function NuevaCompraForm({
         idProveedor: parseInt(selectedProveedor, 10),
         observaciones,
         detalles: itemsCompra.map((i) => ({
-          idProducto: parseInt(i.idProducto, 10),
+          idVariante: parseInt(i.idVariante, 10),
           cantidad: i.cantidad,
           precioCompra: parseFloat(i.precioCompra),
         })),
@@ -87,17 +111,41 @@ export function NuevaCompraForm({
       <CardBody>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
-            <SelectField
-              label="Proveedor"
-              value={selectedProveedor}
-              onChange={(e) => setSelectedProveedor(e.target.value)}
-              placeholder="Seleccione el proveedor..."
-              options={proveedores.map((pr) => ({
-                value: pr.idProveedor,
-                label: `${pr.nombre} ${pr.contacto ? `(${pr.contacto})` : ''}`,
-              }))}
-              required
-            />
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                <label className="form-field-label" style={{ margin: 0 }}>Proveedor *</label>
+                {onCreateProveedor && (
+                  <button
+                    type="button"
+                    onClick={() => setShowQuickProveedor(true)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--brand-gold)',
+                      fontSize: '0.78rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.2rem',
+                    }}
+                  >
+                    <Plus size={12} />
+                    <span>+ Crear Proveedor</span>
+                  </button>
+                )}
+              </div>
+              <SelectField
+                value={selectedProveedor}
+                onChange={(e) => setSelectedProveedor(e.target.value)}
+                placeholder="Seleccione el proveedor..."
+                options={proveedores.map((pr) => ({
+                  value: pr.idProveedor,
+                  label: `${pr.nombre} ${pr.contacto ? `(${pr.contacto})` : ''}`,
+                }))}
+                required
+              />
+            </div>
 
             <InputField
               label="N° Factura / Referencia Proveedor"
@@ -127,13 +175,13 @@ export function NuevaCompraForm({
                   }}
                 >
                   <SelectField
-                    label="Producto"
-                    value={item.idProducto}
-                    onChange={(e) => handleProductChange(idx, e.target.value)}
+                    label="Producto (Variante)"
+                    value={item.idVariante}
+                    onChange={(e) => handleVarianteChange(idx, e.target.value)}
                     placeholder="Seleccionar..."
-                    options={productos.map((p) => ({
-                      value: p.idProducto,
-                      label: `${p.sku} - ${p.nombre} (Stock: ${p.stockActual})`,
+                    options={variantesDisponibles.map((v) => ({
+                      value: v.idVariante,
+                      label: `${v.sku} - ${v.nombreCompuesto} (Stock: ${v.stockActual})`,
                     }))}
                     required
                   />
@@ -216,6 +264,15 @@ export function NuevaCompraForm({
             </div>
           </div>
         </form>
+
+        {onCreateProveedor && (
+          <QuickCreateModal
+            isOpen={showQuickProveedor}
+            onClose={handleQuickProveedorComplete}
+            type="proveedor"
+            onCreate={onCreateProveedor}
+          />
+        )}
       </CardBody>
     </Card>
   );

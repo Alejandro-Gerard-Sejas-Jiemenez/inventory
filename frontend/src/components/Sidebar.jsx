@@ -1,13 +1,11 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { Store, LogOut, UserCheck } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 import { SIDEBAR_MENU_ITEMS } from '../data/menuItems';
 
 export function Sidebar({
-  currentTab,
-  onSelectTab,
   stats,
-  onGoToTienda,
   currentUser,
   onLogout,
 }) {
@@ -24,46 +22,44 @@ export function Sidebar({
       </div>
 
       {/* Botón de acceso a la Tienda de Clientes */}
-      {onGoToTienda && (
-        <div style={{ padding: '0.8rem 1rem 0.4rem' }}>
-          <button
-            type="button"
-            onClick={onGoToTienda}
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.5rem',
-              padding: '0.65rem 0.8rem',
-              backgroundColor: 'var(--brand-gold)',
-              color: '#111',
-              border: 'none',
-              borderRadius: 'var(--radius-sm)',
-              fontWeight: 800,
-              fontSize: '0.82rem',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(245, 158, 11, 0.25)',
-              transition: 'transform 0.15s ease',
-            }}
-          >
-            <Store size={16} />
-            <span>Ver Tienda / Catálogo</span>
-          </button>
-        </div>
-      )}
+      <div style={{ padding: '0.8rem 1rem 0.4rem' }}>
+        <NavLink
+          to="/"
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem',
+            padding: '0.65rem 0.8rem',
+            backgroundColor: 'var(--brand-gold)',
+            color: '#111',
+            textDecoration: 'none',
+            border: 'none',
+            borderRadius: 'var(--radius-sm)',
+            fontWeight: 800,
+            fontSize: '0.82rem',
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(245, 158, 11, 0.25)',
+            transition: 'transform 0.15s ease',
+          }}
+        >
+          <Store size={16} />
+          <span>Ver Tienda / Catálogo</span>
+        </NavLink>
+      </div>
 
       <nav className="sidebar-nav">
         {SIDEBAR_MENU_ITEMS.map((item) => {
           const Icon = item.icon;
-          const isActive = currentTab === item.id;
           const badgeValue = item.badgeKey ? stats?.[item.badgeKey] : undefined;
 
           return (
-            <button
+            <NavLink
               key={item.id}
-              onClick={() => onSelectTab(item.id)}
-              className={`nav-item ${isActive ? 'active' : ''}`}
+              to={`/admin/${item.id}`}
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+              style={{ textDecoration: 'none' }}
             >
               <div className="nav-item-left">
                 <Icon size={18} />
@@ -72,7 +68,7 @@ export function Sidebar({
               {badgeValue !== undefined && (
                 <span className="nav-item-badge">{badgeValue}</span>
               )}
-            </button>
+            </NavLink>
           );
         })}
       </nav>

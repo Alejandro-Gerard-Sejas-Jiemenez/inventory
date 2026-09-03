@@ -2,8 +2,8 @@ package com.inventario.modules.ventas.service.impl;
 
 import com.inventario.core.exception.BadRequestException;
 import com.inventario.core.exception.ResourceNotFoundException;
-import com.inventario.modules.catalogo.model.Producto;
-import com.inventario.modules.catalogo.repository.ProductoRepository;
+import com.inventario.modules.catalogo.model.ProductoVariante;
+import com.inventario.modules.catalogo.repository.ProductoVarianteRepository;
 import com.inventario.modules.inventario.model.MovimientoStock;
 import com.inventario.modules.inventario.model.TipoMovimiento;
 import com.inventario.modules.inventario.repository.MovimientoStockRepository;
@@ -33,7 +33,7 @@ import java.util.List;
 public class VentaServiceImpl implements VentaService {
 
     private final VentaRepository ventaRepository;
-    private final ProductoRepository productoRepository;
+    private final ProductoVarianteRepository varianteRepository;
     private final UsuarioRepository usuarioRepository;
     private final MovimientoStockRepository movimientoStockRepository;
     private final BitacoraService bitacoraService;
@@ -70,29 +70,29 @@ public class VentaServiceImpl implements VentaService {
         BigDecimal totalVenta = BigDecimal.ZERO;
 
         for (DetalleVentaRequestDto item : request.getDetalles()) {
-            Producto producto = productoRepository.findById(item.getIdProducto())
-                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + item.getIdProducto()));
+            ProductoVariante variante = varianteRepository.findById(item.getIdVariante())
+                    .orElseThrow(() -> new ResourceNotFoundException("Variante no encontrada con ID: " + item.getIdVariante()));
 
-            if (producto.getStockActual() < item.getCantidad()) {
-                throw new BadRequestException("Stock insuficiente para '" + producto.getNombre() + "'. Stock actual: " + producto.getStockActual() + ", solicitado: " + item.getCantidad());
+            if (variante.getStockActual() < item.getCantidad()) {
+                throw new BadRequestException("Stock insuficiente para '" + variante.getProducto().getNombre() + "'. Stock actual: " + variante.getStockActual() + ", solicitado: " + item.getCantidad());
             }
 
             BigDecimal precioUnitario = item.getPrecioUnitario() != null
                     ? item.getPrecioUnitario()
-                    : producto.getPrecioUnitario();
+                    : variante.getProducto().getPrecioUnitario();
 
             BigDecimal subtotal = precioUnitario.multiply(BigDecimal.valueOf(item.getCantidad()));
             totalVenta = totalVenta.add(subtotal);
 
-            // Descontar stock del producto
-            int stockAntes = producto.getStockActual();
+            // Descontar stock
+            int stockAntes = variante.getStockActual();
             int stockDespues = stockAntes - item.getCantidad();
-            producto.setStockActual(stockDespues);
-            productoRepository.save(producto);
+            variante.setStockActual(stockDespues);
+            varianteRepository.save(variante);
 
             // Registrar movimiento de auditoría
             MovimientoStock movimiento = MovimientoStock.builder()
-                    .producto(producto)
+                    .variante(variante)
                     .usuario(usuario)
                     .tipo(TipoMovimiento.VENTA)
                     .cantidad(item.getCantidad())
@@ -105,7 +105,7 @@ public class VentaServiceImpl implements VentaService {
             // Añadir detalle a la venta
             DetalleVenta detalle = DetalleVenta.builder()
                     .venta(venta)
-                    .producto(producto)
+                    .variante(variante)
                     .cantidad(item.getCantidad())
                     .precioUnitario(precioUnitario)
                     .subtotal(subtotal)
@@ -141,14 +141,14 @@ public class VentaServiceImpl implements VentaService {
 
         // Devolver stock de cada producto
         for (DetalleVenta d : venta.getDetalles()) {
-            Producto prod = d.getProducto();
+            ProductoVariante prod = d.getVariante();
             int stockAntes = prod.getStockActual();
             int stockDespues = stockAntes + d.getCantidad();
             prod.setStockActual(stockDespues);
-            productoRepository.save(prod);
+            varianteRepository.save(prod);
 
             MovimientoStock movimiento = MovimientoStock.builder()
-                    .producto(prod)
+                    .variante(prod)
                     .usuario(venta.getUsuario())
                     .tipo(TipoMovimiento.DEVOLUCION)
                     .cantidad(d.getCantidad())

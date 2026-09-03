@@ -1,8 +1,8 @@
 package com.inventario.modules.compras.service.impl;
 
 import com.inventario.core.exception.ResourceNotFoundException;
-import com.inventario.modules.catalogo.model.Producto;
-import com.inventario.modules.catalogo.repository.ProductoRepository;
+import com.inventario.modules.catalogo.model.ProductoVariante;
+import com.inventario.modules.catalogo.repository.ProductoVarianteRepository;
 import com.inventario.modules.compras.dto.CompraRequestDto;
 import com.inventario.modules.compras.dto.DetalleCompraRequestDto;
 import com.inventario.modules.compras.model.Compra;
@@ -33,7 +33,7 @@ import java.util.List;
 public class CompraServiceImpl implements CompraService {
 
     private final CompraRepository compraRepository;
-    private final ProductoRepository productoRepository;
+    private final ProductoVarianteRepository varianteRepository;
     private final ProveedorRepository proveedorRepository;
     private final UsuarioRepository usuarioRepository;
     private final MovimientoStockRepository movimientoStockRepository;
@@ -74,22 +74,22 @@ public class CompraServiceImpl implements CompraService {
         BigDecimal totalCompra = BigDecimal.ZERO;
 
         for (DetalleCompraRequestDto item : request.getDetalles()) {
-            Producto producto = productoRepository.findById(item.getIdProducto())
-                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + item.getIdProducto()));
+            ProductoVariante variante = varianteRepository.findById(item.getIdVariante())
+                    .orElseThrow(() -> new ResourceNotFoundException("Variante no encontrada con ID: " + item.getIdVariante()));
 
             BigDecimal subtotal = item.getPrecioCompra().multiply(BigDecimal.valueOf(item.getCantidad()));
             totalCompra = totalCompra.add(subtotal);
 
-            // Aumentar stock del producto y actualizar último precio de compra
-            int stockAntes = producto.getStockActual();
+            int stockAntes = variante.getStockActual();
             int stockDespues = stockAntes + item.getCantidad();
-            producto.setStockActual(stockDespues);
-            producto.setPrecioCompra(item.getPrecioCompra());
-            productoRepository.save(producto);
+            variante.setStockActual(stockDespues);
+            // Actualizar el precio de compra del producto padre? o de la variante?
+            // Dejemos el update de precio de compra en el producto padre para despues si es necesario
+            variante.getProducto().setPrecioCompra(item.getPrecioCompra());
+            varianteRepository.save(variante);
 
-            // Registrar movimiento de stock
             MovimientoStock movimiento = MovimientoStock.builder()
-                    .producto(producto)
+                    .variante(variante)
                     .usuario(usuario)
                     .tipo(TipoMovimiento.COMPRA)
                     .cantidad(item.getCantidad())
@@ -101,7 +101,7 @@ public class CompraServiceImpl implements CompraService {
 
             DetalleCompra detalle = DetalleCompra.builder()
                     .compra(compra)
-                    .producto(producto)
+                    .variante(variante)
                     .cantidad(item.getCantidad())
                     .precioCompra(item.getPrecioCompra())
                     .subtotal(subtotal)

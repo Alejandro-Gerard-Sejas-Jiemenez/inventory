@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MovimientoStockRequestDto {
 
-    @NotNull(message = "El ID del producto es obligatorio")
-    private Long idProducto;
+    @NotNull(message = "El ID de la variante es obligatorio")
+    private Long idVariante;
 
     private Long idUsuario;
 

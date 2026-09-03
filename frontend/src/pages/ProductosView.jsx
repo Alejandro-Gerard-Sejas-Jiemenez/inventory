@@ -29,6 +29,11 @@ export function ProductosView({
   setSelectedCategoria,
   selectedModelo,
   setSelectedModelo,
+  onCreateCategoria,
+  onCreateMaterial,
+  onCreatePropietario,
+  onCreateModelo,
+  onCreateColor,
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProducto, setEditingProducto] = useState(null);
@@ -132,6 +137,11 @@ export function ProductosView({
         materiales={materiales}
         colores={colores}
         propietarios={propietarios}
+        onCreateCategoria={onCreateCategoria}
+        onCreateMaterial={onCreateMaterial}
+        onCreatePropietario={onCreatePropietario}
+        onCreateModelo={onCreateModelo}
+        onCreateColor={onCreateColor}
       />
     </div>
   );

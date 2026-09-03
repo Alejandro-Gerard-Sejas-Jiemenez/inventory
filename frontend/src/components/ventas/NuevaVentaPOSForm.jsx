@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { CreditCard, Plus, CheckCircle } from 'lucide-react';
 import { Card, CardTitle, CardBody } from '../common/Card';
 import { SelectField } from '../common/SelectField';
@@ -19,22 +19,35 @@ export function NuevaVentaPOSForm({
 }) {
   const [selectedMetodo, setSelectedMetodo] = useState('EFECTIVO');
   const [observaciones, setObservaciones] = useState('');
-  const [itemsVenta, setItemsVenta] = useState([{ idProducto: '', cantidad: 1, precioUnitario: 0 }]);
+  const [itemsVenta, setItemsVenta] = useState([{ idVariante: '', cantidad: 1, precioUnitario: 0 }]);
   const [loading, setLoading] = useState(false);
 
+  // Aplanar productos -> variantes para el selector
+  const variantesDisponibles = useMemo(() => {
+    return productos.flatMap(p => 
+      (p.variantes || []).map(v => ({
+        idVariante: v.idVariante,
+        idProducto: p.idProducto,
+        nombreCompuesto: `${p.nombre} ${v.modelo?.nombre ? `- ${v.modelo.nombre}` : ''} ${v.color?.nombre ? `(${v.color.nombre})` : ''}`,
+        stockActual: v.stockActual,
+        precioUnitario: p.precioUnitario
+      }))
+    );
+  }, [productos]);
+
   const handleAddItem = () => {
-    setItemsVenta([...itemsVenta, { idProducto: '', cantidad: 1, precioUnitario: 0 }]);
+    setItemsVenta([...itemsVenta, { idVariante: '', cantidad: 1, precioUnitario: 0 }]);
   };
 
   const handleRemoveItem = (index) => {
     setItemsVenta(itemsVenta.filter((_, i) => i !== index));
   };
 
-  const handleProductChange = (index, prodId) => {
-    const prod = productos.find((p) => String(p.idProducto) === String(prodId));
+  const handleVarianteChange = (index, varId) => {
+    const variante = variantesDisponibles.find((v) => String(v.idVariante) === String(varId));
     const newItems = [...itemsVenta];
-    newItems[index].idProducto = prodId;
-    newItems[index].precioUnitario = prod ? prod.precioUnitario : 0;
+    newItems[index].idVariante = varId;
+    newItems[index].precioUnitario = variante ? variante.precioUnitario : 0;
     setItemsVenta(newItems);
   };
 
@@ -56,8 +69,8 @@ export function NuevaVentaPOSForm({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (itemsVenta.some((i) => !i.idProducto)) {
-      alert('Por favor selecciona un producto para cada línea de venta');
+    if (itemsVenta.some((i) => !i.idVariante)) {
+      alert('Por favor selecciona un producto (variante) para cada línea de venta');
       return;
     }
 
@@ -68,7 +81,7 @@ export function NuevaVentaPOSForm({
         metodoPago: selectedMetodo,
         observaciones,
         detalles: itemsVenta.map((i) => ({
-          idProducto: parseInt(i.idProducto, 10),
+          idVariante: parseInt(i.idVariante, 10),
           cantidad: i.cantidad,
           precioUnitario: parseFloat(i.precioUnitario),
         })),
@@ -117,8 +130,8 @@ export function NuevaVentaPOSForm({
                   key={index}
                   item={item}
                   index={index}
-                  productos={productos}
-                  onProductChange={handleProductChange}
+                  variantesDisponibles={variantesDisponibles}
+                  onVarianteChange={handleVarianteChange}
                   onCantidadChange={handleCantidadChange}
                   onPrecioChange={handlePrecioChange}
                   onRemove={handleRemoveItem}

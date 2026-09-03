@@ -1,6 +1,7 @@
 package com.inventario.modules.catalogo;
 
 import com.inventario.modules.catalogo.dto.ProductoRequestDto;
+import com.inventario.modules.catalogo.dto.ProductoVarianteDto;
 import com.inventario.modules.catalogo.model.*;
 import com.inventario.modules.catalogo.repository.*;
 import com.inventario.modules.catalogo.service.ProductoService;
@@ -80,49 +81,60 @@ class ProductoServiceTest {
     @DisplayName("Debe crear un producto correctamente con sus relaciones")
     void testCrearProducto() {
         ProductoRequestDto dto = ProductoRequestDto.builder()
-                .sku("TEST-SKU-001")
                 .nombre("Producto de Prueba")
                 .descripcion("Descripción de prueba")
                 .idCategoria(categoriaTest.getIdCategoria())
-                .idModelo(modeloTest.getIdModelo())
                 .idMaterial(materialTest.getIdMaterial())
-                .idColor(colorTest.getIdColor())
-                .stockActual(15)
-                .stockMinimo(5)
                 .precioCompra(new BigDecimal("100.00"))
                 .precioUnitario(new BigDecimal("150.00"))
                 .activo(true)
+                .variantes(List.of(
+                        ProductoVarianteDto.builder()
+                                .sku("TEST-SKU-001")
+                                .idModelo(modeloTest.getIdModelo())
+                                .idColor(colorTest.getIdColor())
+                                .stockActual(15)
+                                .stockMinimo(5)
+                                .build()
+                ))
                 .build();
 
         Producto creado = productoService.create(dto);
 
         assertNotNull(creado.getIdProducto());
-        assertEquals("TEST-SKU-001", creado.getSku());
-        assertEquals(15, creado.getStockActual());
+        assertEquals(1, creado.getVariantes().size());
+        assertEquals("TEST-SKU-001", creado.getVariantes().get(0).getSku());
+        assertEquals(15, creado.getVariantes().get(0).getStockActual());
         assertNotNull(creado.getCategoria());
         assertEquals("Categoria Test", creado.getCategoria().getNombre());
-        assertEquals("Modelo Test", creado.getModelo().getNombre());
-        assertEquals("Marca Test", creado.getModelo().getMarca().getNombre());
+        assertEquals("Modelo Test", creado.getVariantes().get(0).getModelo().getNombre());
+        assertEquals("Marca Test", creado.getVariantes().get(0).getModelo().getMarca().getNombre());
         assertEquals("Material Test", creado.getMaterial().getNombre());
-        assertEquals("Color Test", creado.getColor().getNombre());
+        assertEquals("Color Test", creado.getVariantes().get(0).getColor().getNombre());
     }
 
     @Test
     @DisplayName("Debe listar productos con bajo stock")
     void testBuscarBajoStock() {
         productoService.create(ProductoRequestDto.builder()
-                .sku("TEST-LOW-STOCK")
                 .nombre("Producto Critico")
-                .idModelo(modeloTest.getIdModelo())
-                .stockActual(2)
-                .stockMinimo(5)
+                .idCategoria(categoriaTest.getIdCategoria())
                 .precioCompra(new BigDecimal("50.00"))
                 .precioUnitario(new BigDecimal("90.00"))
                 .activo(true)
+                .variantes(List.of(
+                        ProductoVarianteDto.builder()
+                                .sku("TEST-LOW-STOCK")
+                                .idModelo(modeloTest.getIdModelo())
+                                .idColor(colorTest.getIdColor())
+                                .stockActual(2)
+                                .stockMinimo(5)
+                                .build()
+                ))
                 .build());
 
         List<Producto> bajoStock = productoService.findLowStock();
         assertFalse(bajoStock.isEmpty());
-        assertTrue(bajoStock.stream().anyMatch(p -> p.getSku().equals("TEST-LOW-STOCK")));
+        assertTrue(bajoStock.stream().anyMatch(p -> p.getVariantes().stream().anyMatch(v -> v.getSku().equals("TEST-LOW-STOCK"))));
     }
 }

@@ -6,10 +6,13 @@ import { Button } from '../common/Button';
 export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete, onDuplicate }) {
   return [
     {
-      header: 'SKU',
-      accessor: 'sku',
-      width: '110px',
-      render: (p) => <Badge variant="brand">{p.sku}</Badge>,
+      header: 'SKU / Ref',
+      width: '120px',
+      render: (p) => {
+        if (!p.variantes || p.variantes.length === 0) return <Badge variant="neutral">Sin Variantes</Badge>;
+        if (p.variantes.length === 1) return <Badge variant="brand">{p.variantes[0].sku}</Badge>;
+        return <Badge variant="brand">+{p.variantes.length} Variantes</Badge>;
+      },
     },
     {
       header: 'Producto',
@@ -47,42 +50,40 @@ export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete, onDupli
       ),
     },
     {
-      header: 'Modelo & Marca',
-      render: (p) => (
-        <div>
-          <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
-            {p.modelo?.nombre || '-'}
-          </div>
-          <span style={{ fontSize: '0.75rem', color: 'var(--brand-gold)' }}>
-            {p.modelo?.marca?.nombre || 'Sin Marca'}
-          </span>
-        </div>
-      ),
+      header: 'Detalles (Variantes)',
+      render: (p) => {
+        if (!p.variantes || p.variantes.length === 0) return <span style={{ color: 'var(--text-muted)' }}>-</span>;
+        if (p.variantes.length === 1) {
+            const v = p.variantes[0];
+            return (
+              <div>
+                <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                  {v.modelo?.nombre || '-'}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.2rem' }}>
+                  {v.color?.codigoHex && (
+                    <span
+                      style={{
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '2px',
+                        backgroundColor: v.color.codigoHex,
+                        border: '1px solid rgba(255,255,255,0.3)',
+                      }}
+                    />
+                  )}
+                  <span style={{ fontSize: '0.75rem', color: 'var(--brand-gold)' }}>
+                    {v.color ? v.color.nombre : 'Sin color'}
+                  </span>
+                </div>
+              </div>
+            );
+        }
+        return <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Múltiples Modelos/Colores</span>;
+      },
     },
     {
-      header: 'Material & Color',
-      render: (p) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          {p.color?.codigoHex && (
-            <span
-              style={{
-                width: '14px',
-                height: '14px',
-                borderRadius: '3px',
-                backgroundColor: p.color.codigoHex,
-                border: '1px solid rgba(255,255,255,0.3)',
-                flexShrink: 0,
-              }}
-            />
-          )}
-          <span>
-            {p.material?.nombre || '-'} {p.color ? `· ${p.color.nombre}` : ''}
-          </span>
-        </div>
-      ),
-    },
-    {
-      header: 'Precio Unit.',
+      header: 'Precios',
       render: (p) => (
         <div>
           <strong style={{ color: 'var(--brand-gold)' }}>
@@ -97,9 +98,12 @@ export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete, onDupli
       ),
     },
     {
-      header: 'Stock Actual',
+      header: 'Stock Total',
       render: (p) => {
-        const isLow = p.stockActual <= p.stockMinimo;
+        if (!p.variantes || p.variantes.length === 0) return <span>0</span>;
+        const totalStock = p.variantes.reduce((sum, v) => sum + (v.stockActual || 0), 0);
+        const minStock = p.variantes.reduce((sum, v) => sum + (v.stockMinimo || 0), 0);
+        const isLow = totalStock <= minStock;
         return (
           <div>
             <span
@@ -109,11 +113,11 @@ export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete, onDupli
                 color: isLow ? 'var(--brand-red)' : 'var(--text-white)',
               }}
             >
-              {p.stockActual}
+              {totalStock}
             </span>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
               {' '}
-              / min {p.stockMinimo}
+              / min {minStock}
             </span>
           </div>
         );
@@ -122,7 +126,10 @@ export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete, onDupli
     {
       header: 'Estado',
       render: (p) => {
-        const isLow = p.stockActual <= p.stockMinimo;
+        if (!p.variantes || p.variantes.length === 0) return <Badge variant="neutral">Sin Stock</Badge>;
+        const totalStock = p.variantes.reduce((sum, v) => sum + (v.stockActual || 0), 0);
+        const minStock = p.variantes.reduce((sum, v) => sum + (v.stockMinimo || 0), 0);
+        const isLow = totalStock <= minStock;
         return (
           <Badge variant={isLow ? 'danger' : 'success'}>
             {isLow ? 'Stock Crítico' : 'Disponible'}
@@ -139,23 +146,8 @@ export function getProductoColumns({ onOpenMovimiento, onEdit, onDelete, onDupli
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onOpenMovimiento(p)}
-            title="Ajuste de Stock (Kardex)"
-            icon={ArrowUpDown}
-            style={{ color: 'var(--brand-gold)' }}
-          />
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onDuplicate && onDuplicate(p)}
-            title="Duplicar Producto"
-            icon={Copy}
-          />
-          <Button
-            variant="ghost"
-            size="sm"
             onClick={() => onEdit(p)}
-            title="Editar Producto"
+            title="Administrar Producto y Variantes"
             icon={Edit}
           />
           <Button

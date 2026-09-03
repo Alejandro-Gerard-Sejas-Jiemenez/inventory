@@ -1,8 +1,8 @@
 package com.inventario.modules.ventas;
 
 import com.inventario.modules.catalogo.dto.ProductoRequestDto;
-import com.inventario.modules.catalogo.model.Producto;
-import com.inventario.modules.catalogo.repository.ProductoRepository;
+import com.inventario.modules.catalogo.model.*;
+import com.inventario.modules.catalogo.repository.*;
 import com.inventario.modules.catalogo.service.ProductoService;
 import com.inventario.modules.inventario.model.MovimientoStock;
 import com.inventario.modules.inventario.model.TipoMovimiento;
@@ -44,9 +44,23 @@ class VentaServiceTest {
     private ProductoRepository productoRepository;
 
     @Autowired
+    private ProductoVarianteRepository productoVarianteRepository;
+
+    @Autowired
     private UsuarioRepository usuarioRepository;
     @Autowired
     private RolRepository rolRepository;
+
+    @Autowired
+    private CategoriaRepository categoriaRepository;
+    @Autowired
+    private MaterialRepository materialRepository;
+    @Autowired
+    private MarcaRepository marcaRepository;
+    @Autowired
+    private ModeloRepository modeloRepository;
+    @Autowired
+    private ColorRepository colorRepository;
 
     @Autowired
     private MovimientoStockRepository movimientoStockRepository;
@@ -54,12 +68,21 @@ class VentaServiceTest {
     private Usuario usuarioTest;
     private Rol rolTest;
     private Producto productoTest;
+    private ProductoVariante varianteTest;
 
     @BeforeEach
     void setUp() {
         rolTest = rolRepository.save(TestMockDataFactory.crearRolVendedor());
         usuarioTest = usuarioRepository.save(TestMockDataFactory.crearUsuarioVendedor(rolTest));
-        productoTest = productoService.create(TestMockDataFactory.crearProductoTest());
+
+        Categoria cat = categoriaRepository.save(Categoria.builder().nombre("Cat").build());
+        Material mat = materialRepository.save(Material.builder().nombre("Mat").build());
+        Marca marca = marcaRepository.save(Marca.builder().nombre("Marca").build());
+        Modelo mod = modeloRepository.save(Modelo.builder().nombre("Mod").marca(marca).build());
+        Color col = colorRepository.save(Color.builder().nombre("Col").codigoHex("#000").build());
+
+        productoTest = productoService.create(TestMockDataFactory.crearProductoTest(cat.getIdCategoria(), mat.getIdMaterial(), mod.getIdModelo(), col.getIdColor()));
+        varianteTest = productoTest.getVariantes().get(0);
     }
 
     @Test
@@ -71,7 +94,7 @@ class VentaServiceTest {
                 .observaciones("Venta de prueba unitaria")
                 .detalles(List.of(
                         DetalleVentaRequestDto.builder()
-                                .idProducto(productoTest.getIdProducto())
+                                .idVariante(varianteTest.getIdVariante())
                                 .cantidad(3)
                                 .precioUnitario(new BigDecimal("250.00"))
                                 .build()
@@ -85,13 +108,13 @@ class VentaServiceTest {
         assertEquals(EstadoVenta.COMPLETADA, venta.getEstado());
 
         // Verificar que el stock se descontó (20 - 3 = 17)
-        Producto prodActualizado = productoRepository.findById(productoTest.getIdProducto()).orElseThrow();
-        assertEquals(17, prodActualizado.getStockActual());
+        ProductoVariante varActualizada = productoVarianteRepository.findById(varianteTest.getIdVariante()).orElseThrow();
+        assertEquals(17, varActualizada.getStockActual());
 
         // Verificar registro de auditoría en movimientos
-        List<MovimientoStock> movimientos = movimientoStockRepository.findByProductoIdProductoOrderByFechaHoraDesc(productoTest.getIdProducto());
+        List<MovimientoStock> movimientos = movimientoStockRepository.findByVarianteIdVarianteOrderByFechaHoraDesc(varianteTest.getIdVariante());
         assertFalse(movimientos.isEmpty());
-        assertEquals(TipoMovimiento.VENTA, movimientos.get(0).getTipo());
-        assertEquals(3, movimientos.get(0).getCantidad());
+        // El primer movimiento podría ser el registro inicial (ENTRADA) o la VENTA, como los ordenamos por fecha, el último debe ser la VENTA.
+        assertTrue(movimientos.stream().anyMatch(m -> m.getTipo() == TipoMovimiento.VENTA && m.getCantidad() == 3));
     }
 }

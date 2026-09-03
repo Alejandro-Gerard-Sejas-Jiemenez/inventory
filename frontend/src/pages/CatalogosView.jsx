@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
-import { Trash2, Tag, Palette, Box, Layers, FolderTree, Award, Users, RefreshCw } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Tag, Palette, Box, Layers, FolderTree, Award, Users } from 'lucide-react';
 import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardTitle, CardBody } from '../components/common/Card';
-import { Button } from '../components/common/Button';
-import { Badge } from '../components/common/Badge';
 import { DataTable } from '../components/common/DataTable';
 import { Tabs } from '../components/common/Tabs';
 import { NuevaCategoriaForm } from '../components/catalogos/NuevaCategoriaForm';
@@ -12,6 +10,14 @@ import { NuevoModeloForm } from '../components/catalogos/NuevoModeloForm';
 import { NuevoMaterialForm } from '../components/catalogos/NuevoMaterialForm';
 import { NuevoColorForm } from '../components/catalogos/NuevoColorForm';
 import { NuevoPropietarioForm } from '../components/catalogos/NuevoPropietarioForm';
+import {
+  getCategoriaColumns,
+  getMarcaColumns,
+  getModeloColumns,
+  getMaterialColumns,
+  getColorColumns,
+  getPropietarioColumns,
+} from '../components/catalogos/catalogosColumns';
 
 export function CatalogosView({
   categorias = [],
@@ -55,129 +61,12 @@ export function CatalogosView({
     { id: 'propietarios', label: 'Propietarios', count: filterActive(propietarios).length, icon: Users },
   ];
 
-  const renderActions = (id, isActive, onDelete, onRestore) => (
-    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-      {isActive ? (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onDelete(id)}
-          style={{ color: 'var(--brand-red)' }}
-          icon={Trash2}
-          aria-label="Desactivar"
-        />
-      ) : (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onRestore(id)}
-          style={{ color: 'var(--brand-green)' }}
-          icon={RefreshCw}
-          aria-label="Restaurar"
-        />
-      )}
-    </div>
-  );
-
-  const renderStatus = (isActive) => (
-    <Badge variant={isActive ? 'success' : 'neutral'}>{isActive ? 'Activo' : 'Inactivo'}</Badge>
-  );
-
-  const categoriaColumns = [
-    { header: 'ID', accessor: 'idCategoria', width: '70px', render: (cat) => <span style={{ color: 'var(--text-muted)' }}>#{cat.idCategoria}</span> },
-    { header: 'Categoría', accessor: 'nombre', render: (cat) => <strong style={{ color: 'var(--text-white)' }}>{cat.nombre}</strong> },
-    { header: 'Descripción', accessor: 'descripcion', render: (cat) => <span style={{ color: 'var(--text-secondary)' }}>{cat.descripcion || '-'}</span> },
-    { header: 'Estado', render: (cat) => renderStatus(cat.activo !== false) },
-    {
-      header: 'Acción',
-      align: 'right',
-      width: '100px',
-      render: (cat) => renderActions(cat.idCategoria, cat.activo !== false, onDeleteCategoria, onRestaurarCategoria),
-    },
-  ];
-
-  const marcaColumns = [
-    { header: 'ID', accessor: 'idMarca', width: '70px', render: (m) => <span style={{ color: 'var(--text-muted)' }}>#{m.idMarca}</span> },
-    { header: 'Marca / Fabricante', accessor: 'nombre', render: (m) => <strong style={{ color: 'var(--text-white)' }}>{m.nombre}</strong> },
-    { header: 'Estado', render: (m) => renderStatus(m.activo !== false) },
-    {
-      header: 'Acción',
-      align: 'right',
-      width: '100px',
-      render: (m) => renderActions(m.idMarca, m.activo !== false, onDeleteMarca, onRestaurarMarca),
-    },
-  ];
-
-  const modeloColumns = [
-    { header: 'ID', accessor: 'idModelo', width: '70px', render: (m) => <span style={{ color: 'var(--text-muted)' }}>#{m.idModelo}</span> },
-    { header: 'Modelo', accessor: 'nombre', render: (m) => <strong style={{ color: 'var(--text-white)' }}>{m.nombre}</strong> },
-    {
-      header: 'Marca Fabricante',
-      render: (m) => <Badge variant="brand">{m.marca?.nombre || 'Genérica'}</Badge>,
-    },
-    { header: 'Descripción', accessor: 'descripcion', render: (m) => <span style={{ color: 'var(--text-secondary)' }}>{m.descripcion || '-'}</span> },
-    { header: 'Estado', render: (m) => renderStatus(m.activo !== false) },
-    {
-      header: 'Acción',
-      align: 'right',
-      width: '100px',
-      render: (m) => renderActions(m.idModelo, m.activo !== false, onDeleteModelo, onRestaurarModelo),
-    },
-  ];
-
-  const materialColumns = [
-    { header: 'ID', accessor: 'idMaterial', width: '70px', render: (m) => <span style={{ color: 'var(--text-muted)' }}>#{m.idMaterial}</span> },
-    { header: 'Material', accessor: 'nombre', render: (m) => <strong style={{ color: 'var(--text-white)' }}>{m.nombre}</strong> },
-    { header: 'Descripción', accessor: 'descripcion', render: (m) => <span style={{ color: 'var(--text-secondary)' }}>{m.descripcion || '-'}</span> },
-    { header: 'Estado', render: (m) => renderStatus(m.activo !== false) },
-    {
-      header: 'Acción',
-      align: 'right',
-      width: '100px',
-      render: (m) => renderActions(m.idMaterial, m.activo !== false, onDeleteMaterial, onRestaurarMaterial),
-    },
-  ];
-
-  const colorColumns = [
-    { header: 'ID', accessor: 'idColor', width: '70px', render: (c) => <span style={{ color: 'var(--text-muted)' }}>#{c.idColor}</span> },
-    {
-      header: 'Muestra',
-      width: '80px',
-      render: (c) => (
-        <div
-          style={{
-            width: '28px',
-            height: '28px',
-            borderRadius: 'var(--radius-sm)',
-            backgroundColor: c.codigoHex || '#888',
-            border: '2px solid rgba(255,255,255,0.2)',
-            boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
-          }}
-        />
-      ),
-    },
-    { header: 'Color', accessor: 'nombre', render: (c) => <strong style={{ color: 'var(--text-white)' }}>{c.nombre}</strong> },
-    { header: 'HEX', accessor: 'codigoHex', render: (c) => <code>{c.codigoHex || '-'}</code> },
-    { header: 'Estado', render: (c) => renderStatus(c.activo !== false) },
-    {
-      header: 'Acción',
-      align: 'right',
-      width: '100px',
-      render: (c) => renderActions(c.idColor, c.activo !== false, onDeleteColor, onRestaurarColor),
-    },
-  ];
-
-  const propietarioColumns = [
-    { header: 'ID', accessor: 'idPropietario', width: '70px', render: (p) => <span style={{ color: 'var(--text-muted)' }}>#{p.idPropietario}</span> },
-    { header: 'Propietario / Dueño', accessor: 'nombre', render: (p) => <strong style={{ color: 'var(--text-white)' }}>{p.nombre}</strong> },
-    { header: 'Estado', render: (p) => renderStatus(p.activo !== false) },
-    {
-      header: 'Acción',
-      align: 'right',
-      width: '100px',
-      render: (p) => renderActions(p.idPropietario, p.activo !== false, onDeletePropietario, onRestaurarPropietario),
-    },
-  ];
+  const categoriaCols = useMemo(() => getCategoriaColumns(onDeleteCategoria, onRestaurarCategoria), [onDeleteCategoria, onRestaurarCategoria]);
+  const marcaCols = useMemo(() => getMarcaColumns(onDeleteMarca, onRestaurarMarca), [onDeleteMarca, onRestaurarMarca]);
+  const modeloCols = useMemo(() => getModeloColumns(onDeleteModelo, onRestaurarModelo), [onDeleteModelo, onRestaurarModelo]);
+  const materialCols = useMemo(() => getMaterialColumns(onDeleteMaterial, onRestaurarMaterial), [onDeleteMaterial, onRestaurarMaterial]);
+  const colorCols = useMemo(() => getColorColumns(onDeleteColor, onRestaurarColor), [onDeleteColor, onRestaurarColor]);
+  const propietarioCols = useMemo(() => getPropietarioColumns(onDeletePropietario, onRestaurarPropietario), [onDeletePropietario, onRestaurarPropietario]);
 
   return (
     <div className="view-container">
@@ -209,7 +98,7 @@ export function CatalogosView({
             </CardTitle>
             <CardBody>
               <DataTable
-                columns={categoriaColumns}
+                columns={categoriaCols}
                 data={filterActive(categorias)}
                 keyExtractor={(cat) => cat.idCategoria}
                 showSearch={true}
@@ -230,7 +119,7 @@ export function CatalogosView({
             </CardTitle>
             <CardBody>
               <DataTable
-                columns={marcaColumns}
+                columns={marcaCols}
                 data={filterActive(marcas)}
                 keyExtractor={(m) => m.idMarca}
                 showSearch={true}
@@ -244,14 +133,20 @@ export function CatalogosView({
 
       {activeSubTab === 'modelos' && (
         <div className="grid-split-form">
-          {!showInactive && <NuevoModeloForm marcas={marcas.filter(m => m.activo !== false)} onSubmit={onCreateModelo} />}
+          {!showInactive && (
+            <NuevoModeloForm
+              marcas={marcas.filter(m => m.activo !== false)}
+              onSubmit={onCreateModelo}
+              onCreateMarca={onCreateMarca}
+            />
+          )}
           <Card style={{ gridColumn: showInactive ? '1 / -1' : 'auto' }}>
             <CardTitle icon={Layers} subtitle={showInactive ? "Modelos desactivados" : "Modelos activos vinculados a su marca"}>
               {showInactive ? "Modelos Inactivos" : "Listado de Modelos"}
             </CardTitle>
             <CardBody>
               <DataTable
-                columns={modeloColumns}
+                columns={modeloCols}
                 data={filterActive(modelos)}
                 keyExtractor={(m) => m.idModelo}
                 showSearch={true}
@@ -272,7 +167,7 @@ export function CatalogosView({
             </CardTitle>
             <CardBody>
               <DataTable
-                columns={materialColumns}
+                columns={materialCols}
                 data={filterActive(materiales)}
                 keyExtractor={(m) => m.idMaterial}
                 showSearch={true}
@@ -293,7 +188,7 @@ export function CatalogosView({
             </CardTitle>
             <CardBody>
               <DataTable
-                columns={colorColumns}
+                columns={colorCols}
                 data={filterActive(colores)}
                 keyExtractor={(c) => c.idColor}
                 showSearch={true}
@@ -314,7 +209,7 @@ export function CatalogosView({
             </CardTitle>
             <CardBody>
               <DataTable
-                columns={propietarioColumns}
+                columns={propietarioCols}
                 data={filterActive(propietarios)}
                 keyExtractor={(p) => p.idPropietario}
                 showSearch={true}

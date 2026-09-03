@@ -2,8 +2,8 @@ package com.inventario.modules.inventario.service.impl;
 
 import com.inventario.core.exception.BadRequestException;
 import com.inventario.core.exception.ResourceNotFoundException;
-import com.inventario.modules.catalogo.model.Producto;
-import com.inventario.modules.catalogo.repository.ProductoRepository;
+import com.inventario.modules.catalogo.model.ProductoVariante;
+import com.inventario.modules.catalogo.repository.ProductoVarianteRepository;
 import com.inventario.modules.inventario.dto.MovimientoStockRequestDto;
 import com.inventario.modules.inventario.model.MovimientoStock;
 import com.inventario.modules.inventario.model.TipoMovimiento;
@@ -22,7 +22,7 @@ import java.util.List;
 public class MovimientoStockServiceImpl implements MovimientoStockService {
 
     private final MovimientoStockRepository movimientoStockRepository;
-    private final ProductoRepository productoRepository;
+    private final ProductoVarianteRepository varianteRepository;
     private final UsuarioRepository usuarioRepository;
 
     @Override
@@ -33,22 +33,22 @@ public class MovimientoStockServiceImpl implements MovimientoStockService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MovimientoStock> findByProducto(Long idProducto) {
-        return movimientoStockRepository.findByProductoIdProductoOrderByFechaHoraDesc(idProducto);
+    public List<MovimientoStock> findByVariante(Long idVariante) {
+        return movimientoStockRepository.findByVarianteIdVarianteOrderByFechaHoraDesc(idVariante);
     }
 
     @Override
     @Transactional
     public MovimientoStock registrarMovimiento(MovimientoStockRequestDto request) {
-        Producto producto = productoRepository.findById(request.getIdProducto())
-                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + request.getIdProducto()));
+        ProductoVariante variante = varianteRepository.findById(request.getIdVariante())
+                .orElseThrow(() -> new ResourceNotFoundException("Variante no encontrada con ID: " + request.getIdVariante()));
 
         Usuario usuario = null;
         if (request.getIdUsuario() != null) {
             usuario = usuarioRepository.findById(request.getIdUsuario()).orElse(null);
         }
 
-        int stockAntes = producto.getStockActual();
+        int stockAntes = variante.getStockActual();
         int stockDespues = stockAntes;
 
         if (request.getTipo() == TipoMovimiento.ENTRADA) {
@@ -62,11 +62,11 @@ public class MovimientoStockServiceImpl implements MovimientoStockService {
             stockDespues = request.getCantidad();
         }
 
-        producto.setStockActual(stockDespues);
-        productoRepository.save(producto);
+        variante.setStockActual(stockDespues);
+        varianteRepository.save(variante);
 
         MovimientoStock movimiento = MovimientoStock.builder()
-                .producto(producto)
+                .variante(variante)
                 .usuario(usuario)
                 .tipo(request.getTipo())
                 .cantidad(request.getCantidad())

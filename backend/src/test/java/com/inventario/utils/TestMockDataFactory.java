@@ -1,16 +1,18 @@
 package com.inventario.utils;
 
 import com.inventario.modules.catalogo.dto.ProductoRequestDto;
+import com.inventario.modules.catalogo.dto.ProductoVarianteDto;
 import com.inventario.modules.sistema.model.Rol;
 import com.inventario.modules.sistema.model.Usuario;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class TestMockDataFactory {
 
     public static Rol crearRolVendedor() {
         return Rol.builder()
-                .nombre("VENDEDOR")
+                .nombre("VENDEDOR_TEST")
                 .descripcion("Rol para ventas de prueba")
                 .build();
     }
@@ -25,15 +27,23 @@ public class TestMockDataFactory {
                 .build();
     }
 
-    public static ProductoRequestDto crearProductoTest() {
+    public static ProductoRequestDto crearProductoTest(Long idCategoria, Long idMaterial, Long idModelo, Long idColor) {
         return ProductoRequestDto.builder()
-                .sku("SKU-VENTA-TEST")
                 .nombre("Monitor 27 Pulgadas")
-                .stockActual(20)
-                .stockMinimo(5)
+                .idCategoria(idCategoria)
+                .idMaterial(idMaterial)
                 .precioCompra(new BigDecimal("180.00"))
                 .precioUnitario(new BigDecimal("250.00"))
                 .activo(true)
+                .variantes(List.of(
+                        ProductoVarianteDto.builder()
+                                .sku("SKU-VENTA-TEST")
+                                .idModelo(idModelo)
+                                .idColor(idColor)
+                                .stockActual(20)
+                                .stockMinimo(5)
+                                .build()
+                ))
                 .build();
     }
 }

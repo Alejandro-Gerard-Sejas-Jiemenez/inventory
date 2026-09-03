@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Package, Save } from 'lucide-react';
 import { Modal } from './common/Modal';
-import { InputField } from './common/InputField';
-import { SelectField } from './common/SelectField';
-import { TextAreaField } from './common/TextAreaField';
 import { Button } from './common/Button';
 import { ProductoFotoUploader } from './productos/ProductoFotoUploader';
-import { ColorSelectorSection } from './productos/ColorSelectorSection';
+import { ProductoGeneralFields } from './productos/ProductoGeneralFields';
+import { ProductoVariantesList } from './productos/ProductoVariantesList';
+import { QuickCreateModal } from './common/QuickCreateModal';
 
 /**
  * Modal de Creación y Edición de Productos.
- * Responsabilidad: Orquestación del formulario de producto y validación básica.
+ * Responsabilidad única: Orquestación limpia del formulario de producto y sus modales de soporte.
  */
 export function ProductoModal({
   isOpen,
@@ -18,93 +17,147 @@ export function ProductoModal({
   onSave,
   producto,
   categorias = [],
+  marcas = [],
   modelos = [],
   materiales = [],
   colores = [],
   propietarios = [],
+  onCreateCategoria,
+  onCreateMaterial,
+  onCreatePropietario,
+  onCreateModelo,
+  onCreateColor,
 }) {
   const [formData, setFormData] = useState({
     idProducto: null,
-    sku: '',
     nombre: '',
     descripcion: '',
     imagenUrl: '',
     idCategoria: '',
-    idModelo: '',
     idMaterial: '',
-    idColor: '',
     idPropietario: '',
     precioCompra: '',
     precioMayoreo: '',
     precioUnitario: '',
-    stockActual: 0,
-    stockMinimo: 5,
+    variantes: [],
   });
 
   const [loading, setLoading] = useState(false);
+  const [quickCreateType, setQuickCreateType] = useState(null);
+  const [activeVarianteIndexForQuick, setActiveVarianteIndexForQuick] = useState(null);
 
   useEffect(() => {
     if (producto) {
       setFormData({
         idProducto: producto.idProducto,
-        sku: producto.sku || '',
         nombre: producto.nombre || '',
         descripcion: producto.descripcion || '',
         imagenUrl: producto.imagenUrl || '',
         idCategoria: producto.categoria?.idCategoria || '',
-        idModelo: producto.modelo?.idModelo || '',
         idMaterial: producto.material?.idMaterial || '',
-        idColor: producto.color?.idColor || '',
         idPropietario: producto.propietario?.idPropietario || '',
         precioCompra: producto.precioCompra != null ? producto.precioCompra : '',
         precioMayoreo: producto.precioMayoreo != null ? producto.precioMayoreo : '',
         precioUnitario: producto.precioUnitario != null ? producto.precioUnitario : '',
-        stockActual: producto.stockActual != null ? producto.stockActual : 0,
-        stockMinimo: producto.stockMinimo != null ? producto.stockMinimo : 5,
+        variantes: (producto.variantes || []).map(v => ({
+          idVariante: v.idVariante,
+          sku: v.sku || '',
+          idModelo: v.modelo?.idModelo || '',
+          idColor: v.color?.idColor || '',
+          stockActual: v.stockActual != null ? v.stockActual : 0,
+          stockMinimo: v.stockMinimo != null ? v.stockMinimo : 5,
+        })),
       });
     } else {
       setFormData({
         idProducto: null,
-        sku: '',
         nombre: '',
         descripcion: '',
         imagenUrl: '',
         idCategoria: categorias[0]?.idCategoria || '',
-        idModelo: '',
         idMaterial: '',
-        idColor: '',
         idPropietario: '',
         precioCompra: '',
         precioMayoreo: '',
         precioUnitario: '',
-        stockActual: 0,
-        stockMinimo: 5,
+        variantes: [{ sku: '', idModelo: '', idColor: '', stockActual: 0, stockMinimo: 5 }],
       });
     }
   }, [producto, categorias, isOpen]);
 
   const filterActive = (list) => list.filter(item => item.activo !== false);
 
+  const handleAddVariante = () => {
+    setFormData(prev => ({
+      ...prev,
+      variantes: [...prev.variantes, { sku: '', idModelo: '', idColor: '', stockActual: 0, stockMinimo: 5 }],
+    }));
+  };
+
+  const handleRemoveVariante = (index) => {
+    setFormData(prev => {
+      const newVariantes = [...prev.variantes];
+      newVariantes.splice(index, 1);
+      return { ...prev, variantes: newVariantes };
+    });
+  };
+
+  const updateVariante = (index, field, value) => {
+    setFormData(prev => {
+      const newVariantes = [...prev.variantes];
+      newVariantes[index][field] = value;
+      return { ...prev, variantes: newVariantes };
+    });
+  };
+
+  const handleQuickCreateComplete = (created) => {
+    const type = quickCreateType;
+    setQuickCreateType(null);
+
+    if (!created) return;
+
+    if (type === 'categoria') {
+      setFormData(prev => ({ ...prev, idCategoria: created.idCategoria }));
+    } else if (type === 'material') {
+      setFormData(prev => ({ ...prev, idMaterial: created.idMaterial }));
+    } else if (type === 'propietario') {
+      setFormData(prev => ({ ...prev, idPropietario: created.idPropietario }));
+    } else if (type === 'modelo' && activeVarianteIndexForQuick !== null) {
+      updateVariante(activeVarianteIndexForQuick, 'idModelo', created.idModelo);
+    } else if (type === 'color' && activeVarianteIndexForQuick !== null) {
+      updateVariante(activeVarianteIndexForQuick, 'idColor', created.idColor);
+    }
+    setActiveVarianteIndexForQuick(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.variantes.length === 0) {
+      alert("Debe agregar al menos una variante al producto.");
+      return;
+    }
+
     try {
       setLoading(true);
       const payload = {
         idProducto: formData.idProducto,
-        sku: formData.sku?.trim() || null,
         nombre: formData.nombre.trim(),
         descripcion: formData.descripcion?.trim() || null,
         imagenUrl: formData.imagenUrl?.trim() || null,
         idCategoria: Number(formData.idCategoria),
-        idModelo: formData.idModelo ? Number(formData.idModelo) : null,
         idMaterial: formData.idMaterial ? Number(formData.idMaterial) : null,
-        idColor: formData.idColor ? Number(formData.idColor) : null,
         idPropietario: formData.idPropietario ? Number(formData.idPropietario) : null,
         precioCompra: formData.precioCompra !== '' ? Number(formData.precioCompra) : null,
         precioMayoreo: formData.precioMayoreo !== '' ? Number(formData.precioMayoreo) : null,
         precioUnitario: Number(formData.precioUnitario),
-        stockActual: Number(formData.stockActual),
-        stockMinimo: Number(formData.stockMinimo),
+        variantes: formData.variantes.map(v => ({
+          idVariante: v.idVariante || null,
+          sku: v.sku?.trim() || null,
+          idModelo: v.idModelo ? Number(v.idModelo) : null,
+          idColor: v.idColor ? Number(v.idColor) : null,
+          stockActual: Number(v.stockActual),
+          stockMinimo: Number(v.stockMinimo),
+        })),
       };
       await onSave(payload);
       onClose();
@@ -120,9 +173,9 @@ export function ProductoModal({
       isOpen={isOpen}
       onClose={onClose}
       title={producto ? 'Editar Producto' : 'Nuevo Producto en Catálogo'}
-      subtitle={producto ? `SKU: ${producto.sku || 'Sin SKU'}` : 'Complete la información para registrar el producto'}
+      subtitle={producto ? `Múltiples Variantes` : 'Complete la información general y las variantes (modelos/colores)'}
       icon={Package}
-      maxWidth="780px"
+      maxWidth="920px"
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={loading}>
@@ -141,143 +194,57 @@ export function ProductoModal({
       }
     >
       <form id="producto-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-        {/* 1. Subida y Vista Previa de Fotografía */}
         <ProductoFotoUploader
           imagenUrl={formData.imagenUrl}
-          onImageChange={(newUrl) => setFormData({ ...formData, imagenUrl: newUrl })}
-          onRemoveImage={() => setFormData({ ...formData, imagenUrl: '' })}
+          onImageChange={(newUrl) => setFormData(prev => ({ ...prev, imagenUrl: newUrl }))}
+          onRemoveImage={() => setFormData(prev => ({ ...prev, imagenUrl: '' }))}
         />
 
-        {/* 2. Categoría y Nombre */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
-          <SelectField
-            label="Categoría del Producto"
-            value={formData.idCategoria}
-            onChange={(e) => setFormData({ ...formData, idCategoria: e.target.value })}
-            placeholder="(Seleccionar Categoría...)"
-            options={filterActive(categorias).map((c) => ({
-              value: c.idCategoria,
-              label: c.nombre,
-            }))}
-            required
-          />
-
-          <InputField
-            label="Nombre del Producto"
-            placeholder="Ej. MacBook Pro 14' M3 512GB / Samsung S24"
-            value={formData.nombre}
-            onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-            required
-          />
-        </div>
-
-        {/* 3. Modelo y Material */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
-          <SelectField
-            label="Modelo & Marca"
-            value={formData.idModelo}
-            onChange={(e) => setFormData({ ...formData, idModelo: e.target.value })}
-            placeholder="(Sin modelo específico)"
-            options={filterActive(modelos).map((m) => ({
-              value: m.idModelo,
-              label: `${m.nombre} ${m.marca?.nombre ? `(${m.marca.nombre})` : ''}`,
-            }))}
-          />
-
-          <SelectField
-            label="Material"
-            value={formData.idMaterial}
-            onChange={(e) => setFormData({ ...formData, idMaterial: e.target.value })}
-            placeholder="(Sin material)"
-            options={filterActive(materiales).map((mat) => ({
-              value: mat.idMaterial,
-              label: mat.nombre,
-            }))}
-          />
-
-          <SelectField
-            label="Propietario / Dueño"
-            value={formData.idPropietario}
-            onChange={(e) => setFormData({ ...formData, idPropietario: e.target.value })}
-            placeholder="(Seleccionar propietario...)"
-            options={filterActive(propietarios).map((p) => ({
-              value: p.idPropietario,
-              label: p.nombre,
-            }))}
-            required
-          />
-        </div>
-
-        {/* 4. Selector de Color */}
-        <ColorSelectorSection
-          colores={filterActive(colores)}
-          selectedColorId={formData.idColor}
-          onSelectColor={(cId) => setFormData({ ...formData, idColor: cId })}
+        <ProductoGeneralFields
+          formData={formData}
+          setFormData={setFormData}
+          categorias={categorias}
+          materiales={materiales}
+          propietarios={propietarios}
+          filterActive={filterActive}
+          onCreateCategoria={onCreateCategoria}
+          onCreateMaterial={onCreateMaterial}
+          onCreatePropietario={onCreatePropietario}
+          setQuickCreateType={setQuickCreateType}
         />
 
-        {/* 5. Descripción */}
-        <TextAreaField
-          label="Descripción"
-          placeholder="Especificaciones técnicas, características, memoria..."
-          rows={2}
-          value={formData.descripcion}
-          onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
+        <ProductoVariantesList
+          variantes={formData.variantes}
+          modelos={modelos}
+          colores={colores}
+          isEditMode={Boolean(producto)}
+          filterActive={filterActive}
+          onAddVariante={handleAddVariante}
+          onRemoveVariante={handleRemoveVariante}
+          onUpdateVariante={updateVariante}
+          onCreateModelo={onCreateModelo}
+          onCreateColor={onCreateColor}
+          setActiveVarianteIndexForQuick={setActiveVarianteIndexForQuick}
+          setQuickCreateType={setQuickCreateType}
         />
-
-        {/* 6. Precios */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
-          <InputField
-            label="Precio Compra (Bs.)"
-            type="number"
-            step="0.01"
-            min="0"
-            placeholder="0.00"
-            value={formData.precioCompra}
-            onChange={(e) => setFormData({ ...formData, precioCompra: e.target.value })}
-          />
-
-          <InputField
-            label="Precio Mayoreo (Bs.)"
-            type="number"
-            step="0.01"
-            min="0"
-            placeholder="0.00"
-            value={formData.precioMayoreo}
-            onChange={(e) => setFormData({ ...formData, precioMayoreo: e.target.value })}
-          />
-
-          <InputField
-            label="Precio Venta (Bs.)"
-            type="number"
-            step="0.01"
-            min="0.01"
-            placeholder="0.00"
-            value={formData.precioUnitario}
-            onChange={(e) => setFormData({ ...formData, precioUnitario: e.target.value })}
-            required
-          />
-        </div>
-
-        {/* 7. Stocks */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-          <InputField
-            label={producto ? 'Stock Actual' : 'Stock Inicial'}
-            type="number"
-            min="0"
-            value={formData.stockActual}
-            onChange={(e) => setFormData({ ...formData, stockActual: e.target.value })}
-            required
-          />
-
-          <InputField
-            label="Stock Mínimo (Alerta)"
-            type="number"
-            min="0"
-            value={formData.stockMinimo}
-            onChange={(e) => setFormData({ ...formData, stockMinimo: e.target.value })}
-          />
-        </div>
       </form>
+
+      {quickCreateType && (
+        <QuickCreateModal
+          isOpen={Boolean(quickCreateType)}
+          onClose={handleQuickCreateComplete}
+          type={quickCreateType}
+          marcas={marcas}
+          onCreate={
+            quickCreateType === 'categoria' ? onCreateCategoria :
+            quickCreateType === 'material' ? onCreateMaterial :
+            quickCreateType === 'propietario' ? onCreatePropietario :
+            quickCreateType === 'modelo' ? onCreateModelo :
+            quickCreateType === 'color' ? onCreateColor :
+            null
+          }
+        />
+      )}
     </Modal>
   );
 }

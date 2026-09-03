@@ -1,6 +1,6 @@
 package com.inventario.modules.compras.model;
 
-import com.inventario.modules.catalogo.model.Producto;
+import com.inventario.modules.catalogo.model.ProductoVariante;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
@@ -31,9 +31,9 @@ public class DetalleCompra {
     private Compra compra;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_producto", nullable = false)
+    @JoinColumn(name = "id_variante", nullable = false)
     @NotNull
-    private Producto producto;
+    private ProductoVariante variante;
 
     @NotNull
     @Min(1)

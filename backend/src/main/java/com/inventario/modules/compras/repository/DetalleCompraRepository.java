@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface DetalleCompraRepository extends JpaRepository<DetalleCompra, Long> {
     List<DetalleCompra> findByCompraIdCompra(Long idCompra);
-    List<DetalleCompra> findByProductoIdProducto(Long idProducto);
+    List<DetalleCompra> findByVarianteIdVariante(Long idVariante);
 }

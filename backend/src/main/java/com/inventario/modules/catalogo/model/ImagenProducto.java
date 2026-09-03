@@ -24,6 +24,7 @@ public class ImagenProducto {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_producto", nullable = false)
     @NotNull
+    @com.fasterxml.jackson.annotation.JsonBackReference
     private Producto producto;
 
     @NotBlank(message = "La URL de la imagen es obligatoria")

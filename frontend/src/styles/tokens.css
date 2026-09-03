@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --font-main: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+  
+  /* Paleta Oficial de Colores "Los Caseritos" */
+  --brand-gold: #F59E0B;
+  --brand-gold-hover: #D97706;
+  --brand-gold-light: #FDE68A;
+  --brand-gold-glow: rgba(245, 158, 11, 0.28);
+  --brand-gold-bg: rgba(245, 158, 11, 0.12);
+
+  --brand-red: #EF4444;
+  --brand-red-hover: #DC2626;
+  --brand-red-bg: rgba(239, 68, 68, 0.12);
+  --brand-green: #10B981;
+  --brand-gradient: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+  --brand-gradient-hover: linear-gradient(135deg, #D97706 0%, #DC2626 100%);
+
+  /* Default Dark Mode Variables */
+  --text-white: #FFFFFF;
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+
+  --bg-primary: #070A12;
+  --bg-secondary: #0E1424;
+  --bg-sidebar: #0E1424;
+  --bg-nav: rgba(9, 13, 22, 0.82);
+  --bg-search: rgba(255, 255, 255, 0.06);
+  --border-nav: rgba(255, 255, 255, 0.08);
+  --input-text: #FFFFFF;
+  --input-placeholder: rgba(255, 255, 255, 0.45);
+
+  --bg-card: rgba(18, 24, 38, 0.65);
+  --bg-card-solid: #131A2B;
+  --bg-card-hover: rgba(30, 41, 59, 0.5);
+  --bg-glass: rgba(18, 24, 38, 0.75);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-light: rgba(255, 255, 255, 0.04);
+  --border-specular: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.35);
+  --shadow-bento: 0 12px 36px rgba(0, 0, 0, 0.45);
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  --apple-spring-default: cubic-bezier(0.16, 1, 0.3, 1);
+  --apple-spring-snappy: cubic-bezier(0.2, 0.9, 0.2, 1);
+  --apple-spring-bounce: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* Light Theme Variables */
+[data-theme='light'] {
+  --text-white: #0F172A;
+  --text-primary: #1E293B;
+  --text-secondary: #334155;
+  --text-muted: #64748B;
+
+  --bg-primary: #F1F5F9;
+  --bg-secondary: #FFFFFF;
+  --bg-sidebar: #FFFFFF;
+  --bg-nav: rgba(255, 255, 255, 0.95);
+  --bg-search: #F8FAFC;
+  --border-nav: rgba(203, 213, 225, 0.85);
+  --input-text: #0F172A;
+  --input-placeholder: #64748B;
+
+  --bg-card: #FFFFFF;
+  --bg-card-solid: #FFFFFF;
+  --bg-card-hover: rgba(241, 245, 249, 0.8);
+  --bg-glass: rgba(255, 255, 255, 0.92);
+  --border-color: rgba(203, 213, 225, 0.7);
+  --border-light: rgba(226, 232, 240, 0.8);
+  --border-specular: inset 0 1px 0 rgba(255, 255, 255, 1);
+
+  --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 10px 24px rgba(15, 23, 42, 0.1);
+  --shadow-card: 0 4px 16px rgba(15, 23, 42, 0.06);
+  --shadow-bento: 0 10px 28px rgba(15, 23, 42, 0.08);
+}

@@ -1,6 +1,7 @@
 package com.inventario.core.config;
 
 import com.inventario.modules.catalogo.dto.ProductoRequestDto;
+import com.inventario.modules.catalogo.dto.ProductoVarianteDto;
 import com.inventario.modules.catalogo.model.*;
 import com.inventario.modules.catalogo.repository.*;
 import com.inventario.modules.catalogo.service.ProductoService;
@@ -18,6 +19,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -198,70 +200,86 @@ public class DataInitializer implements CommandLineRunner {
 
             // 9. Productos iniciales
             productoService.create(ProductoRequestDto.builder()
-                    .sku("LAP-MB-M3-GRIS")
                     .nombre("MacBook Pro 14' M3 18GB/512GB")
                     .descripcion("Chip M3 Pro 11-core CPU, 14-core GPU, Pantalla Liquid Retina XDR")
-                    .imagenUrl("https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80")
                     .idCategoria(catLaptops.getIdCategoria())
-                    .idModelo(modMacbook.getIdModelo())
-                    .idColor(colGris.getIdColor())
                     .idMaterial(matAluminio.getIdMaterial())
-                    .stockActual(10)
-                    .stockMinimo(3)
                     .precioCompra(new BigDecimal("1550.00"))
                     .precioMayoreo(new BigDecimal("1850.00"))
                     .precioUnitario(new BigDecimal("1999.00"))
+                    .imagenesUrls(List.of("https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80"))
+                    .variantes(List.of(
+                            ProductoVarianteDto.builder()
+                                    .sku("LAP-MB-M3-GRIS")
+                                    .idModelo(modMacbook.getIdModelo())
+                                    .idColor(colGris.getIdColor())
+                                    .stockActual(10)
+                                    .stockMinimo(3)
+                                    .build()
+                    ))
                     .activo(true)
                     .build());
 
             productoService.create(ProductoRequestDto.builder()
-                    .sku("CEL-IPHONE15-TIT")
                     .nombre("iPhone 15 Pro Max 256GB")
                     .descripcion("Pantalla Super Retina XDR 6.7', Chip A17 Pro, Cámara 48MP")
-                    .imagenUrl("https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=400&q=80")
                     .idCategoria(catSmartphones.getIdCategoria())
-                    .idModelo(modIphone.getIdModelo())
-                    .idColor(colPlata.getIdColor())
                     .idMaterial(matTitanio.getIdMaterial())
-                    .stockActual(8)
-                    .stockMinimo(2)
                     .precioCompra(new BigDecimal("1100.00"))
                     .precioMayoreo(new BigDecimal("1320.00"))
                     .precioUnitario(new BigDecimal("1450.00"))
+                    .imagenesUrls(List.of("https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=400&q=80"))
+                    .variantes(List.of(
+                            ProductoVarianteDto.builder()
+                                    .sku("CEL-IPHONE15-TIT")
+                                    .idModelo(modIphone.getIdModelo())
+                                    .idColor(colPlata.getIdColor())
+                                    .stockActual(8)
+                                    .stockMinimo(2)
+                                    .build()
+                    ))
                     .activo(true)
                     .build());
 
             productoService.create(ProductoRequestDto.builder()
-                    .sku("LAP-XPS15-PLATA")
                     .nombre("Dell XPS 15 OLED i7 32GB/1TB")
                     .descripcion("Intel Core i7 13700H, GeForce RTX 4060, Pantalla 3.5K OLED Touch")
-                    .imagenUrl("https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=400&q=80")
                     .idCategoria(catLaptops.getIdCategoria())
-                    .idModelo(modXPS.getIdModelo())
-                    .idColor(colPlata.getIdColor())
                     .idMaterial(matAluminio.getIdMaterial())
-                    .stockActual(2)
-                    .stockMinimo(4)
                     .precioCompra(new BigDecimal("1400.00"))
                     .precioMayoreo(new BigDecimal("1650.00"))
                     .precioUnitario(new BigDecimal("1799.00"))
+                    .imagenesUrls(List.of("https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=400&q=80"))
+                    .variantes(List.of(
+                            ProductoVarianteDto.builder()
+                                    .sku("LAP-XPS15-PLATA")
+                                    .idModelo(modXPS.getIdModelo())
+                                    .idColor(colPlata.getIdColor())
+                                    .stockActual(2)
+                                    .stockMinimo(4)
+                                    .build()
+                    ))
                     .activo(true)
                     .build());
 
             productoService.create(ProductoRequestDto.builder()
-                    .sku("CEL-S24-ORO")
                     .nombre("Samsung Galaxy S24 Ultra 512GB")
                     .descripcion("Dynamic AMOLED 2X 120Hz, Snapdragon 8 Gen 3, S-Pen integrado")
-                    .imagenUrl("https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=400&q=80")
                     .idCategoria(catSmartphones.getIdCategoria())
-                    .idModelo(modGalaxy.getIdModelo())
-                    .idColor(colOro.getIdColor())
                     .idMaterial(matTitanio.getIdMaterial())
-                    .stockActual(5)
-                    .stockMinimo(2)
                     .precioCompra(new BigDecimal("1050.00"))
                     .precioMayoreo(new BigDecimal("1250.00"))
                     .precioUnitario(new BigDecimal("1380.00"))
+                    .imagenesUrls(List.of("https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=400&q=80"))
+                    .variantes(List.of(
+                            ProductoVarianteDto.builder()
+                                    .sku("CEL-S24-ORO")
+                                    .idModelo(modGalaxy.getIdModelo())
+                                    .idColor(colOro.getIdColor())
+                                    .stockActual(5)
+                                    .stockMinimo(2)
+                                    .build()
+                    ))
                     .activo(true)
                     .build());
 
@@ -286,27 +304,5 @@ public class DataInitializer implements CommandLineRunner {
 
             log.info("Datos maestros inicializados con éxito según diseño lógico.");
         }
-
-        // Recuperación de imágenes por defecto
-        log.info("Verificando imágenes de productos...");
-        java.util.List<Producto> productos = productoRepository.findAll();
-        for (Producto p : productos) {
-            if (p.getImagenUrl() == null || p.getImagenUrl().isEmpty()) {
-                if ("LAP-MB-M3-GRIS".equals(p.getSku())) {
-                    p.setImagenUrl("https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80");
-                    productoRepository.save(p);
-                } else if ("CEL-IPHONE15-TIT".equals(p.getSku())) {
-                    p.setImagenUrl("https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=400&q=80");
-                    productoRepository.save(p);
-                } else if ("LAP-XPS15-PLATA".equals(p.getSku())) {
-                    p.setImagenUrl("https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=400&q=80");
-                    productoRepository.save(p);
-                } else if ("CEL-S24-ORO".equals(p.getSku())) {
-                    p.setImagenUrl("https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=400&q=80");
-                    productoRepository.save(p);
-                }
-            }
-        }
-        log.info("Verificación de imágenes completada.");
     }
 }

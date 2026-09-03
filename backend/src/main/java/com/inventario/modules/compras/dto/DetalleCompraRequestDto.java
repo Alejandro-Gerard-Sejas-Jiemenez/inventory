@@ -16,8 +16,8 @@ import java.math.BigDecimal;
 @Builder
 public class DetalleCompraRequestDto {
 
-    @NotNull(message = "El ID del producto es obligatorio")
-    private Long idProducto;
+    @NotNull(message = "El ID de la variante es obligatorio")
+    private Long idVariante;
 
     @NotNull(message = "La cantidad es obligatoria")
     @Min(value = 1, message = "La cantidad debe ser mayor o igual a 1")

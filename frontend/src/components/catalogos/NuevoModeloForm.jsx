@@ -5,10 +5,12 @@ import { InputField } from '../common/InputField';
 import { SelectField } from '../common/SelectField';
 import { TextAreaField } from '../common/TextAreaField';
 import { Button } from '../common/Button';
+import { QuickCreateModal } from '../common/QuickCreateModal';
 
-export function NuevoModeloForm({ marcas = [], onSubmit }) {
+export function NuevoModeloForm({ marcas = [], onSubmit, onCreateMarca }) {
   const [nuevoModelo, setNuevoModelo] = useState({ nombre: '', idMarca: '', descripcion: '' });
   const [loading, setLoading] = useState(false);
+  const [showQuickMarca, setShowQuickMarca] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,6 +29,13 @@ export function NuevoModeloForm({ marcas = [], onSubmit }) {
     }
   };
 
+  const handleQuickMarcaCreated = (created) => {
+    setShowQuickMarca(false);
+    if (created && created.idMarca) {
+      setNuevoModelo((prev) => ({ ...prev, idMarca: created.idMarca }));
+    }
+  };
+
   return (
     <Card>
       <CardTitle icon={Box} subtitle="Registrar nueva variante o modelo de una marca">
@@ -42,17 +51,41 @@ export function NuevoModeloForm({ marcas = [], onSubmit }) {
             required
           />
 
-          <SelectField
-            label="Marca / Fabricante"
-            placeholder="Seleccione la Marca..."
-            value={nuevoModelo.idMarca}
-            onChange={(e) => setNuevoModelo({ ...nuevoModelo, idMarca: e.target.value })}
-            options={marcas.map((m) => ({
-              value: m.idMarca,
-              label: m.nombre,
-            }))}
-            required
-          />
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+              <label className="form-field-label" style={{ margin: 0 }}>Marca / Fabricante *</label>
+              {onCreateMarca && (
+                <button
+                  type="button"
+                  onClick={() => setShowQuickMarca(true)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--brand-gold)',
+                    fontSize: '0.78rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.2rem',
+                  }}
+                >
+                  <Plus size={12} />
+                  <span>+ Crear Marca</span>
+                </button>
+              )}
+            </div>
+            <SelectField
+              placeholder="Seleccione la Marca..."
+              value={nuevoModelo.idMarca}
+              onChange={(e) => setNuevoModelo({ ...nuevoModelo, idMarca: e.target.value })}
+              options={marcas.map((m) => ({
+                value: m.idMarca,
+                label: m.nombre,
+              }))}
+              required
+            />
+          </div>
 
           <TextAreaField
             label="Descripción"
@@ -66,6 +99,15 @@ export function NuevoModeloForm({ marcas = [], onSubmit }) {
             Guardar Modelo
           </Button>
         </form>
+
+        {onCreateMarca && (
+          <QuickCreateModal
+            isOpen={showQuickMarca}
+            onClose={handleQuickMarcaCreated}
+            type="marca"
+            onCreate={onCreateMarca}
+          />
+        )}
       </CardBody>
     </Card>
   );

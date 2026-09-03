@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface MovimientoStockService {
     List<MovimientoStock> findAll();
-    List<MovimientoStock> findByProducto(Long idProducto);
+    List<MovimientoStock> findByVariante(Long idVariante);
     MovimientoStock registrarMovimiento(MovimientoStockRequestDto request);
 }

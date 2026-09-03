@@ -20,9 +20,9 @@ public class MovimientoStockController {
     private final MovimientoStockService movimientoStockService;
 
     @GetMapping
-    public ResponseEntity<List<MovimientoStock>> getAll(@RequestParam(required = false) Long idProducto) {
-        if (idProducto != null) {
-            return ResponseEntity.ok(movimientoStockService.findByProducto(idProducto));
+    public ResponseEntity<List<MovimientoStock>> getAll(@RequestParam(required = false) Long idVariante) {
+        if (idVariante != null) {
+            return ResponseEntity.ok(movimientoStockService.findByVariante(idVariante));
         }
         return ResponseEntity.ok(movimientoStockService.findAll());
     }

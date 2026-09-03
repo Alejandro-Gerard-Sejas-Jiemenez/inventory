@@ -1,6 +1,6 @@
 package com.inventario.modules.inventario.model;
 
-import com.inventario.modules.catalogo.model.Producto;
+import com.inventario.modules.catalogo.model.ProductoVariante;
 import com.inventario.modules.sistema.model.Usuario;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -24,9 +24,9 @@ public class MovimientoStock {
     private Long idMovimiento;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_producto", nullable = false)
-    @NotNull(message = "El producto es obligatorio")
-    private Producto producto;
+    @JoinColumn(name = "id_variante", nullable = false)
+    @NotNull(message = "La variante del producto es obligatoria")
+    private ProductoVariante variante;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario")

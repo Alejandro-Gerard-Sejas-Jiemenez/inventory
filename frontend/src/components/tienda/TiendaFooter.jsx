@@ -32,7 +32,7 @@ export function TiendaFooter() {
           </span>
         </div>
         <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-          © {new Date().getFullYear()} Los Caseritos. Todos los derechos reservados. Desarrollado por Alejandro Gerard Sejas.
+          © {new Date().getFullYear()} Los Caseritos. Todos los derechos reservados.
         </div>
       </div>
     </footer>

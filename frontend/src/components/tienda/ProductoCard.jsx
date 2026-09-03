@@ -194,7 +194,7 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
                   width: '18px',
                   height: '18px',
                   borderRadius: '50%',
-                  backgroundColor: producto.color.codigoHex || '#888',
+                  backgroundColor: producto.color.codigoHex || 'var(--text-muted)',
                   border: 'none',
                   outline: 'none',
                   display: 'inline-block',
@@ -260,9 +260,9 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
               backgroundColor: isOutOfStock
                 ? 'var(--border-color)'
                 : addedAnimation
-                ? 'var(--brand-green, #10B981)'
+                ? 'var(--brand-green)'
                 : 'var(--brand-gold)',
-              color: isOutOfStock ? 'var(--text-muted)' : '#111',
+              color: isOutOfStock ? 'var(--text-muted)' : 'var(--bg-primary)',
               fontWeight: 800,
               fontSize: '0.8rem',
               cursor: isOutOfStock || remainingStock <= 0 ? 'not-allowed' : 'pointer',

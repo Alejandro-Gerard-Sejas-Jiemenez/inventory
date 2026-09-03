@@ -9,6 +9,9 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "productos")
@@ -29,16 +32,8 @@ public class Producto {
     private Categoria categoria;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_modelo")
-    private Modelo modelo;
-
-    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_material")
     private Material material;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_color")
-    private Color color;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_propietario")
@@ -51,24 +46,15 @@ public class Producto {
     @Column(length = 500)
     private String descripcion;
 
-    @Column(name = "url_imagen", columnDefinition = "TEXT")
-    private String imagenUrl;
-
-    @NotBlank(message = "El SKU es obligatorio")
-    @Column(nullable = false, unique = true, length = 50)
-    private String sku;
-
-    @NotNull(message = "El stock actual es obligatorio")
-    @Min(value = 0, message = "El stock actual no puede ser negativo")
-    @Column(name = "stock_actual", nullable = false)
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     @Builder.Default
-    private Integer stockActual = 0;
+    private List<ProductoVariante> variantes = new ArrayList<>();
 
-    @NotNull(message = "El stock mínimo es obligatorio")
-    @Min(value = 0, message = "El stock mínimo no puede ser negativo")
-    @Column(name = "stock_minimo", nullable = false)
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     @Builder.Default
-    private Integer stockMinimo = 5;
+    private List<ImagenProducto> imagenes = new ArrayList<>();
 
     @NotNull(message = "El precio de compra es obligatorio")
     @DecimalMin(value = "0.0", message = "El precio de compra no puede ser negativo")
@@ -99,8 +85,6 @@ public class Producto {
     protected void onCreate() {
         this.fechaCreacion = LocalDateTime.now();
         this.fechaActualizacion = LocalDateTime.now();
-        if (this.stockActual == null) this.stockActual = 0;
-        if (this.stockMinimo == null) this.stockMinimo = 5;
     }
 
     @PreUpdate
