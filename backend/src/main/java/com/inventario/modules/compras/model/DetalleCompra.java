@@ -26,7 +26,7 @@ public class DetalleCompra {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_compra", nullable = false)
-    @JsonBackReference
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @NotNull
     private Compra compra;
 
