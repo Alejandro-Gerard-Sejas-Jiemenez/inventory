@@ -86,7 +86,7 @@ public class Producto {
     private BigDecimal precioUnitario;
 
     @Builder.Default
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "boolean default true")
     private Boolean activo = true;
 
     @Column(name = "fecha_creacion", updatable = false)
