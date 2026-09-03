@@ -286,5 +286,27 @@ public class DataInitializer implements CommandLineRunner {
 
             log.info("Datos maestros inicializados con éxito según diseño lógico.");
         }
+
+        // Recuperación de imágenes por defecto
+        log.info("Verificando imágenes de productos...");
+        java.util.List<Producto> productos = productoRepository.findAll();
+        for (Producto p : productos) {
+            if (p.getImagenUrl() == null || p.getImagenUrl().isEmpty()) {
+                if ("LAP-MB-M3-GRIS".equals(p.getSku())) {
+                    p.setImagenUrl("https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80");
+                    productoRepository.save(p);
+                } else if ("CEL-IPHONE15-TIT".equals(p.getSku())) {
+                    p.setImagenUrl("https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=400&q=80");
+                    productoRepository.save(p);
+                } else if ("LAP-XPS15-PLATA".equals(p.getSku())) {
+                    p.setImagenUrl("https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=400&q=80");
+                    productoRepository.save(p);
+                } else if ("CEL-S24-ORO".equals(p.getSku())) {
+                    p.setImagenUrl("https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=400&q=80");
+                    productoRepository.save(p);
+                }
+            }
+        }
+        log.info("Verificación de imágenes completada.");
     }
 }
