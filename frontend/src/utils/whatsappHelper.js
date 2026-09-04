@@ -4,11 +4,10 @@
 export function generateWhatsAppOrderUrl({
   clienteNombre,
   clienteTelefono,
-  clienteDireccion,
   clienteNotas,
   items,
   total,
-  storePhone = '59170000000', // Número configurable de WhatsApp de la tienda
+  storePhone = '59174672312', // Número configurable de WhatsApp de la tienda (74672312 o 69211592)
 }) {
   const lineItems = items
     .map(
@@ -30,13 +29,16 @@ export function generateWhatsAppOrderUrl({
     minute: '2-digit',
   });
 
+  const nombreFinal = clienteNombre?.trim() ? clienteNombre.trim() : 'Cliente';
+  const telefonoFinal = clienteTelefono?.trim() ? clienteTelefono.trim() : 'No especificado';
+
   const mensaje =
     `¡Hola Los Caseritos! Quiero realizar el siguiente pedido:\n\n` +
     `----------------------------------------\n` +
     `*DATOS DEL CLIENTE:*\n` +
-    `• *Nombre:* ${clienteNombre.trim()}\n` +
-    `• *Teléfono:* ${clienteTelefono.trim()}\n` +
-    `• *Dirección de Entrega:* ${clienteDireccion.trim()}\n` +
+    `• *Nombre:* ${nombreFinal}\n` +
+    `• *Teléfono / Contacto:* ${telefonoFinal}\n` +
+    `• *Ubicación de entrega:* (Enviaré mi ubicación exacta por este chat)\n` +
     (clienteNotas?.trim() ? `• *Observaciones:* ${clienteNotas.trim()}\n` : '') +
     `• *Fecha:* ${fechaHora}\n` +
     `----------------------------------------\n\n` +
@@ -45,9 +47,11 @@ export function generateWhatsAppOrderUrl({
     `----------------------------------------\n` +
     `*TOTAL A PAGAR:* *Bs. ${Number(total).toFixed(2)}*\n` +
     `----------------------------------------\n\n` +
-    `Por favor confirmen la recepción para coordinar el despacho. ¡Muchas gracias!`;
+    `Adjunto mi ubicación en el siguiente mensaje para coordinar la entrega. ¡Muchas gracias!`;
 
   const encodedMessage = encodeURIComponent(mensaje);
   const cleanPhone = storePhone.replace(/\D/g, '');
-  return `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+  const finalPhone = cleanPhone.startsWith('591') ? cleanPhone : `591${cleanPhone}`;
+  return `https://wa.me/${finalPhone}?text=${encodedMessage}`;
 }
+

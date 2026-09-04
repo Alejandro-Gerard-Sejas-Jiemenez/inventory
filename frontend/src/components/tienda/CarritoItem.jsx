@@ -9,6 +9,14 @@ export function CarritoItem({ item, onUpdateQuantity, onRemoveItem }) {
   const maxStock = item.stockActual ?? 999;
   const reachedLimit = item.cantidad >= maxStock;
 
+  // Resolución segura de la URL de la imagen (soporta múltiples formatos de datos)
+  const displayImage =
+    item.imagenUrl ||
+    (Array.isArray(item.imagenesUrls) && item.imagenesUrls[0]) ||
+    (Array.isArray(item.imagenes) && (item.imagenes[0]?.url || (typeof item.imagenes[0] === 'string' && item.imagenes[0]))) ||
+    item.fotoUrl ||
+    null;
+
   return (
     <div
       style={{
@@ -31,11 +39,14 @@ export function CarritoItem({ item, onUpdateQuantity, onRemoveItem }) {
           flexShrink: 0,
         }}
       >
-        {item.imagenUrl ? (
+        {displayImage ? (
           <img
-            src={item.imagenUrl}
+            src={displayImage}
             alt={item.nombre}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
           />
         ) : (
           <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>

@@ -11,11 +11,12 @@ export function CheckoutWhatsAppModal({
   onClose,
   cartItems = [],
   onBackToCart,
+  onOrderSuccess,
   onSuccessOrder,
 }) {
   const [nombre, setNombre] = useState('');
   const [telefono, setTelefono] = useState('');
-  const [direccion, setDireccion] = useState('');
+  const [targetNumber, setTargetNumber] = useState('74672312'); // 74672312 o 69211592
   const [notas, setNotas] = useState('');
   const [error, setError] = useState('');
 
@@ -27,30 +28,28 @@ export function CheckoutWhatsAppModal({
   );
 
   const handleSendOrder = (e) => {
-    e.preventDefault();
-    if (!nombre.trim() || !telefono.trim() || !direccion.trim()) {
-      setError('Por favor completa todos los campos requeridos (*)');
-      return;
-    }
+    if (e) e.preventDefault();
 
-    // Generar URL y abrir WhatsApp
+    // Generar URL y abrir WhatsApp al número seleccionado
     const waUrl = generateWhatsAppOrderUrl({
       clienteNombre: nombre,
       clienteTelefono: telefono,
-      clienteDireccion: direccion,
       clienteNotas: notas,
       items: cartItems,
       total,
+      storePhone: targetNumber,
     });
 
     // Abrir WhatsApp en nueva pestaña
     window.open(waUrl, '_blank');
 
-    if (onSuccessOrder) {
-      onSuccessOrder({
+    // Notificar éxito para vaciar y cerrar la bolsa de pedidos
+    const successCallback = onOrderSuccess || onSuccessOrder;
+    if (successCallback) {
+      successCallback({
         nombre,
         telefono,
-        direccion,
+        targetNumber,
         notas,
         items: cartItems,
         total,
@@ -64,10 +63,10 @@ export function CheckoutWhatsAppModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Datos de Entrega y Envío por WhatsApp"
-      subtitle="Los Caseritos preparará tu pedido de inmediato tras recibir tu mensaje"
+      title="Enviar Pedido por WhatsApp"
+      subtitle="Los Caseritos atenderá tu solicitud de inmediato en la línea seleccionada"
       icon={Send}
-      maxWidth="560px"
+      maxWidth="540px"
       footer={
         <>
           <Button variant="secondary" onClick={onBackToCart} icon={ArrowLeft}>
@@ -120,37 +119,80 @@ export function CheckoutWhatsAppModal({
           </div>
         </div>
 
-        {/* Campos de Contacto y Entrega */}
+        {/* Selector de Número de WhatsApp de Atención */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+          <label className="form-field-label" style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--brand-gold)' }}>
+            Selecciona la Línea de WhatsApp para enviar tu pedido:
+          </label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
+            <button
+              type="button"
+              onClick={() => setTargetNumber('74672312')}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0.75rem',
+                borderRadius: 'var(--radius-md)',
+                border: targetNumber === '74672312' ? '2px solid var(--brand-gold)' : '1px solid var(--border-color)',
+                backgroundColor: targetNumber === '74672312' ? 'var(--brand-gold-bg)' : 'var(--bg-secondary)',
+                color: targetNumber === '74672312' ? 'var(--brand-gold)' : 'var(--text-secondary)',
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontSize: '0.9rem',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <span>Línea 1</span>
+              <span style={{ fontSize: '1rem', marginTop: '0.2rem' }}>📲 74672312</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setTargetNumber('69211592')}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0.75rem',
+                borderRadius: 'var(--radius-md)',
+                border: targetNumber === '69211592' ? '2px solid var(--brand-gold)' : '1px solid var(--border-color)',
+                backgroundColor: targetNumber === '69211592' ? 'var(--brand-gold-bg)' : 'var(--bg-secondary)',
+                color: targetNumber === '69211592' ? 'var(--brand-gold)' : 'var(--text-secondary)',
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontSize: '0.9rem',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <span>Línea 2</span>
+              <span style={{ fontSize: '1rem', marginTop: '0.2rem' }}>📲 69211592</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Campos de Contacto Opcionales */}
         <InputField
-          label="Nombre Completo (*)"
-          placeholder="Ej. Alejandro Sejas"
+          label="Tu Nombre (Opcional)"
+          placeholder="Ej. Alejandro"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           icon={User}
-          required
         />
 
         <InputField
-          label="Número de Teléfono / WhatsApp (*)"
+          label="Tu Teléfono de Contacto (Opcional)"
           placeholder="Ej. 71234567"
           value={telefono}
           onChange={(e) => setTelefono(e.target.value)}
           icon={Phone}
-          required
-        />
-
-        <InputField
-          label="Dirección de Entrega o 'Recojo en Tienda' (*)"
-          placeholder="Ej. Av. América #450, Edif. Torre Real dpto 3B"
-          value={direccion}
-          onChange={(e) => setDireccion(e.target.value)}
-          icon={MapPin}
-          required
         />
 
         <TextAreaField
-          label="Observaciones o Referencias (Opcional)"
-          placeholder="Ej. Pago con billete de 200 Bs, entregar después de las 15:00..."
+          label="Notas u Observaciones adicionales (Opcional)"
+          placeholder="Ej. Entregar por la tarde, consulta de modelos extra..."
           rows={2}
           value={notas}
           onChange={(e) => setNotas(e.target.value)}
@@ -161,16 +203,17 @@ export function CheckoutWhatsAppModal({
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            padding: '0.65rem 0.85rem',
-            borderRadius: 'var(--radius-sm)',
+            padding: '0.75rem 0.85rem',
+            borderRadius: 'var(--radius-md)',
             backgroundColor: 'rgba(16, 185, 129, 0.08)',
             border: '1px solid rgba(16, 185, 129, 0.25)',
-            fontSize: '0.76rem',
+            fontSize: '0.78rem',
             color: 'var(--brand-green)',
+            lineHeight: 1.4,
           }}
         >
-          <CheckCircle size={15} flexShrink={0} />
-          <span>Al presionar el botón se abrirá WhatsApp con el pedido listo para enviar.</span>
+          <CheckCircle size={18} style={{ flexShrink: 0 }} />
+          <span>Al presionar el botón se abrirá WhatsApp con el pedido listo. Podrás adjuntar tu ubicación directamente por el chat.</span>
         </div>
       </form>
     </Modal>

@@ -38,8 +38,10 @@ export function CatalogoClienteView({
   }, [cartItems]);
 
   const handleOrderSuccess = () => {
-    onClearCart();
-    setOrderSuccessMessage('¡Tu pedido ha sido enviado con éxito por WhatsApp! Nos contactaremos de inmediato para coordinar la entrega.');
+    if (onClearCart) onClearCart();
+    setIsCartOpen(false);
+    setIsCheckoutOpen(false);
+    setOrderSuccessMessage('¡Tu pedido ha sido enviado con éxito por WhatsApp! La bolsa de pedidos se ha vaciado.');
     setTimeout(() => setOrderSuccessMessage(''), 8000);
   };
 
