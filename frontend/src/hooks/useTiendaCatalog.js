@@ -39,31 +39,63 @@ export function useTiendaCatalog(productos = []) {
   const filteredProductos = useMemo(() => {
     let list = [...productos].filter((p) => p.activo !== false);
 
+    // 1. Filtro por Categoría
     if (selectedCategoria !== 'ALL') {
-      list = list.filter((p) => String(p.categoria?.idCategoria) === String(selectedCategoria));
+      list = list.filter((p) => {
+        const catId = p.categoria?.idCategoria ?? p.categoria?.id ?? p.idCategoria ?? (typeof p.categoria === 'object' ? null : p.categoria);
+        return String(catId) === String(selectedCategoria);
+      });
     }
 
+    // 2. Filtro por Marca
     if (selectedMarca !== 'ALL') {
-      list = list.filter((p) => String(p.modelo?.marca?.idMarca) === String(selectedMarca));
+      list = list.filter((p) => {
+        // Marca directa en el producto
+        if (p.modelo?.marca?.idMarca && String(p.modelo.marca.idMarca) === String(selectedMarca)) {
+          return true;
+        }
+        // Marca dentro de alguna variante
+        if (Array.isArray(p.variantes)) {
+          return p.variantes.some(
+            (v) => String(v.modelo?.marca?.idMarca || v.modelo?.marcaId) === String(selectedMarca)
+          );
+        }
+        return false;
+      });
     }
 
+    // 3. Filtro de Búsqueda por Texto
     if (search.trim()) {
       const q = search.toLowerCase().trim();
       list = list.filter((p) => {
         const nombre = p.nombre?.toLowerCase() || '';
-        const modelo = p.modelo?.nombre?.toLowerCase() || '';
-        const marca = p.modelo?.marca?.nombre?.toLowerCase() || '';
-        const color = p.color?.nombre?.toLowerCase() || '';
-        const material = p.material?.nombre?.toLowerCase() || '';
+        const desc = p.descripcion?.toLowerCase() || '';
         const categoria = p.categoria?.nombre?.toLowerCase() || '';
-        return (
-          nombre.includes(q) ||
-          modelo.includes(q) ||
-          marca.includes(q) ||
-          color.includes(q) ||
-          material.includes(q) ||
-          categoria.includes(q)
-        );
+        const material = p.material?.nombre?.toLowerCase() || '';
+
+        // Búsqueda directa
+        if (nombre.includes(q) || desc.includes(q) || categoria.includes(q) || material.includes(q)) {
+          return true;
+        }
+
+        // Búsqueda en variantes (modelo, marca, color, sku)
+        if (Array.isArray(p.variantes)) {
+          const matchVar = p.variantes.some((v) => {
+            const mod = v.modelo?.nombre?.toLowerCase() || '';
+            const mrc = v.modelo?.marca?.nombre?.toLowerCase() || '';
+            const col = v.color?.nombre?.toLowerCase() || '';
+            const sku = v.sku?.toLowerCase() || '';
+            return mod.includes(q) || mrc.includes(q) || col.includes(q) || sku.includes(q);
+          });
+          if (matchVar) return true;
+        }
+
+        // Búsqueda en modelo directo
+        const modeloDirecto = p.modelo?.nombre?.toLowerCase() || '';
+        const marcaDirecta = p.modelo?.marca?.nombre?.toLowerCase() || '';
+        const colorDirecto = p.color?.nombre?.toLowerCase() || '';
+
+        return modeloDirecto.includes(q) || marcaDirecta.includes(q) || colorDirecto.includes(q);
       });
     }
 

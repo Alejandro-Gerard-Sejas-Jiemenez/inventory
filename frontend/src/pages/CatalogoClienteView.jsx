@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { ShieldCheck, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
 import { TiendaHeader } from '../components/tienda/TiendaHeader';
+import { TiendaHeroLanding } from '../components/tienda/TiendaHeroLanding';
 import { TiendaCategoryNav } from '../components/tienda/TiendaCategoryNav';
 import { TiendaSearchCapsule } from '../components/tienda/TiendaSearchCapsule';
 import { TiendaFooter } from '../components/tienda/TiendaFooter';
@@ -43,6 +44,11 @@ export function CatalogoClienteView({
     setIsCheckoutOpen(false);
     setOrderSuccessMessage('¡Tu pedido ha sido enviado con éxito por WhatsApp! La bolsa de pedidos se ha vaciado.');
     setTimeout(() => setOrderSuccessMessage(''), 8000);
+  };
+
+  const handleExploreCatalog = () => {
+    const el = document.getElementById('productos-grid');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -95,7 +101,19 @@ export function CatalogoClienteView({
         </div>
       )}
 
-      {/* 2. Barra de Navegación por Categorías */}
+      {/* 2. Hero Landing Page inspirada en VGOM */}
+      <TiendaHeroLanding
+        onExploreCatalog={handleExploreCatalog}
+        onOpenWhatsAppCheckout={() => {
+          if (cartItems.length > 0) {
+            setIsCheckoutOpen(true);
+          } else {
+            handleExploreCatalog();
+          }
+        }}
+      />
+
+      {/* 3. Barra de Navegación Centrada por Categorías Activas */}
       <TiendaCategoryNav
         categorias={categorias}
         selectedCategoria={catalog.selectedCategoria}

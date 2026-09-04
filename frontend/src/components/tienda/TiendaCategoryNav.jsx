@@ -18,9 +18,14 @@ function getCategoryIcon(nombre) {
  * Responsabilidad: Filtrado rápido por categoría con subrayado activo y desplazamiento táctil.
  */
 export function TiendaCategoryNav({ categorias = [], selectedCategoria, onSelectCategoria }) {
+  // Filtrar únicamente categorías activas (activo !== false && estado !== false)
+  const activeCategorias = React.useMemo(() => {
+    return categorias.filter((c) => c.activo !== false && c.estado !== false);
+  }, [categorias]);
+
   return (
-    <section style={{ maxWidth: '1280px', margin: '0.6rem auto 0', padding: '0 1.4rem', width: '100%' }}>
-      <div className="airbnb-category-nav">
+    <section style={{ maxWidth: '1280px', margin: '0.8rem auto 0', padding: '0 1.4rem', width: '100%' }}>
+      <div className="airbnb-category-nav" style={{ justifyContent: 'center' }}>
         <button
           type="button"
           onClick={() => onSelectCategoria('ALL')}
@@ -30,7 +35,7 @@ export function TiendaCategoryNav({ categorias = [], selectedCategoria, onSelect
           <span>Todo</span>
         </button>
 
-        {categorias.map((c) => {
+        {activeCategorias.map((c) => {
           const isSelected = String(selectedCategoria) === String(c.idCategoria);
           return (
             <button
