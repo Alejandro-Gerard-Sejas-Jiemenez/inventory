@@ -3,17 +3,20 @@ import { Image as ImageIcon, Upload, Link, Trash2, Plus, Star } from 'lucide-rea
 import { Button } from '../common/Button';
 import { InputField } from '../common/InputField';
 
-// Compresión client-side de imágenes
-// Compresión client-side de imágenes ultra-ligera (reduce el espacio en DB en un 92%)
-const processDeviceImage = (file) => {
+// Configuración de Supabase Storage para subida directa de archivos
+const SUPABASE_URL = 'https://gvmjjobeboymfsfjpkai.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2bWpqb2JlYm95bWZzZmpwa2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMzA3NTUsImV4cCI6MjEwMzcwNjc1NX0.G3fEkn6pt8JLngv_-ugaxEhTZWKPElkVYZtlR4abHXo';
+
+// Compresión client-side y conversión a Blob
+const processDeviceImageToBlob = (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 480;
-        const MAX_HEIGHT = 480;
+        const MAX_WIDTH = 900;
+        const MAX_HEIGHT = 900;
         let width = img.width;
         let height = img.height;
 
@@ -34,9 +37,14 @@ const processDeviceImage = (file) => {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Compresión optimizada para e-commerce (~20KB por imagen)
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.65);
-        resolve(dataUrl);
+        canvas.toBlob(
+          (blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error('Error al convertir imagen a Blob'));
+          },
+          'image/jpeg',
+          0.82
+        );
       };
       img.onerror = () => reject(new Error('No se pudo procesar la imagen del dispositivo'));
       img.src = e.target.result;
@@ -46,9 +54,33 @@ const processDeviceImage = (file) => {
   });
 };
 
+// Subida a Supabase Storage Bucket 'productos'
+const uploadToSupabaseStorage = async (blobFile) => {
+  const fileName = `prod_${Date.now()}_${Math.random().toString(36).substring(2, 9)}.jpg`;
+  const uploadUrl = `${SUPABASE_URL}/storage/v1/object/productos/${fileName}`;
+
+  const response = await fetch(uploadUrl, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      'Content-Type': 'image/jpeg',
+      'x-upsert': 'true',
+    },
+    body: blobFile,
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`Error en Supabase Storage (${response.status}): ${errText}`);
+  }
+
+  return `${SUPABASE_URL}/storage/v1/object/public/productos/${fileName}`;
+};
+
 /**
  * Componente Galería de Fotos del Producto.
- * Responsabilidad: Gestión de múltiples imágenes por producto (subida desde archivo local o URL web).
+ * Responsabilidad: Gestión de múltiples imágenes por producto (subida directa a Supabase Storage o URL web).
  */
 export function ProductoFotoUploader({ imagenesUrls = [], onImagesChange }) {
   const fileInputRef = useRef(null);
@@ -62,15 +94,18 @@ export function ProductoFotoUploader({ imagenesUrls = [], onImagesChange }) {
 
     try {
       setUploadingImage(true);
-      const newBase64s = [];
+      const uploadedPublicUrls = [];
       for (const file of files) {
-        const base64Data = await processDeviceImage(file);
-        newBase64s.push(base64Data);
+        // 1. Optimizar y convertir imagen a Blob
+        const blob = await processDeviceImageToBlob(file);
+        // 2. Subir directamente a Supabase Storage bucket 'productos'
+        const publicUrl = await uploadToSupabaseStorage(blob);
+        uploadedPublicUrls.push(publicUrl);
       }
-      onImagesChange([...imagenesUrls, ...newBase64s]);
+      onImagesChange([...imagenesUrls, ...uploadedPublicUrls]);
     } catch (err) {
-      console.error('Error procesando imagen local:', err);
-      alert('Hubo un problema al procesar las imágenes del dispositivo.');
+      console.error('Error subiendo imagen a Supabase Storage:', err);
+      alert('Hubo un problema al subir la imagen a Supabase Storage. Revisa que el bucket "productos" tenga las políticas RLS activadas.');
     } finally {
       setUploadingImage(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
