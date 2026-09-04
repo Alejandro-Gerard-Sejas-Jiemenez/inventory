@@ -1,12 +1,42 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { X, ShoppingCart, Check, Box, Smartphone, Palette, ShieldCheck, Image as ImageIcon } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { X, ShoppingCart, Check, Box, Smartphone, Palette, Image as ImageIcon } from 'lucide-react';
+
+// Helper síncrono para obtener colores filtrados por modelo (evita re-renders asíncronos pesados)
+const getColorsForModel = (producto, modelName) => {
+  if (!Array.isArray(producto?.variantes) || producto.variantes.length === 0) {
+    if (producto?.color?.nombre) {
+      return [{
+        nombre: producto.color.nombre,
+        hex: producto.color.codigoHex || '#888888',
+        variante: null,
+      }];
+    }
+    return [];
+  }
+
+  const map = new Map();
+  producto.variantes.forEach((v) => {
+    const nombreMod = v.modelo?.nombre || producto.modelo?.nombre;
+    if (!modelName || nombreMod === modelName) {
+      const colorObj = v.color || producto.color;
+      if (colorObj?.nombre && !map.has(colorObj.nombre)) {
+        map.set(colorObj.nombre, {
+          nombre: colorObj.nombre,
+          hex: colorObj.codigoHex || '#888888',
+          variante: v,
+        });
+      }
+    }
+  });
+  return Array.from(map.values());
+};
 
 /**
  * Modal de Detalle de Producto para la Tienda Pública de Clientes.
- * Requisitos & Usabilidad:
- * - Selección encadenada en 2 pasos: Modelo / Dispositivo -> Colores disponibles para ese modelo.
- * - Muestra únicamente el Precio Unitario (sin Propietario ni números exactos de stock).
- * - Estructura visual armónica con Glassmorphic Design (Krug & Kowalski UI).
+ * Rendimiento & Usabilidad Óptima (Emil Kowalski Animation & Krug Usability):
+ * - Selección síncrona en 1 solo frame de React (0 retardos / 0 cascadas de useEffect).
+ * - Transiciones ligeras de 120ms con curva rápida `cubic-bezier(0.16, 1, 0.3, 1)`.
+ * - Estructura visual armónica en modo oscuro Glassmorphism.
  */
 export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, cartQuantity = 0 }) {
   if (!isOpen || !producto) return null;
@@ -22,7 +52,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
 
   const mainImage = allImages[selectedImageIndex] || null;
 
-  // 1. Obtener modelos únicos disponibles en el producto o sus variantes
+  // 1. Obtener modelos únicos disponibles
   const modelosUnicos = useMemo(() => {
     if (!Array.isArray(producto.variantes) || producto.variantes.length === 0) {
       return producto.modelo?.nombre ? [producto.modelo.nombre] : [];
@@ -35,59 +65,28 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
     return Array.from(set);
   }, [producto]);
 
-  const [selectedModelo, setSelectedModelo] = useState(() => modelosUnicos[0] || '');
+  // Estado inicial del modelo y su primer color de forma síncrona
+  const initialModel = modelosUnicos[0] || '';
+  const initialColors = useMemo(() => getColorsForModel(producto, initialModel), [producto, initialModel]);
+  const initialColorName = initialColors[0]?.nombre || '';
 
-  // Sincronizar modelo por defecto si cambia el producto
-  useEffect(() => {
-    if (modelosUnicos.length > 0 && !modelosUnicos.includes(selectedModelo)) {
-      setSelectedModelo(modelosUnicos[0]);
-    }
-  }, [modelosUnicos, selectedModelo]);
+  const [selectedModelo, setSelectedModelo] = useState(initialModel);
+  const [selectedColorName, setSelectedColorName] = useState(initialColorName);
 
-  // 2. Colores disponibles filtrados para el modelo seleccionado
+  // Colores calculados síncronamente según el modelo actual
   const coloresDelModelo = useMemo(() => {
-    if (!Array.isArray(producto.variantes) || producto.variantes.length === 0) {
-      if (producto.color?.nombre) {
-        return [{
-          nombre: producto.color.nombre,
-          hex: producto.color.codigoHex || '#888888',
-          variante: null,
-        }];
-      }
-      return [];
-    }
-
-    const map = new Map();
-    producto.variantes.forEach((v) => {
-      const nombreMod = v.modelo?.nombre || producto.modelo?.nombre;
-      if (!selectedModelo || nombreMod === selectedModelo) {
-        const colorObj = v.color || producto.color;
-        if (colorObj?.nombre && !map.has(colorObj.nombre)) {
-          map.set(colorObj.nombre, {
-            nombre: colorObj.nombre,
-            hex: colorObj.codigoHex || '#888888',
-            variante: v,
-          });
-        }
-      }
-    });
-    return Array.from(map.values());
+    return getColorsForModel(producto, selectedModelo);
   }, [producto, selectedModelo]);
 
-  const [selectedColorName, setSelectedColorName] = useState(() => coloresDelModelo[0]?.nombre || '');
+  // Cambio síncrono de modelo (actualiza modelo + color en un solo ciclo de render)
+  const handleSelectModelo = (modName) => {
+    const newColors = getColorsForModel(producto, modName);
+    const nextColor = newColors[0]?.nombre || '';
+    setSelectedModelo(modName);
+    setSelectedColorName(nextColor);
+  };
 
-  // Sincronizar color cuando cambie el modelo seleccionado
-  useEffect(() => {
-    if (coloresDelModelo.length > 0) {
-      if (!coloresDelModelo.some((c) => c.nombre === selectedColorName)) {
-        setSelectedColorName(coloresDelModelo[0].nombre);
-      }
-    } else {
-      setSelectedColorName('');
-    }
-  }, [selectedModelo, coloresDelModelo, selectedColorName]);
-
-  // 3. Obtener variante específica coincidente con Modelo + Color
+  // 3. Obtener variante específica coincidente
   const selectedVariante = useMemo(() => {
     if (!Array.isArray(producto.variantes) || producto.variantes.length === 0) return null;
     return producto.variantes.find((v) => {
@@ -123,7 +122,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.72)',
+        backgroundColor: 'rgba(0, 0, 0, 0.75)',
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
         display: 'flex',
@@ -131,7 +130,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
         justifyContent: 'center',
         zIndex: 1000,
         padding: '1rem',
-        animation: 'fadeIn 0.25s ease-out',
+        animation: 'fadeIn 0.2s ease-out',
       }}
       onClick={onClose}
     >
@@ -212,7 +211,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                     height: '100%',
                     objectFit: 'contain',
                     padding: '0.5rem',
-                    transition: 'all 0.3s ease',
+                    transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease-out',
                   }}
                 />
               ) : (
@@ -262,7 +261,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                       backgroundColor: 'var(--bg-secondary)',
                       cursor: 'pointer',
                       opacity: selectedImageIndex === idx ? 1 : 0.65,
-                      transition: 'all 0.2s ease',
+                      transition: 'border-color 0.12s ease-out, opacity 0.12s ease-out',
                       flexShrink: 0,
                     }}
                   >
@@ -273,7 +272,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
             )}
           </div>
 
-          {/* Columna Derecha: Información y Selectores de Modelo/Color */}
+          {/* Columna Derecha: Información y Selectores Rápidos */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
             {/* Categoría y Marca */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -377,7 +376,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
               </div>
             )}
 
-            {/* 1. Selector de Modelo / Dispositivo (Paso 1) */}
+            {/* 1. Selector de Modelo / Dispositivo (Transición ultra-rápida a 120ms) */}
             {modelosUnicos.length > 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-white)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -391,7 +390,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                       <button
                         key={modName}
                         type="button"
-                        onClick={() => setSelectedModelo(modName)}
+                        onClick={() => handleSelectModelo(modName)}
                         style={{
                           padding: '0.5rem 0.9rem',
                           borderRadius: 'var(--radius-md)',
@@ -401,8 +400,9 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                           fontWeight: isSelected ? 800 : 600,
                           fontSize: '0.82rem',
                           cursor: 'pointer',
-                          transition: 'all 0.2s ease',
+                          transition: 'transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.12s ease-out, border-color 0.12s ease-out, box-shadow 0.12s ease-out',
                           boxShadow: isSelected ? '0 0 10px rgba(245, 158, 11, 0.25)' : 'none',
+                          transform: isSelected ? 'scale(1.02)' : 'scale(1)',
                         }}
                       >
                         {modName}
@@ -413,7 +413,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
               </div>
             )}
 
-            {/* 2. Selector de Color para el Modelo Seleccionado (Paso 2) */}
+            {/* 2. Selector de Color para el Modelo Seleccionado */}
             {coloresDelModelo.length > 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-white)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -440,8 +440,9 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                           fontWeight: isSelected ? 800 : 500,
                           fontSize: '0.8rem',
                           cursor: 'pointer',
-                          transition: 'all 0.2s ease',
+                          transition: 'transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.12s ease-out, border-color 0.12s ease-out, box-shadow 0.12s ease-out',
                           boxShadow: isSelected ? '0 0 10px rgba(245, 158, 11, 0.2)' : 'none',
+                          transform: isSelected ? 'scale(1.02)' : 'scale(1)',
                         }}
                       >
                         <span
