@@ -101,17 +101,8 @@ export function CatalogoClienteView({
         </div>
       )}
 
-      {/* 2. Hero Landing Page inspirada en VGOM */}
-      <TiendaHeroLanding
-        onExploreCatalog={handleExploreCatalog}
-        onOpenWhatsAppCheckout={() => {
-          if (cartItems.length > 0) {
-            setIsCheckoutOpen(true);
-          } else {
-            handleExploreCatalog();
-          }
-        }}
-      />
+      {/* 2. Hero Landing Page Minimalista */}
+      <TiendaHeroLanding />
 
       {/* 3. Barra de Navegación Centrada por Categorías Activas */}
       <TiendaCategoryNav
