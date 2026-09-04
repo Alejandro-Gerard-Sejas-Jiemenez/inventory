@@ -5,6 +5,7 @@ import { TiendaCategoryNav } from '../components/tienda/TiendaCategoryNav';
 import { TiendaSearchCapsule } from '../components/tienda/TiendaSearchCapsule';
 import { TiendaFooter } from '../components/tienda/TiendaFooter';
 import { ProductoCard } from '../components/tienda/ProductoCard';
+import { ProductoDetalleModal } from '../components/tienda/ProductoDetalleModal';
 import { CarritoDrawer } from '../components/tienda/CarritoDrawer';
 import { CheckoutWhatsAppModal } from '../components/tienda/CheckoutWhatsAppModal';
 import { useTiendaCatalog } from '../hooks/useTiendaCatalog';
@@ -26,9 +27,10 @@ export function CatalogoClienteView({
 }) {
   const catalog = useTiendaCatalog(productos);
 
-  // Control del Drawer del Carrito y Modal WhatsApp
+  // Control de Modales (Carrito, Checkout y Detalle de Producto)
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [selectedProductForDetail, setSelectedProductForDetail] = useState(null);
   const [orderSuccessMessage, setOrderSuccessMessage] = useState('');
 
   const totalCartUnits = useMemo(() => {
@@ -206,6 +208,7 @@ export function CatalogoClienteView({
                     key={prod.idProducto}
                     producto={prod}
                     onAddToCart={onAddToCart}
+                    onOpenDetail={(p) => setSelectedProductForDetail(p)}
                     cartQuantity={cartItem?.cantidad || 0}
                   />
                 );
@@ -318,6 +321,14 @@ export function CatalogoClienteView({
         }}
         cartItems={cartItems}
         onOrderSuccess={handleOrderSuccess}
+      />
+
+      {/* 9. Modal de Detalle de Producto para Clientes */}
+      <ProductoDetalleModal
+        producto={selectedProductForDetail}
+        isOpen={!!selectedProductForDetail}
+        onClose={() => setSelectedProductForDetail(null)}
+        onAddToCart={onAddToCart}
       />
     </div>
   );

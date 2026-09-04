@@ -39,4 +39,12 @@ public class VentaController {
         ventaService.cancelarVenta(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<Venta> cambiarEstado(
+            @PathVariable Long id,
+            @RequestParam com.inventario.modules.ventas.model.EstadoVenta nuevoEstado,
+            @RequestParam(required = false) Long idUsuario) {
+        return ResponseEntity.ok(ventaService.cambiarEstado(id, nuevoEstado, idUsuario));
+    }
 }

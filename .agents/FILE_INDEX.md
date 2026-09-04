@@ -230,6 +230,7 @@ frontend/
     │   │   ├── TiendaSearchCapsule.jsx          ← Cápsula de búsqueda segmentada y filtros de marca/orden
     │   │   ├── TiendaFooter.jsx                 ← Pie de página minimalista
     │   │   ├── ProductoCard.jsx                 ← Tarjeta e-commerce con física táctil y discos puros de color
+    │   │   ├── ProductoDetalleModal.jsx         ← Modal de detalle de producto para clientes (galería, variantes, precio unitario)
     │   │   ├── CarritoDrawer.jsx                ← Drawer lateral deslizante de carrito con tope de stock
     │   │   ├── CarritoItem.jsx                  ← Fila individual de producto en la bolsa de pedidos
     │   │   └── CheckoutWhatsAppModal.jsx        ← Formulario de entrega y enlace universal a WhatsApp

@@ -49,6 +49,10 @@ public class Venta {
     @Builder.Default
     private EstadoVenta estado = EstadoVenta.COMPLETADA;
 
+    @Column(name = "estado_modificado")
+    @Builder.Default
+    private Boolean estadoModificado = false;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "metodo_pago", nullable = false, length = 30)
     @Builder.Default
@@ -72,6 +76,7 @@ public class Venta {
         if (this.hora == null) this.hora = LocalTime.now();
         if (this.total == null) this.total = BigDecimal.ZERO;
         if (this.estado == null) this.estado = EstadoVenta.COMPLETADA;
+        if (this.estadoModificado == null) this.estadoModificado = false;
         if (this.metodoPago == null) this.metodoPago = MetodoPago.EFECTIVO;
     }
 }

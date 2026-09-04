@@ -1,5 +1,6 @@
 package com.inventario.modules.compras.service.impl;
 
+import com.inventario.core.exception.BadRequestException;
 import com.inventario.core.exception.ResourceNotFoundException;
 import com.inventario.modules.catalogo.model.ProductoVariante;
 import com.inventario.modules.catalogo.repository.ProductoVarianteRepository;
@@ -83,8 +84,6 @@ public class CompraServiceImpl implements CompraService {
             int stockAntes = variante.getStockActual();
             int stockDespues = stockAntes + item.getCantidad();
             variante.setStockActual(stockDespues);
-            // Actualizar el precio de compra del producto padre? o de la variante?
-            // Dejemos el update de precio de compra en el producto padre para despues si es necesario
             variante.getProducto().setPrecioCompra(item.getPrecioCompra());
             varianteRepository.save(variante);
 
@@ -124,4 +123,82 @@ public class CompraServiceImpl implements CompraService {
 
         return savedCompra;
     }
+
+    @Override
+    @Transactional
+    public Compra cambiarEstado(Long id, EstadoCompra nuevoEstado, Long idUsuario) {
+        Compra compra = findById(id);
+
+        if (Boolean.TRUE.equals(compra.getEstadoModificado())) {
+            throw new BadRequestException("El estado de la Compra #" + id + " ya fue modificado previamente (" + compra.getEstado() + ") y se encuentra bloqueado.");
+        }
+
+        if (compra.getEstado() == nuevoEstado) {
+            throw new BadRequestException("La compra ya se encuentra en estado " + nuevoEstado);
+        }
+
+        EstadoCompra estadoAnterior = compra.getEstado();
+        Usuario usuarioAccion = (idUsuario != null)
+                ? usuarioRepository.findById(idUsuario).orElse(compra.getUsuario())
+                : compra.getUsuario();
+
+        // Transición a CANCELADA: descontar el stock recibido previamente
+        if (nuevoEstado == EstadoCompra.CANCELADA) {
+            for (DetalleCompra d : compra.getDetalles()) {
+                ProductoVariante prod = d.getVariante();
+                int stockAntes = prod.getStockActual();
+                int stockDespues = Math.max(0, stockAntes - d.getCantidad());
+                prod.setStockActual(stockDespues);
+                varianteRepository.save(prod);
+
+                MovimientoStock movimiento = MovimientoStock.builder()
+                        .variante(prod)
+                        .usuario(usuarioAccion)
+                        .tipo(TipoMovimiento.AJUSTE_SUSTRACCION)
+                        .cantidad(d.getCantidad())
+                        .stockAntes(stockAntes)
+                        .stockDespues(stockDespues)
+                        .motivo("Cancelación de compra #" + compra.getIdCompra())
+                        .build();
+                movimientoStockRepository.save(movimiento);
+            }
+        }
+        // Transición de CANCELADA a RECIBIDA: reincorporar stock de la compra
+        else if (estadoAnterior == EstadoCompra.CANCELADA && nuevoEstado == EstadoCompra.RECIBIDA) {
+            for (DetalleCompra d : compra.getDetalles()) {
+                ProductoVariante prod = d.getVariante();
+                int stockAntes = prod.getStockActual();
+                int stockDespues = stockAntes + d.getCantidad();
+                prod.setStockActual(stockDespues);
+                varianteRepository.save(prod);
+
+                MovimientoStock movimiento = MovimientoStock.builder()
+                        .variante(prod)
+                        .usuario(usuarioAccion)
+                        .tipo(TipoMovimiento.COMPRA)
+                        .cantidad(d.getCantidad())
+                        .stockAntes(stockAntes)
+                        .stockDespues(stockDespues)
+                        .motivo("Reactivación de compra #" + compra.getIdCompra())
+                        .build();
+                movimientoStockRepository.save(movimiento);
+            }
+        }
+
+        compra.setEstado(nuevoEstado);
+        compra.setEstadoModificado(true);
+        Compra savedCompra = compraRepository.save(compra);
+
+        bitacoraService.registrar(
+                usuarioAccion,
+                "CAMBIO_ESTADO_COMPRA",
+                "compras",
+                savedCompra.getIdCompra(),
+                "Estado de Compra #" + savedCompra.getIdCompra() + " cambiado de " + estadoAnterior + " a " + nuevoEstado + " (Bloqueo de cambio único activado)",
+                "127.0.0.1"
+        );
+
+        return savedCompra;
+    }
 }
+

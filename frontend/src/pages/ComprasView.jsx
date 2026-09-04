@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Truck, Plus, Building } from 'lucide-react';
+import { Truck, Plus, Building, Lock } from 'lucide-react';
 import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardTitle, CardBody } from '../components/common/Card';
 import { Button } from '../components/common/Button';
@@ -16,10 +16,12 @@ export function ComprasView({
   usuarios = [],
   onRegistrarCompra,
   onCreateProveedor,
+  onCambiarEstadoCompra,
 }) {
   const [subTab, setSubTab] = useState('compras');
   const [showNuevaCompra, setShowNuevaCompra] = useState(false);
   const [showNuevoProveedor, setShowNuevoProveedor] = useState(false);
+  const [loadingEstadoId, setLoadingEstadoId] = useState(null);
 
   const tabsConfig = [
     { id: 'compras', label: 'Historial de Compras', count: compras.length, icon: Truck },
@@ -34,6 +36,22 @@ export function ComprasView({
   const handleProveedorSubmit = async (payload) => {
     await onCreateProveedor(payload);
     setShowNuevoProveedor(false);
+  };
+
+  const handleCambiarEstado = async (idCompra, nuevoEstado) => {
+    if (!window.confirm(`¿Estás seguro de cambiar el estado de la orden de compra #${idCompra} a "${nuevoEstado}"?\n\nTEN EN CUENTA: Solo se permite modificar el estado UNA SOLA VEZ por compra. Después quedará bloqueado.`)) {
+      return;
+    }
+    try {
+      setLoadingEstadoId(idCompra);
+      if (onCambiarEstadoCompra) {
+        await onCambiarEstadoCompra(idCompra, nuevoEstado);
+      }
+    } catch (err) {
+      alert(err.message || 'Error al cambiar estado de compra');
+    } finally {
+      setLoadingEstadoId(null);
+    }
   };
 
   const comprasColumns = [
@@ -51,7 +69,56 @@ export function ComprasView({
     },
     {
       header: 'Estado',
-      render: (c) => <Badge variant="success">{c.estado || 'COMPLETADA'}</Badge>,
+      render: (c) => {
+        const est = c.estado || 'RECIBIDA';
+        const badgeVar = est === 'RECIBIDA' ? 'success' : est === 'CANCELADA' ? 'danger' : 'warning';
+        return <Badge variant={badgeVar}>{est}</Badge>;
+      },
+    },
+    {
+      header: 'Acciones de Estado',
+      render: (c) => {
+        if (c.estadoModificado) {
+          return (
+            <span
+              style={{
+                fontSize: '0.74rem',
+                color: 'var(--text-muted)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.3rem',
+                backgroundColor: 'var(--bg-glass)',
+                padding: '0.25rem 0.65rem',
+                borderRadius: '999px',
+                border: '1px solid var(--border-color)',
+              }}
+              title="El estado de esta compra ya fue modificado 1 vez y se encuentra bloqueado"
+            >
+              <Lock size={12} color="var(--brand-gold)" />
+              Bloqueado (1/1)
+            </span>
+          );
+        }
+
+        const isCurrentCancel = c.estado === 'CANCELADA';
+        const targetState = isCurrentCancel ? 'RECIBIDA' : 'CANCELADA';
+
+        return (
+          <Button
+            size="sm"
+            variant={isCurrentCancel ? 'brand' : 'ghost'}
+            loading={loadingEstadoId === c.idCompra}
+            onClick={() => handleCambiarEstado(c.idCompra, targetState)}
+            style={{
+              fontSize: '0.74rem',
+              padding: '0.25rem 0.6rem',
+              color: isCurrentCancel ? '#111' : 'var(--brand-red)',
+            }}
+          >
+            {isCurrentCancel ? 'Reactivar Orden' : 'Cancelar Compra'}
+          </Button>
+        );
+      },
     },
   ];
 

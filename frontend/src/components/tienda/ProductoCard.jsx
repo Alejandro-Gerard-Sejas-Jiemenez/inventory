@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Check, XCircle, Image as ImageIcon } from 'lucide-react';
 
-export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
+export function ProductoCard({ producto, onAddToCart, onOpenDetail, cartQuantity = 0 }) {
   const [addedAnimation, setAddedAnimation] = useState(false);
 
   const stockActual = (producto.variantes && producto.variantes.length > 0)
@@ -18,10 +18,17 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
     setTimeout(() => setAddedAnimation(false), 800);
   };
 
+  const handleCardClick = () => {
+    if (onOpenDetail) {
+      onOpenDetail(producto);
+    }
+  };
+
   const mainImage = (producto.imagenes && producto.imagenes.length > 0 && producto.imagenes[0]?.url) || producto.imagenUrl;
 
   return (
     <div
+      onClick={handleCardClick}
       style={{
         borderRadius: 'var(--radius-lg)',
         overflow: 'hidden',
@@ -29,7 +36,7 @@ export function ProductoCard({ producto, onAddToCart, cartQuantity = 0 }) {
         flexDirection: 'column',
         position: 'relative',
         opacity: isOutOfStock ? 0.65 : 1,
-        cursor: 'default',
+        cursor: 'pointer',
       }}
       className="apple-glass-card"
     >

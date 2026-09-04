@@ -145,6 +145,7 @@ export function App() {
                           usuarios={inventory.usuarios}
                           currentUser={currentUser}
                           onRegistrarVenta={inventory.registrarVenta}
+                          onCambiarEstadoVenta={inventory.cambiarEstadoVenta}
                         />
                       }
                     />
@@ -160,6 +161,7 @@ export function App() {
                           currentUser={currentUser}
                           onRegistrarCompra={inventory.registrarCompra}
                           onCreateProveedor={inventory.createProveedor}
+                          onCambiarEstadoCompra={inventory.cambiarEstadoCompra}
                         />
                       }
                     />

@@ -117,6 +117,8 @@ export function useInventoryData() {
     saveMovimiento: tx.saveMovimiento,
     registrarVenta: tx.registrarVenta,
     registrarCompra: tx.registrarCompra,
+    cambiarEstadoVenta: tx.cambiarEstadoVenta,
+    cambiarEstadoCompra: tx.cambiarEstadoCompra,
 
     // Mutaciones Catálogos
     createProveedor: master.createProveedor,

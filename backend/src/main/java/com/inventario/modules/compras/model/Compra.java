@@ -52,6 +52,10 @@ public class Compra {
     @Builder.Default
     private EstadoCompra estado = EstadoCompra.RECIBIDA;
 
+    @Column(name = "estado_modificado")
+    @Builder.Default
+    private Boolean estadoModificado = false;
+
     @Column(length = 500)
     private String observaciones;
 
@@ -70,5 +74,6 @@ public class Compra {
         if (this.hora == null) this.hora = LocalTime.now();
         if (this.total == null) this.total = BigDecimal.ZERO;
         if (this.estado == null) this.estado = EstadoCompra.RECIBIDA;
+        if (this.estadoModificado == null) this.estadoModificado = false;
     }
 }

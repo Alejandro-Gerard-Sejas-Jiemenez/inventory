@@ -59,6 +59,18 @@ export function useTransactionData(onDataMutated) {
     if (onDataMutated) await onDataMutated();
   };
 
+  const cambiarEstadoVenta = async (id, nuevoEstado, idUsuario) => {
+    await api.cambiarEstadoVenta(id, nuevoEstado, idUsuario);
+    await loadTransactionData();
+    if (onDataMutated) await onDataMutated();
+  };
+
+  const cambiarEstadoCompra = async (id, nuevoEstado, idUsuario) => {
+    await api.cambiarEstadoCompra(id, nuevoEstado, idUsuario);
+    await loadTransactionData();
+    if (onDataMutated) await onDataMutated();
+  };
+
   return {
     stats,
     usuarios,
@@ -70,5 +82,7 @@ export function useTransactionData(onDataMutated) {
     saveMovimiento,
     registrarVenta,
     registrarCompra,
+    cambiarEstadoVenta,
+    cambiarEstadoCompra,
   };
 }

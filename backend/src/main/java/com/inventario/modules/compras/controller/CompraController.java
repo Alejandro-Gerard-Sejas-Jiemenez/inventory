@@ -33,4 +33,12 @@ public class CompraController {
     public ResponseEntity<Compra> registrarCompra(@Valid @RequestBody CompraRequestDto request) {
         return new ResponseEntity<>(compraService.registrarCompra(request), HttpStatus.CREATED);
     }
+
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<Compra> cambiarEstado(
+            @PathVariable Long id,
+            @RequestParam com.inventario.modules.compras.model.EstadoCompra nuevoEstado,
+            @RequestParam(required = false) Long idUsuario) {
+        return ResponseEntity.ok(compraService.cambiarEstado(id, nuevoEstado, idUsuario));
+    }
 }

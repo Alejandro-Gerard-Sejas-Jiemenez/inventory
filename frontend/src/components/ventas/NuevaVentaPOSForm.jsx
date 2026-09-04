@@ -19,7 +19,7 @@ export function NuevaVentaPOSForm({
 }) {
   const [selectedMetodo, setSelectedMetodo] = useState('EFECTIVO');
   const [observaciones, setObservaciones] = useState('');
-  const [itemsVenta, setItemsVenta] = useState([{ idVariante: '', cantidad: 1, precioUnitario: 0 }]);
+  const [itemsVenta, setItemsVenta] = useState([{ idVariante: '', cantidad: 1, precioUnitario: 0, tipoPrecio: 'UNITARIO' }]);
   const [loading, setLoading] = useState(false);
 
   // Aplanar productos -> variantes para el selector
@@ -30,13 +30,14 @@ export function NuevaVentaPOSForm({
         idProducto: p.idProducto,
         nombreCompuesto: `${p.nombre} ${v.modelo?.nombre ? `- ${v.modelo.nombre}` : ''} ${v.color?.nombre ? `(${v.color.nombre})` : ''}`,
         stockActual: v.stockActual,
-        precioUnitario: p.precioUnitario
+        precioUnitario: p.precioUnitario,
+        precioMayoreo: p.precioMayoreo,
       }))
     );
   }, [productos]);
 
   const handleAddItem = () => {
-    setItemsVenta([...itemsVenta, { idVariante: '', cantidad: 1, precioUnitario: 0 }]);
+    setItemsVenta([...itemsVenta, { idVariante: '', cantidad: 1, precioUnitario: 0, tipoPrecio: 'UNITARIO' }]);
   };
 
   const handleRemoveItem = (index) => {
@@ -47,7 +48,24 @@ export function NuevaVentaPOSForm({
     const variante = variantesDisponibles.find((v) => String(v.idVariante) === String(varId));
     const newItems = [...itemsVenta];
     newItems[index].idVariante = varId;
-    newItems[index].precioUnitario = variante ? variante.precioUnitario : 0;
+    const tipo = newItems[index].tipoPrecio || 'UNITARIO';
+    if (tipo === 'MAYOREO' && variante && variante.precioMayoreo && Number(variante.precioMayoreo) > 0) {
+      newItems[index].precioUnitario = variante.precioMayoreo;
+    } else {
+      newItems[index].precioUnitario = variante ? variante.precioUnitario : 0;
+    }
+    setItemsVenta(newItems);
+  };
+
+  const handleTipoPrecioChange = (index, tipo) => {
+    const newItems = [...itemsVenta];
+    newItems[index].tipoPrecio = tipo;
+    const variante = variantesDisponibles.find((v) => String(v.idVariante) === String(newItems[index].idVariante));
+    if (tipo === 'MAYOREO' && variante && variante.precioMayoreo && Number(variante.precioMayoreo) > 0) {
+      newItems[index].precioUnitario = variante.precioMayoreo;
+    } else if (variante) {
+      newItems[index].precioUnitario = variante.precioUnitario;
+    }
     setItemsVenta(newItems);
   };
 
@@ -84,6 +102,7 @@ export function NuevaVentaPOSForm({
           idVariante: parseInt(i.idVariante, 10),
           cantidad: i.cantidad,
           precioUnitario: parseFloat(i.precioUnitario),
+          tipoPrecio: i.tipoPrecio || 'UNITARIO',
         })),
       };
 
@@ -134,6 +153,7 @@ export function NuevaVentaPOSForm({
                   onVarianteChange={handleVarianteChange}
                   onCantidadChange={handleCantidadChange}
                   onPrecioChange={handlePrecioChange}
+                  onTipoPrecioChange={handleTipoPrecioChange}
                   onRemove={handleRemoveItem}
                   canRemove={itemsVenta.length > 1}
                 />

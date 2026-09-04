@@ -15,18 +15,20 @@ export function VentaDetalleRow({
   onVarianteChange,
   onCantidadChange,
   onPrecioChange,
+  onTipoPrecioChange,
   onRemove,
   canRemove,
 }) {
   const varSelec = variantesDisponibles.find((v) => String(v.idVariante) === String(item.idVariante));
   const maxStock = varSelec ? varSelec.stockActual ?? 0 : null;
+  const tieneMayoreo = varSelec && varSelec.precioMayoreo && Number(varSelec.precioMayoreo) > 0;
 
   return (
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'minmax(200px, 2fr) minmax(90px, 0.8fr) minmax(110px, 1fr) minmax(100px, 1fr) 40px',
-        gap: '0.75rem',
+        gridTemplateColumns: 'minmax(180px, 2fr) minmax(100px, 1fr) minmax(75px, 0.7fr) minmax(100px, 1fr) minmax(90px, 1fr) 36px',
+        gap: '0.6rem',
         alignItems: 'end',
         padding: '0.85rem',
         backgroundColor: 'var(--bg-secondary)',
@@ -46,6 +48,16 @@ export function VentaDetalleRow({
         required
       />
 
+      <SelectField
+        label={index === 0 ? 'Tipo Precio' : ''}
+        value={item.tipoPrecio || 'UNITARIO'}
+        onChange={(e) => onTipoPrecioChange && onTipoPrecioChange(index, e.target.value)}
+        options={[
+          { value: 'UNITARIO', label: 'Unitario' },
+          { value: 'MAYOREO', label: tieneMayoreo ? `Mayoreo (Bs. ${Number(varSelec.precioMayoreo).toFixed(2)})` : 'Mayoreo' },
+        ]}
+      />
+
       <InputField
         label={index === 0 ? 'Cant.' : ''}
         type="number"
@@ -57,7 +69,7 @@ export function VentaDetalleRow({
       />
 
       <InputField
-        label={index === 0 ? 'P. Unit (Bs.)' : ''}
+        label={index === 0 ? 'Precio (Bs.)' : ''}
         type="number"
         step="0.01"
         min="0"
@@ -75,7 +87,7 @@ export function VentaDetalleRow({
             alignItems: 'center',
             fontWeight: 700,
             color: 'var(--brand-gold)',
-            fontSize: '0.92rem',
+            fontSize: '0.88rem',
           }}
         >
           Bs. {(item.cantidad * (parseFloat(item.precioUnitario) || 0)).toFixed(2)}

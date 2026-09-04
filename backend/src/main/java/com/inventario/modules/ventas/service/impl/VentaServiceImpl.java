@@ -77,9 +77,16 @@ public class VentaServiceImpl implements VentaService {
                 throw new BadRequestException("Stock insuficiente para '" + variante.getProducto().getNombre() + "'. Stock actual: " + variante.getStockActual() + ", solicitado: " + item.getCantidad());
             }
 
-            BigDecimal precioUnitario = item.getPrecioUnitario() != null
-                    ? item.getPrecioUnitario()
-                    : variante.getProducto().getPrecioUnitario();
+            BigDecimal precioUnitario = item.getPrecioUnitario();
+            if (precioUnitario == null) {
+                if ("MAYOREO".equalsIgnoreCase(item.getTipoPrecio()) 
+                        && variante.getProducto().getPrecioMayoreo() != null 
+                        && variante.getProducto().getPrecioMayoreo().compareTo(BigDecimal.ZERO) > 0) {
+                    precioUnitario = variante.getProducto().getPrecioMayoreo();
+                } else {
+                    precioUnitario = variante.getProducto().getPrecioUnitario();
+                }
+            }
 
             BigDecimal subtotal = precioUnitario.multiply(BigDecimal.valueOf(item.getCantidad()));
             totalVenta = totalVenta.add(subtotal);
@@ -134,41 +141,87 @@ public class VentaServiceImpl implements VentaService {
     @Override
     @Transactional
     public void cancelarVenta(Long id) {
+        cambiarEstado(id, EstadoVenta.CANCELADA, null);
+    }
+
+    @Override
+    @Transactional
+    public Venta cambiarEstado(Long id, EstadoVenta nuevoEstado, Long idUsuario) {
         Venta venta = findById(id);
-        if (venta.getEstado() == EstadoVenta.CANCELADA) {
-            throw new BadRequestException("La venta ya se encuentra cancelada");
+
+        if (Boolean.TRUE.equals(venta.getEstadoModificado())) {
+            throw new BadRequestException("El estado de la Venta #" + id + " ya fue modificado previamente (" + venta.getEstado() + ") y se encuentra bloqueado.");
         }
 
-        // Devolver stock de cada producto
-        for (DetalleVenta d : venta.getDetalles()) {
-            ProductoVariante prod = d.getVariante();
-            int stockAntes = prod.getStockActual();
-            int stockDespues = stockAntes + d.getCantidad();
-            prod.setStockActual(stockDespues);
-            varianteRepository.save(prod);
-
-            MovimientoStock movimiento = MovimientoStock.builder()
-                    .variante(prod)
-                    .usuario(venta.getUsuario())
-                    .tipo(TipoMovimiento.DEVOLUCION)
-                    .cantidad(d.getCantidad())
-                    .stockAntes(stockAntes)
-                    .stockDespues(stockDespues)
-                    .motivo("Cancelación de venta #" + venta.getIdVenta())
-                    .build();
-            movimientoStockRepository.save(movimiento);
+        if (venta.getEstado() == nuevoEstado) {
+            throw new BadRequestException("La venta ya se encuentra en estado " + nuevoEstado);
         }
 
-        venta.setEstado(EstadoVenta.CANCELADA);
-        ventaRepository.save(venta);
+        EstadoVenta estadoAnterior = venta.getEstado();
+        Usuario usuarioAccion = (idUsuario != null) 
+                ? usuarioRepository.findById(idUsuario).orElse(venta.getUsuario())
+                : venta.getUsuario();
+
+        // Transición a CANCELADA: devolver stock
+        if (nuevoEstado == EstadoVenta.CANCELADA) {
+            for (DetalleVenta d : venta.getDetalles()) {
+                ProductoVariante prod = d.getVariante();
+                int stockAntes = prod.getStockActual();
+                int stockDespues = stockAntes + d.getCantidad();
+                prod.setStockActual(stockDespues);
+                varianteRepository.save(prod);
+
+                MovimientoStock movimiento = MovimientoStock.builder()
+                        .variante(prod)
+                        .usuario(usuarioAccion)
+                        .tipo(TipoMovimiento.DEVOLUCION)
+                        .cantidad(d.getCantidad())
+                        .stockAntes(stockAntes)
+                        .stockDespues(stockDespues)
+                        .motivo("Cancelación de venta #" + venta.getIdVenta())
+                        .build();
+                movimientoStockRepository.save(movimiento);
+            }
+        }
+        // Transición de CANCELADA a COMPLETADA: volver a descontar stock
+        else if (estadoAnterior == EstadoVenta.CANCELADA && nuevoEstado == EstadoVenta.COMPLETADA) {
+            for (DetalleVenta d : venta.getDetalles()) {
+                ProductoVariante prod = d.getVariante();
+                if (prod.getStockActual() < d.getCantidad()) {
+                    throw new BadRequestException("Stock insuficiente para reactivar la venta #" + venta.getIdVenta() + ". Disponible: " + prod.getStockActual() + ", Requerido: " + d.getCantidad());
+                }
+                int stockAntes = prod.getStockActual();
+                int stockDespues = stockAntes - d.getCantidad();
+                prod.setStockActual(stockDespues);
+                varianteRepository.save(prod);
+
+                MovimientoStock movimiento = MovimientoStock.builder()
+                        .variante(prod)
+                        .usuario(usuarioAccion)
+                        .tipo(TipoMovimiento.VENTA)
+                        .cantidad(d.getCantidad())
+                        .stockAntes(stockAntes)
+                        .stockDespues(stockDespues)
+                        .motivo("Reactivación de venta #" + venta.getIdVenta())
+                        .build();
+                movimientoStockRepository.save(movimiento);
+            }
+        }
+
+        venta.setEstado(nuevoEstado);
+        venta.setEstadoModificado(true);
+        Venta savedVenta = ventaRepository.save(venta);
 
         bitacoraService.registrar(
-                venta.getUsuario(),
-                "CANCELAR_VENTA",
+                usuarioAccion,
+                "CAMBIO_ESTADO_VENTA",
                 "ventas",
-                venta.getIdVenta(),
-                "Venta #" + venta.getIdVenta() + " fue cancelada y el stock fue reincorporado",
+                savedVenta.getIdVenta(),
+                "Estado de Venta #" + savedVenta.getIdVenta() + " cambiado de " + estadoAnterior + " a " + nuevoEstado + " (Bloqueo de cambio único activado)",
                 "127.0.0.1"
         );
+
+        return savedVenta;
     }
 }
+

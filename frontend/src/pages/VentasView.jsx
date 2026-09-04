@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Plus, UserPlus, Users } from 'lucide-react';
+import { ShoppingCart, Plus, Lock, RefreshCw, AlertCircle } from 'lucide-react';
 import { PageHeader } from '../components/common/PageHeader';
 import { Card, CardTitle, CardBody } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
 import { DataTable } from '../components/common/DataTable';
-import { Tabs } from '../components/common/Tabs';
 import { NuevaVentaPOSForm } from '../components/ventas/NuevaVentaPOSForm';
 
 export function VentasView({
@@ -13,12 +12,30 @@ export function VentasView({
   productos = [],
   usuarios = [],
   onRegistrarVenta,
+  onCambiarEstadoVenta,
 }) {
   const [showNuevaVenta, setShowNuevaVenta] = useState(false);
+  const [loadingEstadoId, setLoadingEstadoId] = useState(null);
 
   const handleVentaSubmit = async (payload) => {
     await onRegistrarVenta(payload);
     setShowNuevaVenta(false);
+  };
+
+  const handleCambiarEstado = async (idVenta, nuevoEstado) => {
+    if (!window.confirm(`¿Estás seguro de cambiar el estado de la venta #${idVenta} a "${nuevoEstado}"?\n\nTEN EN CUENTA: Solo se permite modificar el estado UNA SOLA VEZ por venta. Después quedará bloqueado.`)) {
+      return;
+    }
+    try {
+      setLoadingEstadoId(idVenta);
+      if (onCambiarEstadoVenta) {
+        await onCambiarEstadoVenta(idVenta, nuevoEstado);
+      }
+    } catch (err) {
+      alert(err.message || 'Error al cambiar estado de venta');
+    } finally {
+      setLoadingEstadoId(null);
+    }
   };
 
   const ventasColumns = [
@@ -37,7 +54,56 @@ export function VentasView({
     },
     {
       header: 'Estado',
-      render: (v) => <Badge variant="success">{v.estado || 'COMPLETADA'}</Badge>,
+      render: (v) => {
+        const est = v.estado || 'COMPLETADA';
+        const badgeVar = est === 'COMPLETADA' ? 'success' : est === 'CANCELADA' ? 'danger' : 'warning';
+        return <Badge variant={badgeVar}>{est}</Badge>;
+      },
+    },
+    {
+      header: 'Acciones de Estado',
+      render: (v) => {
+        if (v.estadoModificado) {
+          return (
+            <span
+              style={{
+                fontSize: '0.74rem',
+                color: 'var(--text-muted)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.3rem',
+                backgroundColor: 'var(--bg-glass)',
+                padding: '0.25rem 0.65rem',
+                borderRadius: '999px',
+                border: '1px solid var(--border-color)',
+              }}
+              title="El estado de esta venta ya fue modificado 1 vez y se encuentra bloqueado"
+            >
+              <Lock size={12} color="var(--brand-gold)" />
+              Bloqueado (1/1)
+            </span>
+          );
+        }
+
+        const isCurrentCancel = v.estado === 'CANCELADA';
+        const targetState = isCurrentCancel ? 'COMPLETADA' : 'CANCELADA';
+
+        return (
+          <Button
+            size="sm"
+            variant={isCurrentCancel ? 'brand' : 'ghost'}
+            loading={loadingEstadoId === v.idVenta}
+            onClick={() => handleCambiarEstado(v.idVenta, targetState)}
+            style={{
+              fontSize: '0.74rem',
+              padding: '0.25rem 0.6rem',
+              color: isCurrentCancel ? '#111' : 'var(--brand-red)',
+            }}
+          >
+            {isCurrentCancel ? 'Reactivar Venta' : 'Cancelar Venta'}
+          </Button>
+        );
+      },
     },
   ];
 

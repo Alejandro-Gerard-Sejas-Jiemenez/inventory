@@ -5,10 +5,14 @@ export const transactionApi = {
   getVentas: () => http.get('/ventas'),
   registrarVenta: (data) => http.post('/ventas', data),
   cancelarVenta: (id) => http.post(`/ventas/${id}/cancelar`),
+  cambiarEstadoVenta: (id, nuevoEstado, idUsuario) =>
+    http.put(`/ventas/${id}/estado?nuevoEstado=${nuevoEstado}${idUsuario ? `&idUsuario=${idUsuario}` : ''}`),
 
   // Compras
   getCompras: () => http.get('/compras'),
   registrarCompra: (data) => http.post('/compras', data),
+  cambiarEstadoCompra: (id, nuevoEstado, idUsuario) =>
+    http.put(`/compras/${id}/estado?nuevoEstado=${nuevoEstado}${idUsuario ? `&idUsuario=${idUsuario}` : ''}`),
 
   // Movimientos (Kardex)
   getMovimientos: (idProducto) => {
@@ -17,3 +21,4 @@ export const transactionApi = {
   },
   registrarMovimiento: (data) => http.post('/movimientos', data),
 };
+

@@ -1058,3 +1058,39 @@
     - `feat(frontend): add edit capabilities for master catalogs multi-image gallery and quick stock button` (`df36316`)
   - Subido exitosamente a GitHub (`origin/main`).
 
+---
+
+## Bloque 34: Vista de Detalle en Catálogo de Clientes, Ciclo de Estado con Bloqueo de Cambio Único en Bitácora y Zona Horaria Bolivia
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-CLIENT-DETAIL` / `FEAT-STATUS-LOCK` / `FEAT-TZ-BOLIVIA` |
+| **Fecha** | 2026-09-04 |
+| **Módulos Afectados** | Backend (`InventarioBackendApplication`, `ventas`, `compras`, `sistema`), Frontend (`CatalogoClienteView`, `ProductoCard`, `ProductoDetalleModal`, `VentasView`, `ComprasView`, `NuevaVentaPOSForm`, `VentaDetalleRow`, `transactionApi`) |
+| **Skills Aplicadas** | `spring-modular-backend`, `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN
+- Configurar el servidor backend para sincronizar su zona horaria nativa en `America/La_Paz` (Bolivia / GMT-4).
+- Diseñar `ProductoDetalleModal.jsx` para el catálogo de clientes: vista modal translúcida de alta fidelidad (estilo Apple Glassmorphism) con galería de fotos (principal y secundarias), badges de marca/categoría/material/color, selector de variantes con stock por opción, selector de cantidad, precio unitario exclusivo y sin mostrar propietario.
+- Implementar ciclo de vida de estado para Ventas (`COMPLETADA`, `CANCELADA`, `PENDIENTE`) y Compras (`RECIBIDA`, `CANCELADA`, `PENDIENTE`) con bloqueo de cambio único (`estadoModificado = true`), ajuste automático de inventario según el cambio y registro en la Bitácora de auditoría.
+- Soportar selección de tipo de precio (`UNITARIO` vs `MAYOREO`) al registrar ventas en el POS.
+
+### Fase 2: IMPLEMENTACIÓN
+- **Backend (Spring Boot 3.4 + Java 21):**
+  - `InventarioBackendApplication.java`: `@PostConstruct` configurando `TimeZone.setDefault(TimeZone.getTimeZone("America/La_Paz"))`.
+  - `Venta.java` & `Compra.java`: Atributo `@Column(name = "estado_modificado") private Boolean estadoModificado = false`.
+  - `VentaServiceImpl.java` & `CompraServiceImpl.java`: Implementación de `cambiarEstado(...)` restringido a **1 solo cambio per-transacción**, reversión/reincorporación de stock y auditoría en `BitacoraService`.
+  - `VentaController.java` & `CompraController.java`: Endpoints REST `PUT /api/ventas/{id}/estado` y `PUT /api/compras/{id}/estado`.
+- **Frontend (React 19 + Vite):**
+  - `ProductoDetalleModal.jsx`: Modal de detalle para clientes con galería, selector de variantes, precio unitario y botón de añadir a la bolsa.
+  - `ProductoCard.jsx` & `CatalogoClienteView.jsx`: Evento de apertura del modal de detalle al pulsar cualquier producto del catálogo público.
+  - `VentaDetalleRow.jsx` & `NuevaVentaPOSForm.jsx`: Selector de `tipoPrecio` (`UNITARIO` / `MAYOREO`) con precio por mayoreo nullable prellenado automáticamente si existe.
+  - `VentasView.jsx` & `ComprasView.jsx`: Insignias de estado, botón interactivo para cambiar estado (1 vez) e indicador `🔒 Bloqueado (1/1)` tras la modificación.
+  - `transactionApi.js` & `useTransactionData.js`: Integración de métodos `cambiarEstadoVenta` y `cambiarEstadoCompra`.
+
+### Fase 3: VERIFICACIÓN
+- **Compilación Maven local:** `./mvnw test-compile` → **`BUILD SUCCESS`** en 3.06s.
+- **Build Frontend local:** `npm run build` → **`0 ERRORS`** en 2.23s.
+
+
