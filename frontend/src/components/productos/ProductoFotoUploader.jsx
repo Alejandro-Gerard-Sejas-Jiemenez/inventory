@@ -3,9 +3,9 @@ import { Image as ImageIcon, Upload, Link, Trash2, Plus, Star } from 'lucide-rea
 import { Button } from '../common/Button';
 import { InputField } from '../common/InputField';
 
-// Configuración de Supabase Storage para subida directa de archivos (Variables de entorno)
+// Configuración de Supabase Storage para subida directa de archivos (Variables de entorno con fallback)
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://gvmjjobeboymfsfjpkai.supabase.co';
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2bWpqb2JlYm95bWZzZmpwa2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMzA3NTUsImV4cCI6MjEwMzcwNjc1NX0.G3fEkn6pt8JLngv_-ugaxEhTZWKPElkVYZtlR4abHXo';
 
 
 // Compresión client-side y conversión a Blob
@@ -55,6 +55,47 @@ const processDeviceImageToBlob = (file) => {
   });
 };
 
+// Conversión a Base64 Ultra-comprimido como respaldo
+const processDeviceImageToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 480;
+        const MAX_HEIGHT = 480;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.65);
+        resolve(dataUrl);
+      };
+      img.onerror = () => reject(new Error('Error al procesar base64'));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('Error al leer archivo'));
+    reader.readAsDataURL(file);
+  });
+};
+
 // Subida a Supabase Storage Bucket 'productos'
 const uploadToSupabaseStorage = async (blobFile) => {
   const fileName = `prod_${Date.now()}_${Math.random().toString(36).substring(2, 9)}.jpg`;
@@ -95,18 +136,24 @@ export function ProductoFotoUploader({ imagenesUrls = [], onImagesChange }) {
 
     try {
       setUploadingImage(true);
-      const uploadedPublicUrls = [];
+      const uploadedUrls = [];
       for (const file of files) {
-        // 1. Optimizar y convertir imagen a Blob
-        const blob = await processDeviceImageToBlob(file);
-        // 2. Subir directamente a Supabase Storage bucket 'productos'
-        const publicUrl = await uploadToSupabaseStorage(blob);
-        uploadedPublicUrls.push(publicUrl);
+        try {
+          // 1. Intentar subida a Supabase Storage
+          const blob = await processDeviceImageToBlob(file);
+          const publicUrl = await uploadToSupabaseStorage(blob);
+          uploadedUrls.push(publicUrl);
+        } catch (storageErr) {
+          console.warn('Fallo la subida a Supabase Storage, aplicando fallback Base64 ultra-comprimido:', storageErr);
+          // 2. Respaldo a Base64 ultra-comprimido en caso de falla de red/API Key
+          const base64Fallback = await processDeviceImageToBase64(file);
+          uploadedUrls.push(base64Fallback);
+        }
       }
-      onImagesChange([...imagenesUrls, ...uploadedPublicUrls]);
+      onImagesChange([...imagenesUrls, ...uploadedUrls]);
     } catch (err) {
-      console.error('Error subiendo imagen a Supabase Storage:', err);
-      alert('Hubo un problema al subir la imagen a Supabase Storage. Revisa que el bucket "productos" tenga las políticas RLS activadas.');
+      console.error('Error procesando imagen del dispositivo:', err);
+      alert('Hubo un problema al procesar la imagen.');
     } finally {
       setUploadingImage(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
