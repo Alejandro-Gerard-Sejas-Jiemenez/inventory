@@ -154,7 +154,7 @@ public class CompraServiceImpl implements CompraService {
                 MovimientoStock movimiento = MovimientoStock.builder()
                         .variante(prod)
                         .usuario(usuarioAccion)
-                        .tipo(TipoMovimiento.AJUSTE_SUSTRACCION)
+                        .tipo(TipoMovimiento.SALIDA)
                         .cantidad(d.getCantidad())
                         .stockAntes(stockAntes)
                         .stockDespues(stockDespues)
