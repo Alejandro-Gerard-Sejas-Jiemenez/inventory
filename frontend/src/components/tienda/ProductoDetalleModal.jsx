@@ -140,7 +140,8 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                     left: 0,
                     width: '100%',
                     height: '100%',
-                    objectFit: 'cover',
+                    objectFit: 'contain',
+                    padding: '0.4rem',
                     transition: 'all 0.3s ease',
                   }}
                 />
@@ -187,14 +188,15 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                       borderRadius: 'var(--radius-md)',
                       overflow: 'hidden',
                       border: selectedImageIndex === idx ? '2px solid var(--brand-gold)' : '1px solid var(--border-color)',
-                      padding: 0,
+                      padding: '2px',
+                      backgroundColor: 'var(--bg-secondary)',
                       cursor: 'pointer',
                       opacity: selectedImageIndex === idx ? 1 : 0.65,
                       transition: 'all 0.2s ease',
                       flexShrink: 0,
                     }}
                   >
-                    <img src={imgUrl} alt={`Vista ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={imgUrl} alt={`Vista ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                   </button>
                 ))}
               </div>
@@ -265,9 +267,9 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                 </div>
               </div>
 
-              {/* Indicador de Stock */}
+              {/* Indicador de Stock sin números */}
               <div style={{ textAlign: 'right' }}>
-                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block' }}>Disponibilidad</span>
+                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block' }}>Estado</span>
                 <span
                   style={{
                     fontSize: '0.86rem',
@@ -279,7 +281,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                   }}
                 >
                   <Box size={14} />
-                  {isOutOfStock ? 'Agotado' : `${currentVariantStock} unidades en stock`}
+                  {isOutOfStock ? 'Agotado' : 'Disponible'}
                 </span>
               </div>
             </div>
@@ -343,11 +345,11 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
               )}
             </div>
 
-            {/* Selector de Variantes (Talla / Modelo / Variantes) */}
-            {producto.variantes && producto.variantes.length > 0 && (
+            {/* Selector de Variantes solo si existen 2 o más opciones reales */}
+            {producto.variantes && producto.variantes.length > 1 && (
               <div style={{ marginTop: '0.4rem' }}>
                 <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)', display: 'block', marginBottom: '0.45rem' }}>
-                  Selecciona la Opción / Variante:
+                  Selecciona la Opción:
                 </span>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                   {producto.variantes.map((v) => {
@@ -360,7 +362,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                         onClick={() => setSelectedVariante(v)}
                         disabled={vStock <= 0}
                         style={{
-                          padding: '0.45rem 0.8rem',
+                          padding: '0.45rem 0.85rem',
                           borderRadius: 'var(--radius-md)',
                           border: isSelected ? '2px solid var(--brand-gold)' : '1px solid var(--border-color)',
                           backgroundColor: isSelected ? 'var(--brand-gold-subtle, rgba(245, 158, 11, 0.12))' : 'var(--bg-glass)',
@@ -375,8 +377,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                           transition: 'all 0.15s ease',
                         }}
                       >
-                        <span>{v.talla || v.sku || `Variante #${v.idVariante}`}</span>
-                        <span style={{ fontSize: '0.68rem', opacity: 0.8 }}>({vStock} en stock)</span>
+                        <span>{v.talla || v.sku || `Opción #${v.idVariante}`}</span>
                       </button>
                     );
                   })}
