@@ -3,9 +3,10 @@ import { Image as ImageIcon, Upload, Link, Trash2, Plus, Star } from 'lucide-rea
 import { Button } from '../common/Button';
 import { InputField } from '../common/InputField';
 
-// Configuración de Supabase Storage para subida directa de archivos
-const SUPABASE_URL = 'https://gvmjjobeboymfsfjpkai.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2bWpqb2JlYm95bWZzZmpwa2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMzA3NTUsImV4cCI6MjEwMzcwNjc1NX0.G3fEkn6pt8JLngv_-ugaxEhTZWKPElkVYZtlR4abHXo';
+// Configuración de Supabase Storage para subida directa de archivos (Variables de entorno)
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://gvmjjobeboymfsfjpkai.supabase.co';
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
 
 // Compresión client-side y conversión a Blob
 const processDeviceImageToBlob = (file) => {
