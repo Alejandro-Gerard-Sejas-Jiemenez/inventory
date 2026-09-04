@@ -1,9 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { ShieldCheck, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
 import { TiendaHeader } from '../components/tienda/TiendaHeader';
-import { TiendaHeroLanding } from '../components/tienda/TiendaHeroLanding';
+import { TiendaLandingHero } from '../components/tienda/TiendaLandingHero';
+import { TiendaEditorialFeatured } from '../components/tienda/TiendaEditorialFeatured';
+import { TiendaCategoryGrid } from '../components/tienda/TiendaCategoryGrid';
 import { TiendaCategoryNav } from '../components/tienda/TiendaCategoryNav';
 import { TiendaSearchCapsule } from '../components/tienda/TiendaSearchCapsule';
+import { TiendaManifesto } from '../components/tienda/TiendaManifesto';
+import { TiendaTrustSignals } from '../components/tienda/TiendaTrustSignals';
 import { TiendaFooter } from '../components/tienda/TiendaFooter';
 import { ProductoCard } from '../components/tienda/ProductoCard';
 import { ProductoDetalleModal } from '../components/tienda/ProductoDetalleModal';
@@ -12,8 +16,9 @@ import { CheckoutWhatsAppModal } from '../components/tienda/CheckoutWhatsAppModa
 import { useTiendaCatalog } from '../hooks/useTiendaCatalog';
 
 /**
- * Vista Principal del Catálogo de Clientes (E-commerce).
- * Responsabilidad única: Presentación y composición de la tienda pública.
+ * Vista Principal del Catálogo de Clientes (E-commerce & Landing Page).
+ * Responsabilidad: Presentación de la Landing Page inspirada en Stitch Tech Accessories
+ * combinada con el catálogo interactivo y carrito de compras en tiempo real.
  */
 export function CatalogoClienteView({
   productos = [],
@@ -47,7 +52,12 @@ export function CatalogoClienteView({
   };
 
   const handleExploreCatalog = () => {
-    const el = document.getElementById('productos-grid');
+    const el = document.getElementById('catalogo');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleExploreFeatured = () => {
+    const el = document.getElementById('destacados');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -101,10 +111,26 @@ export function CatalogoClienteView({
         </div>
       )}
 
-      {/* 2. Hero Landing Page Minimalista */}
-      <TiendaHeroLanding />
+      {/* 2. Hero Landing Oficial (Stitch Minimalist Tech Accessories) */}
+      <TiendaLandingHero
+        onExploreCatalog={handleExploreCatalog}
+        onExploreFeatured={handleExploreFeatured}
+      />
 
-      {/* 3. Barra de Navegación Centrada por Categorías Activas */}
+      {/* 3. Productos Destacados Editoriales (Titanium Case & Audio Hi-Res) */}
+      <TiendaEditorialFeatured onExploreCatalog={handleExploreCatalog} />
+
+      {/* 4. Cuadrícula de Categorías Oficial */}
+      <TiendaCategoryGrid
+        categorias={categorias}
+        selectedCategoria={catalog.selectedCategoria}
+        onSelectCategoria={(catId) => {
+          catalog.setSelectedCategoria(catId);
+          catalog.setCurrentPage(1);
+        }}
+      />
+
+      {/* 5. Barra de Navegación Centrada por Categorías Activas */}
       <TiendaCategoryNav
         categorias={categorias}
         selectedCategoria={catalog.selectedCategoria}
@@ -305,7 +331,13 @@ export function CatalogoClienteView({
         )}
       </main>
 
-      {/* 6. Footer */}
+      {/* 6. Manifiesto de Marca Oficial */}
+      <TiendaManifesto />
+
+      {/* 7. Señales de Confianza y Garantía */}
+      <TiendaTrustSignals />
+
+      {/* 8. Footer Oficial */}
       <TiendaFooter />
 
       {/* 7. Drawer de Carrito */}
