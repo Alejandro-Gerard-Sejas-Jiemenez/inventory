@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
-import { X, ShoppingCart, Check, ShieldCheck, Tag, Layers, Palette, Sparkles, Image as ImageIcon, Box } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { X, ShoppingCart, Check, Box, Smartphone, Palette, ShieldCheck, Image as ImageIcon } from 'lucide-react';
 
 /**
  * Modal de Detalle de Producto para la Tienda Pública de Clientes.
- * Requisitos:
- * - Galería de imágenes (principal y secundarias).
- * - Marca, Categoría, Material, Color, Descripción.
- * - Variantes y estado de stock por variante.
- * - Muestra ÚNICAMENTE el precio unitario.
- * - NO muestra Propietario.
+ * Requisitos & Usabilidad:
+ * - Selección encadenada en 2 pasos: Modelo / Dispositivo -> Colores disponibles para ese modelo.
+ * - Muestra únicamente el Precio Unitario (sin Propietario ni números exactos de stock).
+ * - Estructura visual armónica con Glassmorphic Design (Krug & Kowalski UI).
  */
 export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, cartQuantity = 0 }) {
   if (!isOpen || !producto) return null;
@@ -19,39 +17,87 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
     : producto.imagenUrl ? [producto.imagenUrl] : [];
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [selectedVariante, setSelectedVariante] = useState(
-    producto.variantes && producto.variantes.length > 0 ? producto.variantes[0] : null
-  );
   const [cantidad, setCantidad] = useState(1);
   const [addedAnimation, setAddedAnimation] = useState(false);
 
   const mainImage = allImages[selectedImageIndex] || null;
 
-  const availableColors = React.useMemo(() => {
-    const colorsMap = new Map();
-
-    if (producto.color?.nombre) {
-      colorsMap.set(producto.color.nombre, {
-        nombre: producto.color.nombre,
-        hex: producto.color.codigoHex || '#888888',
-      });
+  // 1. Obtener modelos únicos disponibles en el producto o sus variantes
+  const modelosUnicos = useMemo(() => {
+    if (!Array.isArray(producto.variantes) || producto.variantes.length === 0) {
+      return producto.modelo?.nombre ? [producto.modelo.nombre] : [];
     }
-
-    if (Array.isArray(producto.variantes)) {
-      producto.variantes.forEach((v) => {
-        if (v.color?.nombre) {
-          colorsMap.set(v.color.nombre, {
-            nombre: v.color.nombre,
-            hex: v.color.codigoHex || '#888888',
-          });
-        }
-      });
-    }
-
-    return Array.from(colorsMap.values());
+    const set = new Set();
+    producto.variantes.forEach((v) => {
+      const nombreMod = v.modelo?.nombre || producto.modelo?.nombre;
+      if (nombreMod) set.add(nombreMod);
+    });
+    return Array.from(set);
   }, [producto]);
 
-  // Stock global y por variante
+  const [selectedModelo, setSelectedModelo] = useState(() => modelosUnicos[0] || '');
+
+  // Sincronizar modelo por defecto si cambia el producto
+  useEffect(() => {
+    if (modelosUnicos.length > 0 && !modelosUnicos.includes(selectedModelo)) {
+      setSelectedModelo(modelosUnicos[0]);
+    }
+  }, [modelosUnicos, selectedModelo]);
+
+  // 2. Colores disponibles filtrados para el modelo seleccionado
+  const coloresDelModelo = useMemo(() => {
+    if (!Array.isArray(producto.variantes) || producto.variantes.length === 0) {
+      if (producto.color?.nombre) {
+        return [{
+          nombre: producto.color.nombre,
+          hex: producto.color.codigoHex || '#888888',
+          variante: null,
+        }];
+      }
+      return [];
+    }
+
+    const map = new Map();
+    producto.variantes.forEach((v) => {
+      const nombreMod = v.modelo?.nombre || producto.modelo?.nombre;
+      if (!selectedModelo || nombreMod === selectedModelo) {
+        const colorObj = v.color || producto.color;
+        if (colorObj?.nombre && !map.has(colorObj.nombre)) {
+          map.set(colorObj.nombre, {
+            nombre: colorObj.nombre,
+            hex: colorObj.codigoHex || '#888888',
+            variante: v,
+          });
+        }
+      }
+    });
+    return Array.from(map.values());
+  }, [producto, selectedModelo]);
+
+  const [selectedColorName, setSelectedColorName] = useState(() => coloresDelModelo[0]?.nombre || '');
+
+  // Sincronizar color cuando cambie el modelo seleccionado
+  useEffect(() => {
+    if (coloresDelModelo.length > 0) {
+      if (!coloresDelModelo.some((c) => c.nombre === selectedColorName)) {
+        setSelectedColorName(coloresDelModelo[0].nombre);
+      }
+    } else {
+      setSelectedColorName('');
+    }
+  }, [selectedModelo, coloresDelModelo, selectedColorName]);
+
+  // 3. Obtener variante específica coincidente con Modelo + Color
+  const selectedVariante = useMemo(() => {
+    if (!Array.isArray(producto.variantes) || producto.variantes.length === 0) return null;
+    return producto.variantes.find((v) => {
+      const matchMod = !selectedModelo || (v.modelo?.nombre || producto.modelo?.nombre) === selectedModelo;
+      const matchCol = !selectedColorName || (v.color?.nombre || producto.color?.nombre) === selectedColorName;
+      return matchMod && matchCol;
+    }) || producto.variantes[0];
+  }, [producto, selectedModelo, selectedColorName]);
+
+  // Stock y disponibilidad
   const stockTotal = (producto.variantes && producto.variantes.length > 0)
     ? producto.variantes.reduce((sum, v) => sum + (v.stockActual || 0), 0)
     : (producto.stockActual ?? 0);
@@ -93,7 +139,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
         className="apple-glass-card"
         style={{
           width: '100%',
-          maxWidth: '820px',
+          maxWidth: '840px',
           maxHeight: '90vh',
           overflowY: 'auto',
           borderRadius: 'var(--radius-xl)',
@@ -135,7 +181,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(330px, 1fr))',
             gap: '1.8rem',
             padding: '1.8rem',
           }}
@@ -147,7 +193,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
               style={{
                 position: 'relative',
                 width: '100%',
-                paddingTop: '90%',
+                paddingTop: '92%',
                 borderRadius: 'var(--radius-lg)',
                 backgroundColor: 'var(--bg-secondary)',
                 overflow: 'hidden',
@@ -165,7 +211,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                     width: '100%',
                     height: '100%',
                     objectFit: 'contain',
-                    padding: '0.4rem',
+                    padding: '0.5rem',
                     transition: 'all 0.3s ease',
                   }}
                 />
@@ -227,19 +273,19 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
             )}
           </div>
 
-          {/* Columna Derecha: Detalles del Producto */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {/* Marca y Categoría */}
+          {/* Columna Derecha: Información y Selectores de Modelo/Color */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+            {/* Categoría y Marca */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
               {producto.categoria?.nombre && (
                 <span
                   style={{
                     padding: '0.25rem 0.65rem',
                     borderRadius: '999px',
-                    backgroundColor: 'var(--bg-glass)',
+                    backgroundColor: 'var(--brand-gold-bg)',
                     border: '1px solid var(--border-color)',
                     fontSize: '0.72rem',
-                    fontWeight: 700,
+                    fontWeight: 800,
                     color: 'var(--brand-gold)',
                     letterSpacing: '0.03em',
                   }}
@@ -259,7 +305,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
             <h2
               style={{
                 margin: 0,
-                fontSize: '1.45rem',
+                fontSize: '1.4rem',
                 color: 'var(--text-white)',
                 fontWeight: 800,
                 lineHeight: 1.25,
@@ -269,31 +315,32 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
               {producto.nombre}
             </h2>
 
-            {/* Precio Unitario Solamente */}
+            {/* Caja de Precio Unitario y Estado */}
             <div
               style={{
-                padding: '0.85rem 1rem',
+                padding: '0.9rem 1.1rem',
                 backgroundColor: 'var(--bg-secondary)',
                 borderRadius: 'var(--radius-md)',
                 border: '1px solid var(--border-color)',
                 display: 'flex',
-                alignItems: 'baseline',
+                alignItems: 'center',
                 justifyContent: 'space-between',
               }}
             >
               <div>
-                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 700, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Precio Unitario
                 </span>
-                <div style={{ fontSize: '1.65rem', fontWeight: 800, color: 'var(--brand-gold)' }}>
+                <div style={{ fontSize: '1.65rem', fontWeight: 800, color: 'var(--brand-gold)', lineHeight: 1.1 }}>
                   <span style={{ fontSize: '1rem', marginRight: '3px' }}>Bs.</span>
                   {Number(producto.precioUnitario).toFixed(2)}
                 </div>
               </div>
 
-              {/* Indicador de Stock sin números */}
               <div style={{ textAlign: 'right' }}>
-                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block' }}>Estado</span>
+                <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', display: 'block', textTransform: 'uppercase', fontWeight: 700 }}>
+                  Estado
+                </span>
                 <span
                   style={{
                     fontSize: '0.86rem',
@@ -302,6 +349,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.3rem',
+                    marginTop: '2px',
                   }}
                 >
                   <Box size={14} />
@@ -310,60 +358,90 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
               </div>
             </div>
 
-            {/* Descripción */}
-            {producto.descripcion && (
-              <div style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                <strong style={{ color: 'var(--text-primary)', display: 'block', marginBottom: '0.2rem', fontSize: '0.8rem' }}>
-                  Descripción:
-                </strong>
-                {producto.descripcion}
+            {/* Material */}
+            {producto.material?.nombre && (
+              <div
+                style={{
+                  padding: '0.65rem 0.9rem',
+                  backgroundColor: 'var(--bg-glass)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border-color)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  fontSize: '0.82rem',
+                }}
+              >
+                <span style={{ color: 'var(--brand-gold)', fontWeight: 800 }}>Material:</span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{producto.material.nombre}</span>
               </div>
             )}
 
-            {/* Atributos: Material y Color */}
-            {/* Atributos: Material y Colores Disponibles */}
-            <div style={{ display: 'grid', gridTemplateColumns: availableColors.length > 0 && producto.material?.nombre ? '1fr 1fr' : '1fr', gap: '0.8rem' }}>
-              {producto.material?.nombre && (
-                <div
-                  style={{
-                    padding: '0.6rem 0.8rem',
-                    backgroundColor: 'var(--bg-glass)',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid var(--border-color)',
-                    fontSize: '0.78rem',
-                  }}
-                >
-                  <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.68rem', fontWeight: 600 }}>MATERIAL</span>
-                  <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{producto.material.nombre}</span>
+            {/* 1. Selector de Modelo / Dispositivo (Paso 1) */}
+            {modelosUnicos.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-white)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Smartphone size={15} style={{ color: 'var(--brand-gold)' }} />
+                  <span>1. Selecciona tu Modelo / Dispositivo:</span>
+                </label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {modelosUnicos.map((modName) => {
+                    const isSelected = selectedModelo === modName;
+                    return (
+                      <button
+                        key={modName}
+                        type="button"
+                        onClick={() => setSelectedModelo(modName)}
+                        style={{
+                          padding: '0.5rem 0.9rem',
+                          borderRadius: 'var(--radius-md)',
+                          border: isSelected ? '2px solid var(--brand-gold)' : '1px solid var(--border-color)',
+                          backgroundColor: isSelected ? 'var(--brand-gold-bg)' : 'var(--bg-glass)',
+                          color: isSelected ? 'var(--brand-gold)' : 'var(--text-secondary)',
+                          fontWeight: isSelected ? 800 : 600,
+                          fontSize: '0.82rem',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          boxShadow: isSelected ? '0 0 10px rgba(245, 158, 11, 0.25)' : 'none',
+                        }}
+                      >
+                        {modName}
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
+              </div>
+            )}
 
-              {availableColors.length > 0 && (
-                <div
-                  style={{
-                    padding: '0.6rem 0.8rem',
-                    backgroundColor: 'var(--bg-glass)',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid var(--border-color)',
-                    fontSize: '0.78rem',
-                  }}
-                >
-                  <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.68rem', fontWeight: 600, marginBottom: '0.2rem' }}>
-                    {availableColors.length === 1 ? 'COLOR DISPONIBLE' : 'COLORES DISPONIBLES'}
-                  </span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
-                    {availableColors.map((c, idx) => (
-                      <div
-                        key={idx}
-                        title={c.nombre}
+            {/* 2. Selector de Color para el Modelo Seleccionado (Paso 2) */}
+            {coloresDelModelo.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-white)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Palette size={15} style={{ color: 'var(--brand-gold)' }} />
+                  <span>2. Colores disponibles para {selectedModelo || 'este producto'}:</span>
+                </label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {coloresDelModelo.map((c) => {
+                    const isSelected = selectedColorName === c.nombre;
+                    return (
+                      <button
+                        key={c.nombre}
+                        type="button"
+                        onClick={() => setSelectedColorName(c.nombre)}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '0.3rem',
-                          backgroundColor: 'var(--bg-secondary)',
-                          padding: '0.2rem 0.5rem',
+                          gap: '0.45rem',
+                          padding: '0.45rem 0.85rem',
                           borderRadius: '999px',
-                          border: '1px solid var(--border-color)',
+                          border: isSelected ? '2px solid var(--brand-gold)' : '1px solid var(--border-color)',
+                          backgroundColor: isSelected ? 'var(--brand-gold-bg)' : 'var(--bg-glass)',
+                          color: isSelected ? 'var(--brand-gold)' : 'var(--text-primary)',
+                          fontWeight: isSelected ? 800 : 500,
+                          fontSize: '0.8rem',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          boxShadow: isSelected ? '0 0 10px rgba(245, 158, 11, 0.2)' : 'none',
                         }}
                       >
                         <span
@@ -373,50 +451,11 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                             borderRadius: '50%',
                             backgroundColor: c.hex,
                             display: 'inline-block',
-                            boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+                            boxShadow: '0 1px 4px rgba(0,0,0,0.35)',
+                            border: '1px solid rgba(255,255,255,0.2)',
                           }}
                         />
-                        <span style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '0.74rem' }}>{c.nombre}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Selector de Variantes solo si existen 2 o más opciones reales */}
-            {producto.variantes && producto.variantes.length > 1 && (
-              <div style={{ marginTop: '0.4rem' }}>
-                <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)', display: 'block', marginBottom: '0.45rem' }}>
-                  Selecciona la Opción:
-                </span>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  {producto.variantes.map((v) => {
-                    const isSelected = selectedVariante?.idVariante === v.idVariante;
-                    const vStock = v.stockActual || 0;
-                    return (
-                      <button
-                        key={v.idVariante}
-                        type="button"
-                        onClick={() => setSelectedVariante(v)}
-                        disabled={vStock <= 0}
-                        style={{
-                          padding: '0.45rem 0.85rem',
-                          borderRadius: 'var(--radius-md)',
-                          border: isSelected ? '2px solid var(--brand-gold)' : '1px solid var(--border-color)',
-                          backgroundColor: isSelected ? 'var(--brand-gold-subtle, rgba(245, 158, 11, 0.12))' : 'var(--bg-glass)',
-                          color: vStock <= 0 ? 'var(--text-muted)' : isSelected ? 'var(--brand-gold)' : 'var(--text-primary)',
-                          fontWeight: isSelected ? 800 : 500,
-                          fontSize: '0.78rem',
-                          cursor: vStock <= 0 ? 'not-allowed' : 'pointer',
-                          opacity: vStock <= 0 ? 0.45 : 1,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.35rem',
-                          transition: 'all 0.15s ease',
-                        }}
-                      >
-                        <span>{v.talla || v.sku || `Opción #${v.idVariante}`}</span>
+                        <span>{c.nombre}</span>
                       </button>
                     );
                   })}
@@ -424,8 +463,8 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
               </div>
             )}
 
-            {/* Control de Cantidad y Botón de Acción */}
-            <div style={{ marginTop: 'auto', paddingTop: '1rem', display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
+            {/* Control de Cantidad y Botón Agregar al Carrito */}
+            <div style={{ marginTop: 'auto', paddingTop: '0.8rem', display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
               {/* Contar Cantidad */}
               <div
                 style={{

@@ -204,16 +204,16 @@ export function ProductoCard({ producto, onAddToCart, onOpenDetail, cartQuantity
         <h4
           style={{
             margin: 0,
-            fontSize: '0.92rem',
+            fontSize: '1.02rem',
             color: 'var(--text-white)',
-            fontWeight: 700,
-            lineHeight: 1.32,
+            fontWeight: 800,
+            lineHeight: 1.3,
             letterSpacing: '-0.015em',
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
-            minHeight: '2.4rem',
+            minHeight: '2.6rem',
           }}
           title={producto.nombre}
         >
@@ -221,16 +221,17 @@ export function ProductoCard({ producto, onAddToCart, onOpenDetail, cartQuantity
         </h4>
 
         {/* Atributos: Material y Colores Disponibles */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.15rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.1rem' }}>
           {producto.material?.nombre && (
-            <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 500 }}>
-              {producto.material.nombre}
-            </span>
+            <div style={{ fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <span style={{ color: 'var(--brand-gold)', fontWeight: 700 }}>Material:</span>
+              <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{producto.material.nombre}</span>
+            </div>
           )}
 
           {availableColors.length > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 600, marginRight: '2px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600 }}>
                 Colores:
               </span>
               {availableColors.map((c, idx) => (
@@ -243,7 +244,7 @@ export function ProductoCard({ producto, onAddToCart, onOpenDetail, cartQuantity
                     borderRadius: '50%',
                     backgroundColor: c.hex,
                     border: '1px solid rgba(255, 255, 255, 0.25)',
-                    boxShadow: '0 1px 4px rgba(0, 0, 0, 0.35)',
+                    boxShadow: '0 1px 5px rgba(0, 0, 0, 0.35)',
                     display: 'inline-block',
                     flexShrink: 0,
                     cursor: 'pointer',
