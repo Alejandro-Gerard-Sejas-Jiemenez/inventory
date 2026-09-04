@@ -41,10 +41,10 @@ const processDeviceImageToBlob = (file) => {
         canvas.toBlob(
           (blob) => {
             if (blob) resolve(blob);
-            else reject(new Error('Error al convertir imagen a Blob'));
+            else reject(new Error('Error al convertir imagen a Blob WebP'));
           },
-          'image/jpeg',
-          0.82
+          'image/webp',
+          0.80
         );
       };
       img.onerror = () => reject(new Error('No se pudo procesar la imagen del dispositivo'));
@@ -55,7 +55,7 @@ const processDeviceImageToBlob = (file) => {
   });
 };
 
-// Conversión a Base64 Ultra-comprimido como respaldo
+// Conversión a Base64 Ultra-comprimido WebP como respaldo
 const processDeviceImageToBase64 = (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -85,7 +85,7 @@ const processDeviceImageToBase64 = (file) => {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
 
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.65);
+        const dataUrl = canvas.toDataURL('image/webp', 0.65);
         resolve(dataUrl);
       };
       img.onerror = () => reject(new Error('Error al procesar base64'));
@@ -96,9 +96,9 @@ const processDeviceImageToBase64 = (file) => {
   });
 };
 
-// Subida a Supabase Storage Bucket 'productos'
+// Subida a Supabase Storage Bucket 'productos' (Formato WebP ultra-ligero)
 const uploadToSupabaseStorage = async (blobFile) => {
-  const fileName = `prod_${Date.now()}_${Math.random().toString(36).substring(2, 9)}.jpg`;
+  const fileName = `prod_${Date.now()}_${Math.random().toString(36).substring(2, 9)}.webp`;
   const uploadUrl = `${SUPABASE_URL}/storage/v1/object/productos/${fileName}`;
 
   const response = await fetch(uploadUrl, {
@@ -106,7 +106,7 @@ const uploadToSupabaseStorage = async (blobFile) => {
     headers: {
       'apikey': SUPABASE_ANON_KEY,
       'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-      'Content-Type': 'image/jpeg',
+      'Content-Type': 'image/webp',
       'x-upsert': 'true',
     },
     body: blobFile,
