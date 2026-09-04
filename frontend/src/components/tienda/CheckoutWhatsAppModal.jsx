@@ -173,21 +173,13 @@ export function CheckoutWhatsAppModal({
           </div>
         </div>
 
-        {/* Campos de Contacto Opcionales */}
+        {/* Campo Único: Nombre del Cliente (Opcional) */}
         <InputField
           label="Tu Nombre (Opcional)"
           placeholder="Ej. Alejandro"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           icon={User}
-        />
-
-        <InputField
-          label="Tu Teléfono de Contacto (Opcional)"
-          placeholder="Ej. 71234567"
-          value={telefono}
-          onChange={(e) => setTelefono(e.target.value)}
-          icon={Phone}
         />
 
         <TextAreaField

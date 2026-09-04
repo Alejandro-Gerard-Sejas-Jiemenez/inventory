@@ -423,23 +423,42 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                   {coloresDelModelo.map((c) => {
                     const isSelected = selectedColorName === c.nombre;
+                    const colorStock = c.variante ? (c.variante.stockActual || 0) : stockTotal;
+                    const isColorDisabled = colorStock <= 0;
+
                     return (
                       <button
                         key={c.nombre}
                         type="button"
-                        onClick={() => setSelectedColorName(c.nombre)}
+                        onClick={() => !isColorDisabled && setSelectedColorName(c.nombre)}
+                        disabled={isColorDisabled}
+                        title={isColorDisabled ? `${c.nombre} - Agotado para ${selectedModelo}` : `Seleccionar ${c.nombre}`}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
                           gap: '0.45rem',
                           padding: '0.45rem 0.85rem',
                           borderRadius: '999px',
-                          border: isSelected ? '2px solid var(--brand-gold)' : '1px solid var(--border-color)',
-                          backgroundColor: isSelected ? 'var(--brand-gold-bg)' : 'var(--bg-glass)',
-                          color: isSelected ? 'var(--brand-gold)' : 'var(--text-primary)',
+                          border: isColorDisabled
+                            ? '1px dashed var(--brand-red)'
+                            : isSelected
+                            ? '2px solid var(--brand-gold)'
+                            : '1px solid var(--border-color)',
+                          backgroundColor: isColorDisabled
+                            ? 'rgba(239, 68, 68, 0.08)'
+                            : isSelected
+                            ? 'var(--brand-gold-bg)'
+                            : 'var(--bg-glass)',
+                          color: isColorDisabled
+                            ? 'var(--brand-red)'
+                            : isSelected
+                            ? 'var(--brand-gold)'
+                            : 'var(--text-primary)',
                           fontWeight: isSelected ? 800 : 500,
                           fontSize: '0.8rem',
-                          cursor: 'pointer',
+                          cursor: isColorDisabled ? 'not-allowed' : 'pointer',
+                          opacity: isColorDisabled ? 0.55 : 1,
+                          textDecoration: isColorDisabled ? 'line-through' : 'none',
                           transition: 'transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.12s ease-out, border-color 0.12s ease-out, box-shadow 0.12s ease-out',
                           boxShadow: isSelected ? '0 0 10px rgba(245, 158, 11, 0.2)' : 'none',
                           transform: isSelected ? 'scale(1.02)' : 'scale(1)',
@@ -454,9 +473,13 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                             display: 'inline-block',
                             boxShadow: '0 1px 4px rgba(0,0,0,0.35)',
                             border: '1px solid rgba(255,255,255,0.2)',
+                            opacity: isColorDisabled ? 0.4 : 1,
                           }}
                         />
                         <span>{c.nombre}</span>
+                        {isColorDisabled && (
+                          <span style={{ fontSize: '0.68rem', fontWeight: 700, marginLeft: '2px' }}>(Agotado)</span>
+                        )}
                       </button>
                     );
                   })}

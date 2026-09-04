@@ -26,6 +26,21 @@ export function ProductoCard({ producto, onAddToCart, onOpenDetail, cartQuantity
 
   const mainImage = (producto.imagenes && producto.imagenes.length > 0 && producto.imagenes[0]?.url) || producto.imagenUrl;
 
+  const availableModels = React.useMemo(() => {
+    const modelsSet = new Set();
+    if (producto.modelo?.nombre) {
+      modelsSet.add(producto.modelo.nombre);
+    }
+    if (Array.isArray(producto.variantes)) {
+      producto.variantes.forEach((v) => {
+        if (v.modelo?.nombre) {
+          modelsSet.add(v.modelo.nombre);
+        }
+      });
+    }
+    return Array.from(modelsSet);
+  }, [producto]);
+
   const availableColors = React.useMemo(() => {
     const colorsMap = new Map();
 
@@ -220,8 +235,17 @@ export function ProductoCard({ producto, onAddToCart, onOpenDetail, cartQuantity
           {producto.nombre}
         </h4>
 
-        {/* Atributos: Material y Colores Disponibles */}
+        {/* Atributos: Modelos de Celular, Material y Colores Disponibles */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.1rem' }}>
+          {availableModels.length > 0 && (
+            <div style={{ fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
+              <span style={{ color: 'var(--brand-gold)', fontWeight: 700 }}>Modelo:</span>
+              <span style={{ color: 'var(--text-white)', fontWeight: 600 }}>
+                {availableModels.slice(0, 2).join(', ')}{availableModels.length > 2 ? ` +${availableModels.length - 2}` : ''}
+              </span>
+            </div>
+          )}
+
           {producto.material?.nombre && (
             <div style={{ fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
               <span style={{ color: 'var(--brand-gold)', fontWeight: 700 }}>Material:</span>

@@ -69,7 +69,7 @@ export function CarritoItem({ item, onUpdateQuantity, onRemoveItem }) {
           </strong>
           <button
             type="button"
-            onClick={() => onRemoveItem(item.idProducto)}
+            onClick={() => onRemoveItem(item.cartItemId || item.idProducto)}
             style={{
               background: 'none',
               border: 'none',
@@ -84,10 +84,31 @@ export function CarritoItem({ item, onUpdateQuantity, onRemoveItem }) {
           </button>
         </div>
 
-        {/* Atributos */}
-        <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-          {item.color?.nombre && <span>Color: {item.color.nombre}</span>}
-          {item.material?.nombre && <span>· {item.material.nombre}</span>}
+        {/* Atributos: Modelo de Celular y Color Seleccionado */}
+        <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.15rem' }}>
+          {(item.modeloSeleccionado || item.modelo?.nombre) && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <span style={{ color: 'var(--brand-gold)', fontWeight: 700 }}>Modelo:</span>
+              <span style={{ color: 'var(--text-white)', fontWeight: 600 }}>{item.modeloSeleccionado || item.modelo?.nombre}</span>
+            </div>
+          )}
+          {(item.colorSeleccionado || item.color?.nombre) && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <span style={{ color: 'var(--brand-gold)', fontWeight: 700 }}>Color:</span>
+              <span
+                style={{
+                  width: '12px',
+                  height: '12px',
+                  borderRadius: '50%',
+                  backgroundColor: item.colorHex || item.color?.codigoHex || 'var(--text-muted)',
+                  display: 'inline-block',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                }}
+              />
+              <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{item.colorSeleccionado || item.color?.nombre}</span>
+            </div>
+          )}
         </div>
 
         {/* Selector de Cantidad y Precio */}
@@ -95,7 +116,7 @@ export function CarritoItem({ item, onUpdateQuantity, onRemoveItem }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
             <button
               type="button"
-              onClick={() => onUpdateQuantity(item.idProducto, item.cantidad - 1)}
+              onClick={() => onUpdateQuantity(item.cartItemId || item.idProducto, item.cantidad - 1)}
               style={{
                 width: '26px',
                 height: '26px',
@@ -116,7 +137,7 @@ export function CarritoItem({ item, onUpdateQuantity, onRemoveItem }) {
             </span>
             <button
               type="button"
-              onClick={() => onUpdateQuantity(item.idProducto, item.cantidad + 1)}
+              onClick={() => onUpdateQuantity(item.cartItemId || item.idProducto, item.cantidad + 1)}
               disabled={reachedLimit}
               style={{
                 width: '26px',
