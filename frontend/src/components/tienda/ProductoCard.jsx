@@ -26,6 +26,30 @@ export function ProductoCard({ producto, onAddToCart, onOpenDetail, cartQuantity
 
   const mainImage = (producto.imagenes && producto.imagenes.length > 0 && producto.imagenes[0]?.url) || producto.imagenUrl;
 
+  const availableColors = React.useMemo(() => {
+    const colorsMap = new Map();
+
+    if (producto.color?.nombre) {
+      colorsMap.set(producto.color.nombre, {
+        nombre: producto.color.nombre,
+        hex: producto.color.codigoHex || '#888888',
+      });
+    }
+
+    if (Array.isArray(producto.variantes)) {
+      producto.variantes.forEach((v) => {
+        if (v.color?.nombre) {
+          colorsMap.set(v.color.nombre, {
+            nombre: v.color.nombre,
+            hex: v.color.codigoHex || '#888888',
+          });
+        }
+      });
+    }
+
+    return Array.from(colorsMap.values());
+  }, [producto]);
+
   return (
     <div
       onClick={handleCardClick}
@@ -196,29 +220,37 @@ export function ProductoCard({ producto, onAddToCart, onOpenDetail, cartQuantity
           {producto.nombre}
         </h4>
 
-        {/* Atributos: Color (Círculo sin bordes blancos) y Material */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
-          {producto.color && (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <span
-                title={`Color: ${producto.color.nombre}`}
-                style={{
-                  width: '18px',
-                  height: '18px',
-                  borderRadius: '50%',
-                  backgroundColor: producto.color.codigoHex || 'var(--text-muted)',
-                  border: 'none',
-                  outline: 'none',
-                  display: 'inline-block',
-                  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.25)',
-                  cursor: 'pointer',
-                  flexShrink: 0,
-                }}
-              />
-            </div>
-          )}
+        {/* Atributos: Material y Colores Disponibles */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.15rem' }}>
           {producto.material?.nombre && (
-            <span style={{ fontWeight: 500 }}>{producto.material.nombre}</span>
+            <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+              {producto.material.nombre}
+            </span>
+          )}
+
+          {availableColors.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 600, marginRight: '2px' }}>
+                Colores:
+              </span>
+              {availableColors.map((c, idx) => (
+                <div
+                  key={idx}
+                  title={`Color: ${c.nombre}`}
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    borderRadius: '50%',
+                    backgroundColor: c.hex,
+                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                    boxShadow: '0 1px 4px rgba(0, 0, 0, 0.35)',
+                    display: 'inline-block',
+                    flexShrink: 0,
+                    cursor: 'pointer',
+                  }}
+                />
+              ))}
+            </div>
           )}
         </div>
 

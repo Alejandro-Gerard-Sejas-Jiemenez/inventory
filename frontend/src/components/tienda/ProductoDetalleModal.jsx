@@ -27,6 +27,30 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
 
   const mainImage = allImages[selectedImageIndex] || null;
 
+  const availableColors = React.useMemo(() => {
+    const colorsMap = new Map();
+
+    if (producto.color?.nombre) {
+      colorsMap.set(producto.color.nombre, {
+        nombre: producto.color.nombre,
+        hex: producto.color.codigoHex || '#888888',
+      });
+    }
+
+    if (Array.isArray(producto.variantes)) {
+      producto.variantes.forEach((v) => {
+        if (v.color?.nombre) {
+          colorsMap.set(v.color.nombre, {
+            nombre: v.color.nombre,
+            hex: v.color.codigoHex || '#888888',
+          });
+        }
+      });
+    }
+
+    return Array.from(colorsMap.values());
+  }, [producto]);
+
   // Stock global y por variante
   const stockTotal = (producto.variantes && producto.variantes.length > 0)
     ? producto.variantes.reduce((sum, v) => sum + (v.stockActual || 0), 0)
@@ -297,7 +321,8 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
             )}
 
             {/* Atributos: Material y Color */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem' }}>
+            {/* Atributos: Material y Colores Disponibles */}
+            <div style={{ display: 'grid', gridTemplateColumns: availableColors.length > 0 && producto.material?.nombre ? '1fr 1fr' : '1fr', gap: '0.8rem' }}>
               {producto.material?.nombre && (
                 <div
                   style={{
@@ -313,7 +338,7 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                 </div>
               )}
 
-              {producto.color && (
+              {availableColors.length > 0 && (
                 <div
                   style={{
                     padding: '0.6rem 0.8rem',
@@ -321,26 +346,40 @@ export function ProductoDetalleModal({ producto, isOpen, onClose, onAddToCart, c
                     borderRadius: 'var(--radius-md)',
                     border: '1px solid var(--border-color)',
                     fontSize: '0.78rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
                   }}
                 >
-                  <div>
-                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.68rem', fontWeight: 600 }}>COLOR</span>
-                    <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{producto.color.nombre}</span>
+                  <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.68rem', fontWeight: 600, marginBottom: '0.2rem' }}>
+                    {availableColors.length === 1 ? 'COLOR DISPONIBLE' : 'COLORES DISPONIBLES'}
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                    {availableColors.map((c, idx) => (
+                      <div
+                        key={idx}
+                        title={c.nombre}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.3rem',
+                          backgroundColor: 'var(--bg-secondary)',
+                          padding: '0.2rem 0.5rem',
+                          borderRadius: '999px',
+                          border: '1px solid var(--border-color)',
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: '14px',
+                            height: '14px',
+                            borderRadius: '50%',
+                            backgroundColor: c.hex,
+                            display: 'inline-block',
+                            boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+                          }}
+                        />
+                        <span style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '0.74rem' }}>{c.nombre}</span>
+                      </div>
+                    ))}
                   </div>
-                  {producto.color.codigoHex && (
-                    <span
-                      style={{
-                        width: '20px',
-                        height: '20px',
-                        borderRadius: '50%',
-                        backgroundColor: producto.color.codigoHex,
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
-                      }}
-                    />
-                  )}
                 </div>
               )}
             </div>
