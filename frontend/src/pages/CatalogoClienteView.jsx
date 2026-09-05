@@ -1,34 +1,27 @@
 import React, { useState, useMemo } from 'react';
-import { ShieldCheck, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
-import { TiendaAnnouncementBar } from '../components/tienda/TiendaAnnouncementBar';
+import { ShieldCheck } from 'lucide-react';
 import { TiendaHeader } from '../components/tienda/TiendaHeader';
 import { TiendaLandingHero } from '../components/tienda/TiendaLandingHero';
-import { TiendaDeviceSelector } from '../components/tienda/TiendaDeviceSelector';
 import { TiendaEditorialFeatured } from '../components/tienda/TiendaEditorialFeatured';
 import { TiendaCategoryGrid } from '../components/tienda/TiendaCategoryGrid';
-import { TiendaCategoryNav } from '../components/tienda/TiendaCategoryNav';
-import { TiendaSearchCapsule } from '../components/tienda/TiendaSearchCapsule';
-import { TiendaCaseAnatomy } from '../components/tienda/TiendaCaseAnatomy';
 import { TiendaSocialProof } from '../components/tienda/TiendaSocialProof';
-import { TiendaWhatsAppBanner } from '../components/tienda/TiendaWhatsAppBanner';
 import { TiendaManifesto } from '../components/tienda/TiendaManifesto';
 import { TiendaTrustSignals } from '../components/tienda/TiendaTrustSignals';
 import { TiendaFooter } from '../components/tienda/TiendaFooter';
-import { ProductoCard } from '../components/tienda/ProductoCard';
 import { ProductoDetalleModal } from '../components/tienda/ProductoDetalleModal';
 import { CarritoDrawer } from '../components/tienda/CarritoDrawer';
 import { CheckoutWhatsAppModal } from '../components/tienda/CheckoutWhatsAppModal';
 import { useTiendaCatalog } from '../hooks/useTiendaCatalog';
 
 /**
- * Vista Principal del Catálogo de Clientes (E-commerce & Landing Page).
- * Responsabilidad: Presentación de la Landing Page inspirada en CASETiFY & BURGA
- * con selector rápido de modelos, desglose técnico de protección y carrito interactivo en tiempo real.
+ * Vista Principal de la Tienda (Landing Page Oficial).
+ * Enfocada exclusivamente en la presentación editorial de la marca Los Caseritos:
+ * Hero fotográfico con fundas reales, colección destacada, cuadrícula de categorías centralizada,
+ * pruebas sociales de clientes y pie de página con índices.
  */
 export function CatalogoClienteView({
   productos = [],
   categorias = [],
-  marcas = [],
   cartItems = [],
   onAddToCart,
   onUpdateCartQuantity,
@@ -82,10 +75,7 @@ export function CatalogoClienteView({
         transition: 'background 0.3s ease, color 0.3s ease',
       }}
     >
-      {/* 1. Top Announcement Ribbon (Estilo CASETiFY) */}
-      <TiendaAnnouncementBar />
-
-      {/* 2. Header Translúcido */}
+      {/* 1. Header Translúcido con Categorías */}
       <TiendaHeader
         theme={catalog.theme}
         onToggleTheme={catalog.toggleTheme}
@@ -93,6 +83,7 @@ export function CatalogoClienteView({
         onOpenCart={() => setIsCartOpen(true)}
         onGoToAdmin={onGoToAdmin}
         onResetCatalog={catalog.handleResetCatalog}
+        categorias={categorias}
       />
 
       {/* Alerta de Pedido Exitoso */}
@@ -119,258 +110,40 @@ export function CatalogoClienteView({
         </div>
       )}
 
-      {/* 3. Hero Landing Oficial estilo CASETiFY & BURGA */}
+      {/* 2. Hero Landing Oficial con Fotografía Real de Funda */}
       <TiendaLandingHero
+        productos={productos}
         onExploreCatalog={handleExploreCatalog}
         onExploreFeatured={handleExploreFeatured}
       />
 
-      {/* 4. Selector Rápido de Dispositivo / Modelo (Patrón Insignia de BURGA) */}
-      <TiendaDeviceSelector
+      {/* 3. Colección de Fundas Destacadas (Fotografías Reales) */}
+      <TiendaEditorialFeatured
         productos={productos}
-        selectedDeviceModel={catalog.selectedDeviceModel}
-        onSelectDeviceModel={(modelName) => {
-          catalog.setSelectedDeviceModel(modelName);
-          catalog.setCurrentPage(1);
-        }}
+        onOpenDetail={(p) => setSelectedProductForDetail(p)}
+        onExploreCatalog={handleExploreCatalog}
       />
 
-      {/* 5. Productos Destacados Editoriales (Titanium Case & Audio Hi-Res) */}
-      <TiendaEditorialFeatured onExploreCatalog={handleExploreCatalog} />
-
-      {/* 6. Cuadrícula de Categorías Oficial */}
+      {/* 4. Cuadrícula de Categorías Centralizada (Sin "Todo" y solo categorías activas) */}
       <TiendaCategoryGrid
         categorias={categorias}
         selectedCategoria={catalog.selectedCategoria}
-        onSelectCategoria={(catId) => {
-          catalog.setSelectedCategoria(catId);
-          catalog.setCurrentPage(1);
-        }}
+        onSelectCategoria={(catId) => catalog.setSelectedCategoria(catId)}
       />
 
-      {/* 7. Barra de Navegación Centrada por Categorías Activas */}
-      <TiendaCategoryNav
-        categorias={categorias}
-        selectedCategoria={catalog.selectedCategoria}
-        onSelectCategoria={(catId) => {
-          catalog.setSelectedCategoria(catId);
-          catalog.setCurrentPage(1);
-        }}
-      />
-
-      {/* 3. Cápsula de Búsqueda y Filtros de Marca/Orden */}
-      <TiendaSearchCapsule
-        search={catalog.search}
-        onSearchChange={(q) => {
-          catalog.setSearch(q);
-          catalog.setCurrentPage(1);
-        }}
-        onClearSearch={() => catalog.setSearch('')}
-        marcas={marcas}
-        selectedMarca={catalog.selectedMarca}
-        onSelectMarca={(mId) => {
-          catalog.setSelectedMarca(mId);
-          catalog.setCurrentPage(1);
-        }}
-        sortBy={catalog.sortBy}
-        onSelectSortBy={(s) => catalog.setSortBy(s)}
-        onTriggerSearch={() => {
-          const gridEl = document.getElementById('productos-grid');
-          if (gridEl) gridEl.scrollIntoView({ behavior: 'smooth' });
-        }}
-      />
-
-      {/* 4. Barra de Conteo y Restablecimiento */}
-      <section style={{ maxWidth: '1280px', margin: '0.9rem auto 0', padding: '0 1.4rem', width: '100%' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-          <div>
-            Mostrando <strong style={{ color: 'var(--text-white)' }}>{catalog.filteredProductos.length}</strong> productos
-            {catalog.selectedCategoria !== 'ALL' && (
-              <span> en <strong style={{ color: 'var(--brand-gold)' }}>{categorias.find((c) => String(c.idCategoria) === String(catalog.selectedCategoria))?.nombre}</strong></span>
-            )}
-            {catalog.selectedMarca !== 'ALL' && (
-              <span> de <strong style={{ color: 'var(--brand-gold)' }}>{marcas.find((m) => String(m.idMarca) === String(catalog.selectedMarca))?.nombre}</strong></span>
-            )}
-            {catalog.selectedDeviceModel !== 'ALL' && (
-              <span> para <strong style={{ color: 'var(--brand-gold)' }}>{catalog.selectedDeviceModel}</strong></span>
-            )}
-          </div>
-          {(catalog.search || catalog.selectedMarca !== 'ALL' || catalog.selectedCategoria !== 'ALL' || catalog.selectedDeviceModel !== 'ALL' || catalog.sortBy !== 'featured') && (
-            <button
-              type="button"
-              onClick={catalog.handleResetCatalog}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--brand-red)',
-                fontSize: '0.76rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              Restablecer filtros
-            </button>
-          )}
-        </div>
-      </section>
-
-      {/* 5. Grid de Productos */}
-      <main id="productos-grid" style={{ maxWidth: '1280px', margin: '1.2rem auto', padding: '0 1.4rem', width: '100%', flex: 1 }}>
-        {catalog.filteredProductos.length === 0 ? (
-          <div
-            style={{
-              padding: '3.5rem 1.5rem',
-              textAlign: 'center',
-              backgroundColor: 'var(--bg-card)',
-              borderRadius: 'var(--radius-xl)',
-              border: '1px dashed var(--border-color)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '0.75rem',
-            }}
-          >
-            <RotateCcw size={34} opacity={0.35} color="var(--brand-gold)" />
-            <h3 style={{ margin: 0, color: 'var(--text-white)', fontSize: '1.05rem', fontWeight: 700 }}>
-              No se encontraron productos coincidentes
-            </h3>
-            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.84rem' }}>
-              Intenta cambiando la categoría o ajustando los filtros de búsqueda.
-            </p>
-            <button
-              type="button"
-              onClick={catalog.handleResetCatalog}
-              className="apple-btn-tactile"
-              style={{
-                marginTop: '0.5rem',
-                padding: '0.5rem 1.1rem',
-                borderRadius: '999px',
-                backgroundColor: 'var(--brand-gold)',
-                color: '#111',
-                border: 'none',
-                fontWeight: 700,
-                fontSize: '0.8rem',
-                cursor: 'pointer',
-              }}
-            >
-              Restablecer Filtros
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="tienda-product-grid">
-              {catalog.paginatedProductos.map((prod) => {
-                const cartItem = cartItems.find((ci) => ci.idProducto === prod.idProducto);
-                return (
-                  <ProductoCard
-                    key={prod.idProducto}
-                    producto={prod}
-                    onAddToCart={onAddToCart}
-                    onOpenDetail={(p) => setSelectedProductForDetail(p)}
-                    cartQuantity={cartItem?.cantidad || 0}
-                  />
-                );
-              })}
-            </div>
-
-            {/* Paginación */}
-            {catalog.totalPages > 1 && (
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.35rem',
-                  marginTop: '2.4rem',
-                  paddingBottom: '1.5rem',
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => catalog.setCurrentPage((p) => Math.max(1, p - 1))}
-                  disabled={catalog.currentPage === 1}
-                  className="apple-btn-tactile"
-                  style={{
-                    padding: '0.45rem 0.75rem',
-                    borderRadius: '10px',
-                    border: '1px solid var(--border-color)',
-                    backgroundColor: 'var(--bg-card)',
-                    color: 'var(--text-primary)',
-                    cursor: catalog.currentPage === 1 ? 'not-allowed' : 'pointer',
-                    opacity: catalog.currentPage === 1 ? 0.35 : 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <ChevronLeft size={16} />
-                </button>
-
-                {Array.from({ length: catalog.totalPages }, (_, i) => i + 1).map((pageNum) => (
-                  <button
-                    key={pageNum}
-                    type="button"
-                    onClick={() => catalog.setCurrentPage(pageNum)}
-                    className="apple-btn-tactile"
-                    style={{
-                      width: '34px',
-                      height: '34px',
-                      borderRadius: '10px',
-                      border: pageNum === catalog.currentPage ? '1px solid var(--brand-gold)' : '1px solid var(--border-color)',
-                      backgroundColor: pageNum === catalog.currentPage ? 'var(--brand-gold)' : 'var(--bg-card)',
-                      color: pageNum === catalog.currentPage ? '#111' : 'var(--text-secondary)',
-                      fontWeight: pageNum === catalog.currentPage ? 800 : 500,
-                      fontSize: '0.82rem',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {pageNum}
-                  </button>
-                ))}
-
-                <button
-                  type="button"
-                  onClick={() => catalog.setCurrentPage((p) => Math.min(catalog.totalPages, p + 1))}
-                  disabled={catalog.currentPage === catalog.totalPages}
-                  className="apple-btn-tactile"
-                  style={{
-                    padding: '0.45rem 0.75rem',
-                    borderRadius: '10px',
-                    border: '1px solid var(--border-color)',
-                    backgroundColor: 'var(--bg-card)',
-                    color: 'var(--text-primary)',
-                    cursor: catalog.currentPage === catalog.totalPages ? 'not-allowed' : 'pointer',
-                    opacity: catalog.currentPage === catalog.totalPages ? 0.35 : 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <ChevronRight size={16} />
-                </button>
-              </div>
-            )}
-          </>
-        )}
-      </main>
-
-      {/* 8. Anatomía de Protección en 4 Capas (Ingeniería CASETiFY) */}
-      <TiendaCaseAnatomy />
-
-      {/* 9. Reseñas y Calificaciones de Clientes (Social Proof estilo BURGA) */}
+      {/* 5. Reseñas y Calificaciones Reales de Clientes */}
       <TiendaSocialProof />
 
-      {/* 10. Banner de Asistencia Directa por WhatsApp */}
-      <TiendaWhatsAppBanner />
-
-      {/* 11. Manifiesto de Marca Oficial */}
+      {/* 6. Manifiesto de Marca Oficial */}
       <TiendaManifesto />
 
-      {/* 12. Señales de Confianza y Garantía */}
+      {/* 7. Señales de Confianza y Calidad */}
       <TiendaTrustSignals />
 
-      {/* 13. Footer Oficial */}
-      <TiendaFooter />
+      {/* 8. Footer Oficial con Índices */}
+      <TiendaFooter categorias={categorias} />
 
-      {/* 7. Drawer de Carrito */}
+      {/* 9. Drawer de Carrito */}
       <CarritoDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
@@ -384,7 +157,7 @@ export function CatalogoClienteView({
         }}
       />
 
-      {/* 8. Modal de Checkout WhatsApp */}
+      {/* 10. Modal de Checkout WhatsApp */}
       <CheckoutWhatsAppModal
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
@@ -396,7 +169,7 @@ export function CatalogoClienteView({
         onOrderSuccess={handleOrderSuccess}
       />
 
-      {/* 9. Modal de Detalle de Producto para Clientes */}
+      {/* 11. Modal de Detalle de Producto para Clientes */}
       <ProductoDetalleModal
         producto={selectedProductForDetail}
         isOpen={!!selectedProductForDetail}
@@ -406,3 +179,5 @@ export function CatalogoClienteView({
     </div>
   );
 }
+
+export default CatalogoClienteView;

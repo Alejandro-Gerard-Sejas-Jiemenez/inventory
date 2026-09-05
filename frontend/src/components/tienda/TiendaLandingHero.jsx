@@ -5,7 +5,21 @@ import { ArrowRight, ShieldCheck, Sparkles, MessageCircle } from 'lucide-react';
  * Hero Section Oficial basado en stitch_minimalist_tech_accessories_landing
  * Tipografía Space Grotesk/Sora, degradado fire y composición visual limpia.
  */
-export function TiendaLandingHero({ onExploreCatalog, onExploreFeatured }) {
+export function TiendaLandingHero({ onExploreCatalog, onExploreFeatured, productos = [] }) {
+  // Buscar una funda real con imagen en los productos disponibles
+  const featuredProduct = React.useMemo(() => {
+    if (!Array.isArray(productos) || productos.length === 0) return null;
+    const withImg = productos.find((p) => {
+      return (Array.isArray(p.imagenes) && p.imagenes.length > 0 && p.imagenes[0]?.url) || p.imagenUrl;
+    });
+    return withImg || productos[0] || null;
+  }, [productos]);
+
+  const heroImage =
+    (featuredProduct?.imagenes && featuredProduct.imagenes.length > 0 && featuredProduct.imagenes[0]?.url) ||
+    featuredProduct?.imagenUrl ||
+    'https://images.unsplash.com/photo-1603313011101-320f26a4f6f6?auto=format&fit=crop&w=800&q=80';
+
   return (
     <section
       style={{
@@ -83,7 +97,7 @@ export function TiendaLandingHero({ onExploreCatalog, onExploreFeatured }) {
                 margin: '0 0 1.8rem',
               }}
             >
-              Una selección milimétrica de fundas antichoque, carcasas de auriculares y audio inalámbrico para proteger y elevar tu día a día.
+              Carcasas antichoques de ajuste milimétrico para cada modelo de celular. Diseñadas para resistir caídas extremas con estilo y confort.
             </p>
 
             {/* Botones de Acción (CTAs) */}
@@ -107,7 +121,7 @@ export function TiendaLandingHero({ onExploreCatalog, onExploreFeatured }) {
                   boxShadow: 'var(--shadow-card)',
                 }}
               >
-                <span>Explorar catálogo</span>
+                <span>Explorar categorías</span>
                 <ArrowRight size={16} style={{ color: '#F97316' }} />
               </button>
 
@@ -128,12 +142,12 @@ export function TiendaLandingHero({ onExploreCatalog, onExploreFeatured }) {
                   cursor: 'pointer',
                 }}
               >
-                Ver destacados
+                Ver colección
               </button>
             </div>
           </div>
 
-          {/* Columna Derecha: Composición Visual Stitch */}
+          {/* Columna Derecha: Fotografía Real de Funda (Cero figuras simuladas) */}
           <div
             style={{
               position: 'relative',
@@ -156,99 +170,98 @@ export function TiendaLandingHero({ onExploreCatalog, onExploreFeatured }) {
               }}
             />
 
-            {/* Mockup de Funda Titanium Obsidian */}
+            {/* Tarjeta de Exhibición Fotográfica de Alta Fidelidad */}
             <div
               className="apple-glass-card"
               style={{
                 position: 'relative',
                 zIndex: 1,
                 width: '100%',
-                maxWidth: '360px',
-                padding: '1.6rem',
+                maxWidth: '380px',
+                padding: '1.2rem',
                 borderRadius: '2.5rem',
-                border: '1.5px solid rgba(255, 255, 255, 0.1)',
+                border: '1.5px solid rgba(255, 255, 255, 0.12)',
+                boxShadow: 'var(--shadow-bento), 0 25px 50px rgba(0, 0, 0, 0.5)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                boxShadow: 'var(--shadow-bento), 0 20px 40px rgba(0, 0, 0, 0.4)',
               }}
             >
-              {/* Carcasa Mockup Frontal */}
               <div
                 style={{
-                  width: '190px',
-                  height: '320px',
-                  borderRadius: '2.4rem',
-                  backgroundColor: '#0A0A0E',
-                  border: '4px solid #282834',
-                  boxShadow: '0 25px 50px rgba(0, 0, 0, 0.6)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  padding: '1rem',
+                  width: '100%',
+                  aspectRatio: '1/1.15',
+                  maxHeight: '360px',
+                  borderRadius: '2rem',
+                  overflow: 'hidden',
+                  backgroundColor: '#09090D',
                   position: 'relative',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                {/* Módulo de Cámara Titanium */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div
-                    style={{
-                      width: '58px',
-                      height: '58px',
-                      borderRadius: '14px',
-                      backgroundColor: '#000000',
-                      padding: '6px',
-                      border: '2px solid #333344',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <div style={{ width: '15px', height: '15px', borderRadius: '50%', backgroundColor: '#111', border: '1.5px solid #F97316' }} />
-                      <div style={{ width: '15px', height: '15px', borderRadius: '50%', backgroundColor: '#111', border: '1.5px solid #F97316' }} />
-                    </div>
-                    <div style={{ width: '15px', height: '15px', borderRadius: '50%', backgroundColor: '#111', border: '1.5px solid #EF4444' }} />
-                  </div>
-                  <span style={{ fontSize: '0.6rem', fontFamily: 'monospace', fontWeight: 800, color: '#FB923C' }}>
-                    MAGSAFE
-                  </span>
-                </div>
-
-                {/* Anillo de inducción magnética */}
+                <img
+                  src={heroImage}
+                  alt={featuredProduct?.nombre || 'Funda de Protección Premium'}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
                 <div
                   style={{
-                    width: '90px',
-                    height: '90px',
-                    margin: '0 auto',
-                    borderRadius: '50%',
-                    border: '2px dashed rgba(255, 255, 255, 0.25)',
+                    position: 'absolute',
+                    bottom: '0.85rem',
+                    left: '0.85rem',
+                    right: '0.85rem',
+                    padding: '0.65rem 1rem',
+                    borderRadius: '16px',
+                    backgroundColor: 'rgba(10, 10, 14, 0.85)',
+                    backdropFilter: 'blur(16px)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
+                    justifyContent: 'space-between',
                   }}
                 >
-                  <span className="font-headline" style={{ fontSize: '0.62rem', fontWeight: 900, letterSpacing: '0.15em', color: '#94A3B8' }}>
-                    TITANIUM
-                  </span>
-                </div>
-
-                {/* Marca inferior */}
-                <div style={{ textAlign: 'center' }}>
-                  <span className="font-headline text-gradient-fire" style={{ fontSize: '0.65rem', fontWeight: 900, letterSpacing: '0.15em' }}>
-                    LOS CASERITOS
-                  </span>
+                  <div style={{ overflow: 'hidden' }}>
+                    <h4
+                      className="font-headline"
+                      style={{
+                        margin: 0,
+                        fontSize: '0.84rem',
+                        color: '#fff',
+                        fontWeight: 800,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        maxWidth: '180px',
+                      }}
+                    >
+                      {featuredProduct?.nombre || 'Funda de Protección'}
+                    </h4>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--brand-gold)', fontWeight: 700 }}>
+                      {featuredProduct?.modelo?.nombre || 'Colección Caseritos'}
+                    </span>
+                  </div>
+                  {featuredProduct?.precioUnitario && (
+                    <span className="font-headline" style={{ fontSize: '0.98rem', fontWeight: 900, color: '#fff', flexShrink: 0 }}>
+                      Bs {featuredProduct.precioUnitario}
+                    </span>
+                  )}
                 </div>
               </div>
 
-              {/* Insignia Flotante Obsidian */}
               <div
                 style={{
-                  marginTop: '1.2rem',
+                  marginTop: '0.9rem',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '0.4rem',
-                  padding: '0.35rem 0.85rem',
+                  gap: '0.45rem',
+                  padding: '0.35rem 0.9rem',
                   borderRadius: '999px',
                   backgroundColor: 'var(--bg-glass)',
                   border: '1px solid var(--border-color)',
@@ -260,7 +273,7 @@ export function TiendaLandingHero({ onExploreCatalog, onExploreFeatured }) {
                 }}
               >
                 <Sparkles size={13} style={{ color: 'var(--brand-gold)' }} />
-                <span>Obsidian Finish • MagArmor</span>
+                <span>Fotografía Real · Ajuste Milimétrico</span>
               </div>
             </div>
           </div>

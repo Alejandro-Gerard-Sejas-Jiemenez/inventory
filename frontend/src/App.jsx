@@ -10,6 +10,7 @@ import { MovimientosView } from './pages/MovimientosView';
 import { BitacoraView } from './pages/BitacoraView';
 import { DatabaseView } from './pages/DatabaseView';
 import { CatalogoClienteView } from './pages/CatalogoClienteView';
+import { CategoriaProductosView } from './pages/CategoriaProductosView';
 import { MovimientoModal } from './components/MovimientoModal';
 import { AdminLoginModal } from './components/AdminLoginModal';
 import { useAuth } from './hooks/useAuth';
@@ -53,11 +54,45 @@ export function App() {
   return (
     <>
       <Routes>
-        {/* === RUTA PÚBLICA (CATÁLOGO CLIENTES) === */}
+        {/* === RUTAS PÚBLICAS TIENDA (LANDING & CATEGORÍAS) === */}
         <Route
           path="/"
           element={
             <CatalogoClienteView
+              productos={inventory.productos}
+              categorias={inventory.categorias}
+              marcas={inventory.marcas}
+              cartItems={cartItems}
+              onAddToCart={addToCart}
+              onUpdateCartQuantity={updateCartQuantity}
+              onRemoveCartItem={removeCartItem}
+              onClearCart={clearCart}
+              onGoToAdmin={handleGoToAdmin}
+            />
+          }
+        />
+
+        <Route
+          path="/categoria/:idCategoria"
+          element={
+            <CategoriaProductosView
+              productos={inventory.productos}
+              categorias={inventory.categorias}
+              marcas={inventory.marcas}
+              cartItems={cartItems}
+              onAddToCart={addToCart}
+              onUpdateCartQuantity={updateCartQuantity}
+              onRemoveCartItem={removeCartItem}
+              onClearCart={clearCart}
+              onGoToAdmin={handleGoToAdmin}
+            />
+          }
+        />
+
+        <Route
+          path="/catalogo"
+          element={
+            <CategoriaProductosView
               productos={inventory.productos}
               categorias={inventory.categorias}
               marcas={inventory.marcas}

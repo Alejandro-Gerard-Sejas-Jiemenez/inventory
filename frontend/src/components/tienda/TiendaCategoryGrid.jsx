@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Smartphone, Headphones, Shield, Sparkles, Layers } from 'lucide-react';
 
 function getCategoryVisual(nombre) {
@@ -43,16 +44,17 @@ function getCategoryVisual(nombre) {
  * Muestra las categorías activas con tarjetas oscuras y navegación interactiva.
  */
 export function TiendaCategoryGrid({ categorias = [], selectedCategoria, onSelectCategoria }) {
+  const navigate = useNavigate();
+
   const activeCategorias = React.useMemo(() => {
     return categorias.filter((c) => c.activo !== false && c.estado !== false);
   }, [categorias]);
 
   const handleCategoryClick = (catId) => {
-    onSelectCategoria(catId);
-    const gridEl = document.getElementById('productos-grid');
-    if (gridEl) {
-      gridEl.scrollIntoView({ behavior: 'smooth' });
+    if (onSelectCategoria) {
+      onSelectCategoria(catId);
     }
+    navigate(`/categoria/${catId}`);
   };
 
   return (
@@ -101,51 +103,16 @@ export function TiendaCategoryGrid({ categorias = [], selectedCategoria, onSelec
           </h2>
         </div>
 
-        {/* Cuadrícula de Categorías */}
+        {/* Cuadrícula de Categorías Centralizada (Sin 'Todo' y sólo categorías activas) */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-            gap: '1.1rem',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'stretch',
+            flexWrap: 'wrap',
+            gap: '1.25rem',
           }}
         >
-          {/* Opción Todo */}
-          <div
-            onClick={() => handleCategoryClick('ALL')}
-            className="stitch-category-card"
-            style={{
-              border: selectedCategoria === 'ALL' ? '2px solid var(--brand-gold)' : '1px solid var(--border-color)',
-              backgroundColor: selectedCategoria === 'ALL' ? 'rgba(245, 158, 11, 0.08)' : 'var(--bg-card)',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '1.2rem 0' }}>
-              <div
-                style={{
-                  width: '54px',
-                  height: '54px',
-                  borderRadius: '16px',
-                  backgroundColor: '#111',
-                  border: '1.5px solid var(--border-color)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--brand-gold)',
-                }}
-              >
-                <Layers size={26} />
-              </div>
-            </div>
-            <div>
-              <h3 className="font-headline" style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-white)', margin: '0 0 0.2rem' }}>
-                Ver Todo
-              </h3>
-              <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                Catálogo Completo
-              </span>
-            </div>
-          </div>
-
-          {/* Categorías Activas Dinámicas */}
           {activeCategorias.map((c) => {
             const isSelected = String(selectedCategoria) === String(c.idCategoria);
             const visual = getCategoryVisual(c.nombre);
@@ -156,15 +123,20 @@ export function TiendaCategoryGrid({ categorias = [], selectedCategoria, onSelec
                 onClick={() => handleCategoryClick(c.idCategoria)}
                 className="stitch-category-card"
                 style={{
+                  flex: '0 1 230px',
+                  minWidth: '200px',
+                  maxWidth: '260px',
                   border: isSelected ? '2px solid var(--brand-gold)' : '1px solid var(--border-color)',
                   backgroundColor: isSelected ? 'rgba(245, 158, 11, 0.08)' : 'var(--bg-card)',
+                  cursor: 'pointer',
+                  textAlign: 'center',
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'center', padding: '1.2rem 0' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '1.4rem 0 1rem' }}>
                   <div
                     style={{
-                      width: '54px',
-                      height: '54px',
+                      width: '56px',
+                      height: '56px',
                       borderRadius: '16px',
                       backgroundColor: '#111',
                       border: `1.5px solid ${isSelected ? 'var(--brand-gold)' : 'rgba(255,255,255,0.1)'}`,
@@ -176,8 +148,8 @@ export function TiendaCategoryGrid({ categorias = [], selectedCategoria, onSelec
                     {visual.icon}
                   </div>
                 </div>
-                <div>
-                  <h3 className="font-headline" style={{ fontSize: '0.98rem', fontWeight: 800, color: 'var(--text-white)', margin: '0 0 0.2rem' }}>
+                <div style={{ padding: '0 1rem 1.4rem' }}>
+                  <h3 className="font-headline" style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-white)', margin: '0 0 0.35rem' }}>
                     {c.nombre}
                   </h3>
                   <span style={{ fontSize: '0.72rem', color: visual.accentColor, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>

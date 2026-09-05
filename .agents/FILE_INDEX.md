@@ -261,7 +261,8 @@ frontend/
     │   └── CategoriaModal.jsx                   ← Modal para gestión de catálogos auxiliares
     │
     ├── pages/                                   ← Vistas principales del sistema
-    │   ├── CatalogoClienteView.jsx              ← Catálogo público y tienda virtual sin inicio de sesión
+    │   ├── CatalogoClienteView.jsx              ← Landing Page oficial de Los Caseritos (Boutique)
+    │   ├── CategoriaProductosView.jsx           ← Página dedicada por categoría con filtros y tarjetas de fundas (pag/pag)
     │   ├── DashboardView.jsx                    ← Panel de métricas e indicadores en tiempo real
     │   ├── ProductosView.jsx                    ← Listado multirubro con filtros de categoría y marca
     │   ├── MovimientosView.jsx                  ← Historial de movimientos de stock (Kardex)

@@ -1093,4 +1093,43 @@
 - **Compilación Maven local:** `./mvnw test-compile` → **`BUILD SUCCESS`** en 3.06s.
 - **Build Frontend local:** `npm run build` → **`0 ERRORS`** en 2.23s.
 
+---
+
+## Bloque 35: Rutas Dedicadas por Categoría (pag/pag), Navbar con Categorías y Fotografías Reales Exclusivas
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `FEAT-ROUTES-CATEGORIES` / `FEAT-REAL-PHOTOS` / `CLEANUP-LANDING` |
+| **Fecha** | 2026-09-04 |
+| **Módulos Afectados** | Frontend (`App.jsx`, `CatalogoClienteView.jsx`, `CategoriaProductosView.jsx`, `TiendaHeader.jsx`, `TiendaLandingHero.jsx`, `TiendaEditorialFeatured.jsx`, `TiendaCategoryGrid.jsx`, `TiendaFooter.jsx`) |
+| **Skills Aplicadas** | `react-modern-frontend`, `ui-ux-usability`, `clean-code`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN & ARQUITECTURA
+- Separar la experiencia de la tienda en rutas multi-página (`pag/pag`):
+  - `/`: Landing Page boutique limpia (Hero real, colección destacada real, categorías centradas, reseñas, manifiesto y footer con índices).
+  - `/categoria/:idCategoria` y `/catalogo`: Página dedicada por categoría con selector de modelos (`TiendaDeviceSelector`), cápsula de búsqueda/filtros (`TiendaSearchCapsule`), cuadrícula de tarjetas de fundas (`ProductoCard`) y paginación.
+- Eliminar la barra de anuncios (`TiendaAnnouncementBar`).
+- Eliminar figuras o mockups simulados con CSS en Hero y Destacados, adoptando fotografías reales de las fundas de los productos (`p.imagenes[0]?.url` o `p.imagenUrl`).
+- Centralizar la sección "Nuestras Categorías", filtrar únicamente categorías disponibles/activas y eliminar por completo la opción "Todo".
+- Integrar enlaces de navegación directos a las categorías activas en `TiendaHeader`.
+- Eliminar la sección de 4 capas de protección (`TiendaCaseAnatomy`) y la sección de asistencia personalizada (`TiendaWhatsAppBanner`).
+- Reestructurar el pie de página (`TiendaFooter`) con columnas de índices de navegación (Categorías, Enlaces, Contacto por WhatsApp).
+
+### Fase 2: IMPLEMENTACIÓN
+- `CategoriaProductosView.jsx`: Nueva vista para `/categoria/:idCategoria` y `/catalogo` con selector de modelos, filtros, conteo de fundas, tarjetas y modales.
+- `App.jsx`: Registro de rutas `/`, `/categoria/:idCategoria` y `/catalogo`.
+- `TiendaHeader.jsx`: Menú de navegación horizontal para categorías activas y redirección al inicio desde el logo.
+- `TiendaCategoryGrid.jsx`: Contenedor centrado, sin opción "Todo", navegación a `/categoria/${c.idCategoria}`.
+- `TiendaLandingHero.jsx`: Integración de fotografía real de alta resolución de la funda destacada.
+- `TiendaEditorialFeatured.jsx`: Muestra de 2 fundas reales del catálogo con fotografías auténticas, especificaciones reales y enlace a WhatsApp/Detalle.
+- `CatalogoClienteView.jsx`: Landing Page libre de filtros o cards repetidas.
+- `TiendaFooter.jsx`: Columnas estructuradas de índices con enlaces a categorías.
+
+### Fase 3: VERIFICACIÓN
+- **Build Frontend local:** `npm run build` → **`0 ERRORS`** en 1.08s (1903 módulos transformados).
+- **Compilación Maven local:** `./mvnw.cmd test-compile` → **`BUILD SUCCESS`** en 3.3s.
+- **Git status:** Verificado. `registro_errores_solucionados.md` excluido de Git.
+
+
 
