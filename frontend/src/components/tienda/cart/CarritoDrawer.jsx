@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShoppingBag, X, ArrowRight, ShieldCheck } from 'lucide-react';
-import { Button } from '../common/Button';
+import { Button } from '../../common/Button';
 import { CarritoItem } from './CarritoItem';
 
 /**
@@ -155,17 +155,17 @@ export function CarritoDrawer({
                   Tu bolsa está vacía
                 </strong>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                  Explora el catálogo y agrega los productos que desees comprar
+                  Explora el catálogo y agrega las fundas que desees comprar
                 </span>
               </div>
               <Button variant="brand" size="sm" onClick={onClose} style={{ marginTop: '0.5rem' }}>
-                Ver Productos
+                Ver Fundas
               </Button>
             </div>
           ) : (
             cartItems.map((item) => (
               <CarritoItem
-                key={item.idProducto}
+                key={item.cartItemId || item.idProducto}
                 item={item}
                 onUpdateQuantity={onUpdateQuantity}
                 onRemoveItem={onRemoveItem}
@@ -220,3 +220,5 @@ export function CarritoDrawer({
     </div>
   );
 }
+
+export default CarritoDrawer;

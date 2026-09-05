@@ -9,7 +9,7 @@ export function CarritoItem({ item, onUpdateQuantity, onRemoveItem }) {
   const maxStock = item.stockActual ?? 999;
   const reachedLimit = item.cantidad >= maxStock;
 
-  // Resolución segura de la URL de la imagen (soporta múltiples formatos de datos)
+  // Resolución segura de la URL de la imagen
   const displayImage =
     item.imagenUrl ||
     (Array.isArray(item.imagenesUrls) && item.imagenesUrls[0]) ||
@@ -165,3 +165,5 @@ export function CarritoItem({ item, onUpdateQuantity, onRemoveItem }) {
     </div>
   );
 }
+
+export default CarritoItem;

@@ -1,9 +1,9 @@
 import React from 'react';
-import { ArrowRight, ShieldCheck, Sparkles, MessageCircle } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
 /**
  * Hero Section Oficial basado en stitch_minimalist_tech_accessories_landing
- * Tipografía Space Grotesk/Sora, degradado fire y composición visual limpia.
+ * Tipografía Space Grotesk/Sora, degradado fire y composición fotográfica real.
  */
 export function TiendaLandingHero({ onExploreCatalog, onExploreFeatured, productos = [] }) {
   // Buscar una funda real con imagen en los productos disponibles
@@ -282,3 +282,5 @@ export function TiendaLandingHero({ onExploreCatalog, onExploreFeatured, product
     </section>
   );
 }
+
+export default TiendaLandingHero;

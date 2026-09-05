@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { ShoppingBag, LayoutDashboard, Sun, Moon } from 'lucide-react';
-import logoImg from '../../assets/logo.png';
+import logoImg from '../../../assets/logo.png';
 
 /**
  * Encabezado translúcido con efecto Liquid Glass y Apple Design.
@@ -216,3 +216,5 @@ export function TiendaHeader({
     </header>
   );
 }
+
+export default TiendaHeader;

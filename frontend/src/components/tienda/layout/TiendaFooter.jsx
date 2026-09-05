@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MessageCircle, Shield, Smartphone, ArrowUpRight } from 'lucide-react';
-import logoImg from '../../assets/logo.png';
+import { MessageCircle, Shield, ArrowUpRight } from 'lucide-react';
+import logoImg from '../../../assets/logo.png';
 
 /**
  * Pie de página oficial con índices estructurados y branding corporativo.

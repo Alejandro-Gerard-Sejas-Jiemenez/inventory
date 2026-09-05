@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Check, XCircle, Image as ImageIcon } from 'lucide-react';
 
+/**
+ * Tarjeta de Producto e-commerce para la tienda pública.
+ * Responsabilidad: Representación visual del producto en la cuadrícula, variantes disponibles y adición rápida.
+ */
 export function ProductoCard({ producto, onAddToCart, onOpenDetail, cartQuantity = 0 }) {
   const [addedAnimation, setAddedAnimation] = useState(false);
 
@@ -146,7 +150,7 @@ export function ProductoCard({ producto, onAddToCart, onOpenDetail, cartQuantity
           </div>
         )}
 
-        {/* Micro-Insignias Flotantes con Cristal Esmerilado */}
+        {/* Micro-Insignias Flotantes */}
         <div
           style={{
             position: 'absolute',
@@ -204,7 +208,7 @@ export function ProductoCard({ producto, onAddToCart, onOpenDetail, cartQuantity
         </div>
       </div>
 
-      {/* Cuerpo de la Tarjeta con Tipografía Óptica */}
+      {/* Cuerpo de la Tarjeta */}
       <div
         style={{
           padding: '0.9rem 1rem 1rem',
@@ -235,7 +239,7 @@ export function ProductoCard({ producto, onAddToCart, onOpenDetail, cartQuantity
           {producto.nombre}
         </h4>
 
-        {/* Atributos: Modelos de Celular, Material y Colores Disponibles */}
+        {/* Atributos: Modelos de Celular, Material y Colores */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.1rem' }}>
           {availableModels.length > 0 && (
             <div style={{ fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
@@ -279,7 +283,7 @@ export function ProductoCard({ producto, onAddToCart, onOpenDetail, cartQuantity
           )}
         </div>
 
-        {/* Barra Inferior: Precio & Botón Táctil Apple */}
+        {/* Barra Inferior: Precio & Botón Táctil */}
         <div
           style={{
             marginTop: 'auto',
@@ -360,3 +364,5 @@ export function ProductoCard({ producto, onAddToCart, onOpenDetail, cartQuantity
     </div>
   );
 }
+
+export default ProductoCard;

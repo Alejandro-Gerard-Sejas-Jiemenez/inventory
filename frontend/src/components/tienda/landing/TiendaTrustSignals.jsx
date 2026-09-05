@@ -120,10 +120,10 @@ export function TiendaTrustSignals() {
               <Headphones size={22} />
             </div>
             <h4 className="font-headline" style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-white)', margin: '0 0 0.25rem' }}>
-              Asesoría personalizada
+              Asesoría directa
             </h4>
             <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-              Atención directa sin intermediarios
+              Confirmación inmediata de compatibilidad
             </p>
           </div>
         </div>
@@ -131,3 +131,5 @@ export function TiendaTrustSignals() {
     </section>
   );
 }
+
+export default TiendaTrustSignals;

@@ -1,14 +1,16 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, RotateCcw, Home, ShieldCheck } from 'lucide-react';
-import { TiendaHeader } from '../components/tienda/TiendaHeader';
-import { TiendaDeviceSelector } from '../components/tienda/TiendaDeviceSelector';
-import { TiendaSearchCapsule } from '../components/tienda/TiendaSearchCapsule';
-import { TiendaFooter } from '../components/tienda/TiendaFooter';
-import { ProductoCard } from '../components/tienda/ProductoCard';
-import { ProductoDetalleModal } from '../components/tienda/ProductoDetalleModal';
-import { CarritoDrawer } from '../components/tienda/CarritoDrawer';
-import { CheckoutWhatsAppModal } from '../components/tienda/CheckoutWhatsAppModal';
+import {
+  TiendaHeader,
+  TiendaDeviceSelector,
+  TiendaSearchCapsule,
+  TiendaFooter,
+  ProductoCard,
+  ProductoDetalleModal,
+  CarritoDrawer,
+  CheckoutWhatsAppModal,
+} from '../components/tienda';
 import { useTiendaCatalog } from '../hooks/useTiendaCatalog';
 
 /**

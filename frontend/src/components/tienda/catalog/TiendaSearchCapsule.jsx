@@ -100,7 +100,7 @@ export function TiendaSearchCapsule({
           </select>
         </div>
 
-        {/* Botón Circular de Acción Airbnb */}
+        {/* Botón Circular de Acción */}
         <button
           type="button"
           className="airbnb-search-btn"
@@ -113,3 +113,5 @@ export function TiendaSearchCapsule({
     </section>
   );
 }
+
+export default TiendaSearchCapsule;

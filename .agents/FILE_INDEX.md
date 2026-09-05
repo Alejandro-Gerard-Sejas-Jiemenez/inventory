@@ -224,16 +224,32 @@ frontend/
     │   │   ├── Modal.jsx                        ← Modal accesible con tecla Escape y backdrop
     │   │   └── index.js                         ← Exportador unificado de common
     │   │
-    │   ├── tienda/                              ← Componentes de la Tienda de Clientes (E-commerce)
-    │   │   ├── TiendaHeader.jsx                 ← Encabezado con branding, toggle de tema y accesos
-    │   │   ├── TiendaCategoryNav.jsx            ← Pestañas de categorías estilo Airbnb
-    │   │   ├── TiendaSearchCapsule.jsx          ← Cápsula de búsqueda segmentada y filtros de marca/orden
-    │   │   ├── TiendaFooter.jsx                 ← Pie de página minimalista
-    │   │   ├── ProductoCard.jsx                 ← Tarjeta e-commerce con física táctil y discos puros de color
-    │   │   ├── ProductoDetalleModal.jsx         ← Modal de detalle de producto para clientes (galería, variantes, precio unitario)
-    │   │   ├── CarritoDrawer.jsx                ← Drawer lateral deslizante de carrito con tope de stock
-    │   │   ├── CarritoItem.jsx                  ← Fila individual de producto en la bolsa de pedidos
-    │   │   └── CheckoutWhatsAppModal.jsx        ← Formulario de entrega y enlace universal a WhatsApp
+    │   ├── tienda/                              ← Componentes Modulares de la Tienda (E-commerce)
+    │   │   ├── index.js                         ← Barrel export centralizado de toda la tienda
+    │   │   ├── layout/                          ← Estructura de cabecera y pie de página
+    │   │   │   ├── TiendaHeader.jsx             ← Encabezado con branding, toggle de tema y categorías
+    │   │   │   └── TiendaFooter.jsx             ← Pie de página oficial con 4 columnas de índices
+    │   │   ├── landing/                         ← Componentes exclusivos de la Landing Page
+    │   │   │   ├── TiendaLandingHero.jsx        ← Hero fotográfico con funda real y CTAs
+    │   │   │   ├── TiendaEditorialFeatured.jsx  ← Colección editorial de fundas destacadas
+    │   │   │   ├── FeaturedCaseCard.jsx         ← Tarjeta editorial reutilizable para fundas destacadas
+    │   │   │   ├── TiendaCategoryGrid.jsx       ← Selector centrado de categorías activas
+    │   │   │   ├── TiendaSocialProof.jsx        ← Reseñas y calificaciones verificadas
+    │   │   │   ├── TiendaManifesto.jsx          ← Manifiesto y calidad de marca
+    │   │   │   └── TiendaTrustSignals.jsx       ← Señales de confianza y garantía
+    │   │   ├── catalog/                         ← Catálogo y navegación de productos
+    │   │   │   ├── TiendaDeviceSelector.jsx     ← Selector de modelo de celular
+    │   │   │   ├── TiendaSearchCapsule.jsx      ← Cápsula de búsqueda, marca y orden
+    │   │   │   └── ProductoCard.jsx             ← Tarjeta de producto con selectores de modelo/color
+    │   │   ├── cart/                            ← Carrito de compras y checkout
+    │   │   │   ├── CarritoDrawer.jsx            ← Cajón lateral deslizante de carrito
+    │   │   │   ├── CarritoItem.jsx              ← Fila de producto con control de cantidad
+    │   │   │   └── CheckoutWhatsAppModal.jsx    ← Modal de entrega y enlace directo a WhatsApp
+    │   │   └── product-detail/                  ← Descomposición del detalle de producto
+    │   │       ├── ProductoDetalleModal.jsx     ← Orquestador y diálogo modal de producto
+    │   │       ├── ProductoGallery.jsx          ← Galería de fotos con miniaturas
+    │   │       ├── ProductoVariantSelector.jsx  ← Píldoras de modelos y swatches de colores
+    │   │       └── ProductoPurchaseBar.jsx      ← Contador de unidades y botón de agregar
     │   │
     │   ├── catalogos/                           ← Sub-componentes específicos de Catálogos
     │   │   ├── NuevaCategoriaForm.jsx           ← Formulario aislado para alta de categorías

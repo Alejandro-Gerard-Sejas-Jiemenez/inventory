@@ -1,16 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { ShieldCheck } from 'lucide-react';
-import { TiendaHeader } from '../components/tienda/TiendaHeader';
-import { TiendaLandingHero } from '../components/tienda/TiendaLandingHero';
-import { TiendaEditorialFeatured } from '../components/tienda/TiendaEditorialFeatured';
-import { TiendaCategoryGrid } from '../components/tienda/TiendaCategoryGrid';
-import { TiendaSocialProof } from '../components/tienda/TiendaSocialProof';
-import { TiendaManifesto } from '../components/tienda/TiendaManifesto';
-import { TiendaTrustSignals } from '../components/tienda/TiendaTrustSignals';
-import { TiendaFooter } from '../components/tienda/TiendaFooter';
-import { ProductoDetalleModal } from '../components/tienda/ProductoDetalleModal';
-import { CarritoDrawer } from '../components/tienda/CarritoDrawer';
-import { CheckoutWhatsAppModal } from '../components/tienda/CheckoutWhatsAppModal';
+import {
+  TiendaHeader,
+  TiendaLandingHero,
+  TiendaEditorialFeatured,
+  TiendaCategoryGrid,
+  TiendaSocialProof,
+  TiendaManifesto,
+  TiendaTrustSignals,
+  TiendaFooter,
+  ProductoDetalleModal,
+  CarritoDrawer,
+  CheckoutWhatsAppModal,
+} from '../components/tienda';
 import { useTiendaCatalog } from '../hooks/useTiendaCatalog';
 
 /**

@@ -1131,5 +1131,46 @@
 - **Compilación Maven local:** `./mvnw.cmd test-compile` → **`BUILD SUCCESS`** en 3.3s.
 - **Git status:** Verificado. `registro_errores_solucionados.md` excluido de Git.
 
+---
+
+## Bloque 36: Refactorización Modular del Módulo de Tienda (Package/Folder-by-Domain) y Descomposición SRP
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `REFACTOR-TIENDA-MODULE` |
+| **Fecha** | 2026-09-04 |
+| **Módulos Afectados** | Frontend (`components/tienda/`, `pages/CatalogoClienteView.jsx`, `pages/CategoriaProductosView.jsx`) |
+| **Skills Aplicadas** | `clean-code`, `react-modern-frontend`, `ui-ux-usability`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN & ARQUITECTURA
+- El módulo `components/tienda/` acumulaba 20 archivos planos sobrecargados de responsabilidades.
+- Aplicación de Clean Code (Single Responsibility Principle) y descomposición en 5 subcarpetas de dominio:
+  1. `layout/`: `TiendaHeader.jsx`, `TiendaFooter.jsx`.
+  2. `landing/`: `TiendaLandingHero.jsx`, `TiendaEditorialFeatured.jsx`, `FeaturedCaseCard.jsx` (nuevo), `TiendaCategoryGrid.jsx`, `TiendaSocialProof.jsx`, `TiendaManifesto.jsx`, `TiendaTrustSignals.jsx`.
+  3. `catalog/`: `TiendaDeviceSelector.jsx`, `TiendaSearchCapsule.jsx`, `ProductoCard.jsx`.
+  4. `cart/`: `CarritoDrawer.jsx`, `CarritoItem.jsx`, `CheckoutWhatsAppModal.jsx`.
+  5. `product-detail/`: Descomposición de `ProductoDetalleModal.jsx` (590 líneas) en:
+     - `ProductoGallery.jsx`: Galería con foto principal y tira de miniaturas.
+     - `ProductoVariantSelector.jsx`: Píldoras de modelos de smartphone y swatches de colores.
+     - `ProductoPurchaseBar.jsx`: Selector de cantidad, desglose de precio y botón táctil.
+     - `ProductoDetalleModal.jsx`: Orquestador modal limpio (~115 líneas).
+- Creación de `index.js` (Barrel Export) para importación centralizada sin rutas relativas profundas.
+- Eliminación de 5 archivos obsoletos que no se utilizaban en ninguna vista.
+
+### Fase 2: IMPLEMENTACIÓN
+- Creación de los componentes en sus subcarpetas correspondientes.
+- Extracción de `FeaturedCaseCard.jsx` reduciendo `TiendaEditorialFeatured.jsx` de 398 a 72 líneas.
+- Descomposición de `ProductoDetalleModal.jsx` en 3 componentes atómicos.
+- Exportación centralizada en `components/tienda/index.js`.
+- Actualización de imports en `CatalogoClienteView.jsx` y `CategoriaProductosView.jsx`.
+- Limpieza de archivos planos obsoletos en la raíz de `components/tienda/`.
+
+### Fase 3: VERIFICACIÓN
+- **Build Frontend local:** `npm run build` → **`0 ERRORS`** en 1.32s (1908 módulos transformados, bundle optimizado a 453.90 kB).
+- **Compilación Maven local:** `./mvnw.cmd test-compile` → **`BUILD SUCCESS`** en 3.3s.
+- **Git status:** Verificado. `registro_errores_solucionados.md` excluido de Git.
+
+
 
 

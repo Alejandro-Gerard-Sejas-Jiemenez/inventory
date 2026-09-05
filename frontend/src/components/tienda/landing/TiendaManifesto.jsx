@@ -42,7 +42,7 @@ export function TiendaManifesto() {
         >
           En Los Caseritos creemos que la protección de tu teléfono es{' '}
           <span className="text-gradient-fire">tranquilidad</span>, no un accesorio más. <br />
-          Fundas de tacto prémium que resisten caídas, audio que te acompaña y atención directa al instante.
+          Fundas de tacto prémium con ajuste milimétrico que resisten caídas extremas y atención directa al instante.
         </blockquote>
 
         <div
@@ -58,3 +58,5 @@ export function TiendaManifesto() {
     </section>
   );
 }
+
+export default TiendaManifesto;

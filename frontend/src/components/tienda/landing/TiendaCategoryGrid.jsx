@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Smartphone, Headphones, Shield, Sparkles, Layers } from 'lucide-react';
+import { Smartphone, Headphones, Shield, Sparkles } from 'lucide-react';
 
 function getCategoryVisual(nombre) {
   const n = (nombre || '').toLowerCase();
@@ -164,3 +164,5 @@ export function TiendaCategoryGrid({ categorias = [], selectedCategoria, onSelec
     </section>
   );
 }
+
+export default TiendaCategoryGrid;

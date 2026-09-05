@@ -1,5 +1,5 @@
 import React from 'react';
-import { Smartphone, Check, Sparkles } from 'lucide-react';
+import { Smartphone, Check } from 'lucide-react';
 
 /**
  * Selector de Dispositivo / Modelo de Celular estilo BURGA & CASETiFY
@@ -13,7 +13,6 @@ export function TiendaDeviceSelector({
   // Extraer modelos dinámicos reales de los productos del inventario
   const availableModels = React.useMemo(() => {
     const set = new Set();
-    // Modelos populares prioritarios
     const priority = [
       'iPhone 16 Pro Max',
       'iPhone 16 Pro',
@@ -36,7 +35,6 @@ export function TiendaDeviceSelector({
     });
 
     const list = Array.from(set);
-    // Si no hay modelos cargados aún, usar la lista prioritarios
     return list.length > 0 ? list : priority;
   }, [productos]);
 
@@ -101,53 +99,56 @@ export function TiendaDeviceSelector({
           <button
             type="button"
             onClick={() => onSelectDeviceModel('ALL')}
-            className="apple-pill-tab"
+            className="apple-btn-tactile"
             style={{
-              padding: '0.48rem 1rem',
+              padding: '0.45rem 1rem',
               borderRadius: '999px',
               border: selectedDeviceModel === 'ALL' ? '1.5px solid var(--brand-gold)' : '1px solid var(--border-color)',
-              backgroundColor: selectedDeviceModel === 'ALL' ? 'var(--brand-gold-bg)' : 'var(--bg-card)',
-              color: selectedDeviceModel === 'ALL' ? 'var(--brand-gold)' : 'var(--text-secondary)',
+              backgroundColor: selectedDeviceModel === 'ALL' ? 'var(--brand-gold)' : 'var(--bg-card)',
+              color: selectedDeviceModel === 'ALL' ? '#111' : 'var(--text-secondary)',
+              fontSize: '0.78rem',
               fontWeight: selectedDeviceModel === 'ALL' ? 800 : 600,
-              fontSize: '0.8rem',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
-              flexShrink: 0,
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.35rem',
+              flexShrink: 0,
+              transition: 'all 0.15s ease',
             }}
           >
-            <span>Todos los Dispositivos</span>
+            {selectedDeviceModel === 'ALL' && <Check size={13} />}
+            <span>Todos los Modelos</span>
           </button>
 
-          {/* Modelos Disponibles */}
-          {availableModels.map((modName) => {
-            const isSelected = selectedDeviceModel.toLowerCase() === modName.toLowerCase();
+          {/* Modelos Dinámicos */}
+          {availableModels.map((modelName) => {
+            const isSelected = selectedDeviceModel === modelName;
             return (
               <button
-                key={modName}
+                key={modelName}
                 type="button"
-                onClick={() => onSelectDeviceModel(modName)}
-                className="apple-pill-tab"
+                onClick={() => onSelectDeviceModel(modelName)}
+                className="apple-btn-tactile"
                 style={{
-                  padding: '0.48rem 1rem',
+                  padding: '0.45rem 1rem',
                   borderRadius: '999px',
                   border: isSelected ? '1.5px solid var(--brand-gold)' : '1px solid var(--border-color)',
-                  backgroundColor: isSelected ? 'var(--brand-gold-bg)' : 'var(--bg-card)',
-                  color: isSelected ? 'var(--brand-gold)' : 'var(--text-secondary)',
+                  backgroundColor: isSelected ? 'var(--brand-gold)' : 'var(--bg-card)',
+                  color: isSelected ? '#111' : 'var(--text-secondary)',
+                  fontSize: '0.78rem',
                   fontWeight: isSelected ? 800 : 600,
-                  fontSize: '0.8rem',
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
-                  flexShrink: 0,
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.35rem',
+                  flexShrink: 0,
+                  transition: 'all 0.15s ease',
                 }}
               >
-                {isSelected && <Check size={13} style={{ color: 'var(--brand-gold)' }} />}
-                <span>{modName}</span>
+                {isSelected && <Check size={13} />}
+                <span>{modelName}</span>
               </button>
             );
           })}
@@ -156,3 +157,5 @@ export function TiendaDeviceSelector({
     </section>
   );
 }
+
+export default TiendaDeviceSelector;

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Send, User, Phone, MapPin, CheckCircle, ArrowLeft } from 'lucide-react';
-import { Modal } from '../common/Modal';
-import { InputField } from '../common/InputField';
-import { TextAreaField } from '../common/TextAreaField';
-import { Button } from '../common/Button';
-import { generateWhatsAppOrderUrl } from '../../utils/whatsappHelper';
+import { Send, User, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Modal } from '../../common/Modal';
+import { InputField } from '../../common/InputField';
+import { TextAreaField } from '../../common/TextAreaField';
+import { Button } from '../../common/Button';
+import { generateWhatsAppOrderUrl } from '../../../utils/whatsappHelper';
 
 export function CheckoutWhatsAppModal({
   isOpen,
@@ -215,9 +215,11 @@ export function CheckoutWhatsAppModal({
           }}
         >
           <CheckCircle size={18} style={{ flexShrink: 0 }} />
-          <span>Al presionar el botón se abrirá WhatsApp con el pedido listo. Podrás adjuntar tu ubicación directamente por el chat.</span>
+          <span>Al presionar el botón se abrirá WhatsApp con el pedido listo. Podrás coordinar tu entrega directamente por el chat.</span>
         </div>
       </form>
     </Modal>
   );
 }
+
+export default CheckoutWhatsAppModal;

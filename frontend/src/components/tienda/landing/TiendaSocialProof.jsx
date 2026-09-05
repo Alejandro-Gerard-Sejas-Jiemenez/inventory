@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, CheckCircle, ShieldCheck } from 'lucide-react';
+import { Star, CheckCircle } from 'lucide-react';
 
 /**
  * Sección de Prueba Social y Reseñas de Clientes estilo BURGA & CASETiFY
@@ -109,3 +109,5 @@ export function TiendaSocialProof() {
     </section>
   );
 }
+
+export default TiendaSocialProof;
