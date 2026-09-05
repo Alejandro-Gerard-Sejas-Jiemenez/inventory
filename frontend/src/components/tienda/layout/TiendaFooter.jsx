@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { MessageCircle, Shield, ArrowUpRight } from 'lucide-react';
-import logoImg from '../../../assets/logo.png';
+import { FooterBrandCol } from './FooterBrandCol';
+import { FooterCategoriesCol } from './FooterCategoriesCol';
+import { FooterContactCol } from './FooterContactCol';
 
 /**
  * Pie de página oficial con índices estructurados y branding corporativo.
+ * Responsabilidad: Orquestar el footer general de la tienda pública.
  */
 export function TiendaFooter({ categorias = [] }) {
-  const activeCategorias = React.useMemo(() => {
+  const activeCategorias = useMemo(() => {
     return (categorias || []).filter((c) => c.activo !== false && c.estado !== false);
   }, [categorias]);
 
@@ -32,65 +34,12 @@ export function TiendaFooter({ categorias = [] }) {
           }}
         >
           {/* Columna 1: Branding Los Caseritos */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-              <div className="brand-logo-badge" style={{ width: '32px', height: '32px' }}>
-                <img src={logoImg} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-              </div>
-              <span className="font-headline" style={{ fontSize: '1.1rem', color: 'var(--text-white)', fontWeight: 900, letterSpacing: '0.04em' }}>
-                LOS CASERITOS
-              </span>
-            </div>
-            <p style={{ margin: 0, fontSize: '0.84rem', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: '280px' }}>
-              Especialistas en fundas, carcasas anticaídas y accesorios de protección milimétrica para celulares de alta gama.
-            </p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--brand-gold)', fontSize: '0.76rem', fontWeight: 700 }}>
-              <Shield size={14} />
-              <span>Ajuste Exacto Garantizado</span>
-            </div>
-          </div>
+          <FooterBrandCol />
 
           {/* Columna 2: Índice de Categorías */}
-          <div>
-            <h4
-              className="font-headline"
-              style={{
-                fontSize: '0.78rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.14em',
-                color: 'var(--text-white)',
-                fontWeight: 800,
-                margin: '0 0 1.1rem',
-              }}
-            >
-              Categorías
-            </h4>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-              {activeCategorias.length === 0 ? (
-                <li style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Cargando catálogo...</li>
-              ) : (
-                activeCategorias.map((c) => (
-                  <li key={c.idCategoria}>
-                    <Link
-                      to={`/categoria/${c.idCategoria}`}
-                      style={{
-                        fontSize: '0.82rem',
-                        color: 'var(--text-secondary)',
-                        textDecoration: 'none',
-                        transition: 'color 0.2s ease',
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--brand-gold)')}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
-                    >
-                      {c.nombre}
-                    </Link>
-                  </li>
-                ))
-              )}
-            </ul>
-          </div>
+          <FooterCategoriesCol activeCategorias={activeCategorias} />
 
-          {/* Columna 3: Enlaces del Sitio */}
+          {/* Columna 3: Enlaces de Navegación del Sitio */}
           <div>
             <h4
               className="font-headline"
@@ -140,47 +89,7 @@ export function TiendaFooter({ categorias = [] }) {
           </div>
 
           {/* Columna 4: Atención Directa por WhatsApp */}
-          <div>
-            <h4
-              className="font-headline"
-              style={{
-                fontSize: '0.78rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.14em',
-                color: 'var(--text-white)',
-                fontWeight: 800,
-                margin: '0 0 1.1rem',
-              }}
-            >
-              Atención & Pedidos
-            </h4>
-            <p style={{ margin: '0 0 1rem', fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              ¿Tienes dudas con el modelo de tu teléfono? Escríbenos directamente para confirmar compatibilidad.
-            </p>
-            <a
-              href="https://wa.me/59174672312?text=Hola%20Los%20Caseritos,%20deseo%20consultar%20por%20una%20funda"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="apple-btn-tactile"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.6rem 1.1rem',
-                borderRadius: '999px',
-                backgroundColor: 'rgba(37, 211, 102, 0.12)',
-                border: '1px solid rgba(37, 211, 102, 0.35)',
-                color: 'var(--brand-green)',
-                textDecoration: 'none',
-                fontWeight: 700,
-                fontSize: '0.8rem',
-              }}
-            >
-              <MessageCircle size={15} />
-              <span>+591 74672312</span>
-              <ArrowUpRight size={13} />
-            </a>
-          </div>
+          <FooterContactCol />
         </div>
 
         {/* Barra Inferior de Derechos */}

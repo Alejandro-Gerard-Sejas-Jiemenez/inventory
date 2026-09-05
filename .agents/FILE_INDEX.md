@@ -224,32 +224,57 @@ frontend/
     │   │   ├── Modal.jsx                        ← Modal accesible con tecla Escape y backdrop
     │   │   └── index.js                         ← Exportador unificado de common
     │   │
-    │   ├── tienda/                              ← Componentes Modulares de la Tienda (E-commerce)
+    │   ├── tienda/                              ← Componentes Modulares de la Tienda (E-commerce SRP)
     │   │   ├── index.js                         ← Barrel export centralizado de toda la tienda
     │   │   ├── layout/                          ← Estructura de cabecera y pie de página
-    │   │   │   ├── TiendaHeader.jsx             ← Encabezado con branding, toggle de tema y categorías
-    │   │   │   └── TiendaFooter.jsx             ← Pie de página oficial con 4 columnas de índices
+    │   │   │   ├── TiendaHeader.jsx             ← Encabezado orquestador con diseño Liquid Glass
+    │   │   │   ├── TiendaHeaderBrand.jsx        ← Emblema de marca y títulos oficiales de la tienda
+    │   │   │   ├── TiendaHeaderCategories.jsx   ← Enlaces de categorías con scroll horizontal suave
+    │   │   │   ├── TiendaHeaderActions.jsx      ← Botones de cambio de tema, Mi Bolsa y Panel Admin
+    │   │   │   ├── TiendaFooter.jsx             ← Pie de página oficial estructurado en columnas
+    │   │   │   ├── FooterBrandCol.jsx           ← Columna de identidad de marca y sello de garantía
+    │   │   │   ├── FooterCategoriesCol.jsx      ← Columna de índice de categorías activas
+    │   │   │   └── FooterContactCol.jsx         ← Columna de contacto y botón directo de WhatsApp
     │   │   ├── landing/                         ← Componentes exclusivos de la Landing Page
-    │   │   │   ├── TiendaLandingHero.jsx        ← Hero fotográfico con funda real y CTAs
+    │   │   │   ├── TiendaLandingHero.jsx        ← Hero orquestador de impacto visual
+    │   │   │   ├── HeroCopy.jsx                 ← Copys editoriales, titular con gradiente y CTAs
+    │   │   │   ├── HeroShowcaseVisual.jsx       ← Fotografía real, tarjeta de exhibición y aura brillante
     │   │   │   ├── TiendaEditorialFeatured.jsx  ← Colección editorial de fundas destacadas
-    │   │   │   ├── FeaturedCaseCard.jsx         ← Tarjeta editorial reutilizable para fundas destacadas
+    │   │   │   ├── FeaturedCaseCard.jsx         ← Tarjeta editorial orquestadora en cuadrícula
+    │   │   │   ├── FeaturedCaseImage.jsx        ← Bloque fotográfico con proporción óptica y sombras
+    │   │   │   ├── FeaturedCaseInfo.jsx         ← Bloque de especificaciones, precio y botón de WhatsApp
     │   │   │   ├── TiendaCategoryGrid.jsx       ← Selector centrado de categorías activas
+    │   │   │   ├── CategoryGridCard.jsx         ← Tarjeta de categoría con icono dinámico y tag de estilo
     │   │   │   ├── TiendaSocialProof.jsx        ← Reseñas y calificaciones verificadas
     │   │   │   ├── TiendaManifesto.jsx          ← Manifiesto y calidad de marca
     │   │   │   └── TiendaTrustSignals.jsx       ← Señales de confianza y garantía
     │   │   ├── catalog/                         ← Catálogo y navegación de productos
-    │   │   │   ├── TiendaDeviceSelector.jsx     ← Selector de modelo de celular
-    │   │   │   ├── TiendaSearchCapsule.jsx      ← Cápsula de búsqueda, marca y orden
-    │   │   │   └── ProductoCard.jsx             ← Tarjeta de producto con selectores de modelo/color
+    │   │   │   ├── TiendaDeviceSelector.jsx     ← Selector horizontal de modelo de celular
+    │   │   │   ├── DevicePill.jsx               ← Píldora individual de filtro de dispositivo
+    │   │   │   ├── TiendaSearchCapsule.jsx      ← Cápsula de búsqueda, marca y ordenación
+    │   │   │   ├── ProductoCard.jsx             ← Tarjeta orquestadora de producto
+    │   │   │   ├── CardThumbnail.jsx            ← Proporción óptica, fallback y micro-insignias flotantes
+    │   │   │   ├── CardVariantSwatches.jsx      ← Modelos compatibles, material y swatches de color
+    │   │   │   ├── CardBottomBar.jsx            ← Precio y botón táctil "Agregar / Listo / Agotado"
+    │   │   │   └── useProductoCardVariants.js   ← Hook de cálculo de stock, modelos y colores
     │   │   ├── cart/                            ← Carrito de compras y checkout
-    │   │   │   ├── CarritoDrawer.jsx            ← Cajón lateral deslizante de carrito
-    │   │   │   ├── CarritoItem.jsx              ← Fila de producto con control de cantidad
-    │   │   │   └── CheckoutWhatsAppModal.jsx    ← Modal de entrega y enlace directo a WhatsApp
-    │   │   └── product-detail/                  ← Descomposición del detalle de producto
-    │   │       ├── ProductoDetalleModal.jsx     ← Orquestador y diálogo modal de producto
+    │   │   │   ├── CarritoDrawer.jsx            ← Cajón lateral orquestador de la bolsa
+    │   │   │   ├── CarritoEmptyState.jsx        ← Vista informativa cuando la bolsa está vacía
+    │   │   │   ├── CarritoDrawerFooter.jsx      ← Totales, sello de seguridad y botón de checkout
+    │   │   │   ├── CarritoItem.jsx              ← Fila orquestadora de ítem en la bolsa
+    │   │   │   ├── CarritoItemAttributes.jsx    ← Modelo y color seleccionado con swatch
+    │   │   │   ├── CarritoItemQuantityStepper.jsx ← Stepper de unidades con validación de límite de stock
+    │   │   │   ├── CheckoutWhatsAppModal.jsx    ← Modal orquestador de despacho a WhatsApp
+    │   │   │   ├── CheckoutOrderSummary.jsx     ← Desglose de artículos, variantes y montos
+    │   │   │   └── CheckoutLineSelector.jsx     ← Selector de línea de WhatsApp (Línea 1 / Línea 2)
+    │   │   └── product-detail/                  ← Detalle de producto y variantes
+    │   │       ├── ProductoDetalleModal.jsx     ← Modal orquestador de producto
+    │   │       ├── useProductoDetalleVariants.js ← Hook para gestión síncrona de modelo, color y stock
     │   │       ├── ProductoGallery.jsx          ← Galería de fotos con miniaturas
-    │   │       ├── ProductoVariantSelector.jsx  ← Píldoras de modelos y swatches de colores
-    │   │       └── ProductoPurchaseBar.jsx      ← Contador de unidades y botón de agregar
+    │   │       ├── ProductoVariantSelector.jsx  ← Selector orquestador de variantes
+    │   │       ├── VariantModelPills.jsx        ← Píldoras de modelos de smartphones compatibles
+    │   │       ├── VariantColorSwatches.jsx     ← Swatches táctiles de colores con muestra hex
+    │   │       └── ProductoPurchaseBar.jsx      ← Contador de unidades y botón táctil de agregar
     │   │
     │   ├── catalogos/                           ← Sub-componentes específicos de Catálogos
     │   │   ├── NuevaCategoriaForm.jsx           ← Formulario aislado para alta de categorías

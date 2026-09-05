@@ -1,17 +1,17 @@
-import React from 'react';
-import { Smartphone, Check } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { Smartphone } from 'lucide-react';
+import { DevicePill } from './DevicePill';
 
 /**
- * Selector de Dispositivo / Modelo de Celular estilo BURGA & CASETiFY
- * Permite al usuario filtrar en 1 clic el catálogo para su modelo exacto de teléfono.
+ * Selector de Dispositivo / Modelo de Celular estilo BURGA & CASETiFY.
+ * Responsabilidad: Filtrar en 1 clic el catálogo para el modelo exacto de teléfono.
  */
 export function TiendaDeviceSelector({
   productos = [],
   selectedDeviceModel = 'ALL',
   onSelectDeviceModel,
 }) {
-  // Extraer modelos dinámicos reales de los productos del inventario
-  const availableModels = React.useMemo(() => {
+  const availableModels = useMemo(() => {
     const set = new Set();
     const priority = [
       'iPhone 16 Pro Max',
@@ -48,6 +48,7 @@ export function TiendaDeviceSelector({
       }}
     >
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.4rem' }}>
+        {/* Cabecera del Selector */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Smartphone size={17} style={{ color: 'var(--brand-gold)' }} />
@@ -84,7 +85,7 @@ export function TiendaDeviceSelector({
           )}
         </div>
 
-        {/* Píldoras de Modelos con desplazamiento horizontal suave */}
+        {/* Píldoras de Modelos */}
         <div
           style={{
             display: 'flex',
@@ -95,63 +96,20 @@ export function TiendaDeviceSelector({
             scrollbarWidth: 'none',
           }}
         >
-          {/* Opción Todos */}
-          <button
-            type="button"
+          <DevicePill
+            label="Todos los Modelos"
+            isSelected={selectedDeviceModel === 'ALL'}
             onClick={() => onSelectDeviceModel('ALL')}
-            className="apple-btn-tactile"
-            style={{
-              padding: '0.45rem 1rem',
-              borderRadius: '999px',
-              border: selectedDeviceModel === 'ALL' ? '1.5px solid var(--brand-gold)' : '1px solid var(--border-color)',
-              backgroundColor: selectedDeviceModel === 'ALL' ? 'var(--brand-gold)' : 'var(--bg-card)',
-              color: selectedDeviceModel === 'ALL' ? '#111' : 'var(--text-secondary)',
-              fontSize: '0.78rem',
-              fontWeight: selectedDeviceModel === 'ALL' ? 800 : 600,
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              flexShrink: 0,
-              transition: 'all 0.15s ease',
-            }}
-          >
-            {selectedDeviceModel === 'ALL' && <Check size={13} />}
-            <span>Todos los Modelos</span>
-          </button>
+          />
 
-          {/* Modelos Dinámicos */}
-          {availableModels.map((modelName) => {
-            const isSelected = selectedDeviceModel === modelName;
-            return (
-              <button
-                key={modelName}
-                type="button"
-                onClick={() => onSelectDeviceModel(modelName)}
-                className="apple-btn-tactile"
-                style={{
-                  padding: '0.45rem 1rem',
-                  borderRadius: '999px',
-                  border: isSelected ? '1.5px solid var(--brand-gold)' : '1px solid var(--border-color)',
-                  backgroundColor: isSelected ? 'var(--brand-gold)' : 'var(--bg-card)',
-                  color: isSelected ? '#111' : 'var(--text-secondary)',
-                  fontSize: '0.78rem',
-                  fontWeight: isSelected ? 800 : 600,
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  flexShrink: 0,
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                {isSelected && <Check size={13} />}
-                <span>{modelName}</span>
-              </button>
-            );
-          })}
+          {availableModels.map((modelName) => (
+            <DevicePill
+              key={modelName}
+              label={modelName}
+              isSelected={selectedDeviceModel === modelName}
+              onClick={() => onSelectDeviceModel(modelName)}
+            />
+          ))}
         </div>
       </div>
     </section>

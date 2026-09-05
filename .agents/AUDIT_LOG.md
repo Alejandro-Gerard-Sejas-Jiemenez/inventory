@@ -1171,6 +1171,82 @@
 - **Compilación Maven local:** `./mvnw.cmd test-compile` → **`BUILD SUCCESS`** en 3.3s.
 - **Git status:** Verificado. `registro_errores_solucionados.md` excluido de Git.
 
+---
+
+## Bloque 37: Descomposición Exhaustiva Carpeta por Carpeta bajo el Principio de Responsabilidad Única (SRP)
+
+| Campo | Valor |
+|---|---|
+| **ID Tarea** | `REFACTOR-TIENDA-SRP-FOLDER-BY-FOLDER` |
+| **Fecha** | 2026-09-04 |
+| **Módulos Afectados** | Frontend (`components/tienda/` en 5 subdominios: `catalog/`, `cart/`, `landing/`, `layout/`, `product-detail/`) |
+| **Skills Aplicadas** | `clean-code`, `react-modern-frontend`, `ui-ux-usability`, `git-workflow` |
+| **Estado** | ✅ COMPLETADO |
+
+### Fase 1: ESPECIFICACIÓN & AUDITORÍA
+- Auditoría línea por línea de todos los archivos del módulo `components/tienda/` identificando sobrecarga de responsabilidades en componentes clave:
+  - `ProductoCard.jsx`: 369 líneas (cálculo de stock, extracción de variantes, imagen, badges, cuerpo y botón de compra).
+  - `TiendaLandingHero.jsx`: 287 líneas (copys editoriales, titular con gradiente fire, CTAs, fotografía real, card de exhibición y aura de brillo).
+  - `CheckoutWhatsAppModal.jsx`: 226 líneas (estado, cálculo de totales, desglose de items, selector de línea y callouts).
+  - `CarritoDrawer.jsx`: 225 líneas (backdrop, estado vacío, listado de items y footer con totales/garantía).
+  - `TiendaHeader.jsx`: 221 líneas (emblema de marca, categorías con scroll, tema, bolsa y panel admin).
+  - `TiendaFooter.jsx`: 212 líneas (4 columnas de índices y derechos).
+  - `FeaturedCaseCard.jsx`: 202 líneas (bloque fotográfico y bloque de información/acciones).
+  - `CarritoItem.jsx`: 170 líneas (atributos de modelo/color y control de cantidad con límites de stock).
+  - `ProductoVariantSelector.jsx`: 166 líneas (píldoras de modelos y swatches de colores).
+  - `ProductoDetalleModal.jsx`: 270 líneas (lógica síncrona de resolución de variantes mezclada con layout modal).
+
+### Fase 2: IMPLEMENTACIÓN ATÓMICA
+1. **Dominio `catalog/`:**
+   - `useProductoCardVariants.js`: Hook para abstraer stock total, estado agotado, modelos disponibles y mapa de colores.
+   - `CardThumbnail.jsx`: Contenedor óptico de fotografía con fallback y micro-insignias flotantes ("Agotado", categoría).
+   - `CardVariantSwatches.jsx`: Título, modelos compatibles, material y círculos de color.
+   - `CardBottomBar.jsx`: Precio unitario y botón táctil "Agregar / Listo / Agotado".
+   - `ProductoCard.jsx`: Reducido de 369 a 83 líneas como orquestador puro.
+   - `DevicePill.jsx`: Componente atómico para botones de modelos con icono check.
+   - `TiendaDeviceSelector.jsx`: Reducido a 111 líneas usando `DevicePill`.
+2. **Dominio `cart/`:**
+   - `CheckoutOrderSummary.jsx`: Desglose estructurado de artículos con modelos, colores y subtotales.
+   - `CheckoutLineSelector.jsx`: Selector de dos líneas de WhatsApp (Línea 1 y Línea 2).
+   - `CheckoutWhatsAppModal.jsx`: Reducido de 226 a 117 líneas.
+   - `CarritoEmptyState.jsx`: Mensaje visual y botón de acción para bolsa vacía.
+   - `CarritoDrawerFooter.jsx`: Resumen de totales, sello de garantía y botón de checkout.
+   - `CarritoDrawer.jsx`: Reducido de 225 a 143 líneas.
+   - `CarritoItemAttributes.jsx`: Muestra de modelo y swatch de color seleccionado.
+   - `CarritoItemQuantityStepper.jsx`: Controles de incremento/decremento con validación de límite de stock.
+   - `CarritoItem.jsx`: Reducido de 170 a 105 líneas.
+3. **Dominio `landing/`:**
+   - `HeroCopy.jsx`: Titular con gradiente fire, propuesta de valor y botones CTA.
+   - `HeroShowcaseVisual.jsx`: Tarjeta de exhibición con foto real de alta resolución, badge flotante y aura luminosa.
+   - `TiendaLandingHero.jsx`: Reducido de 287 a 54 líneas.
+   - `FeaturedCaseImage.jsx`: Tarjeta fotográfica con proporción óptica y sombras bento.
+   - `FeaturedCaseInfo.jsx`: Especificaciones técnicas, precio y botones de acción.
+   - `FeaturedCaseCard.jsx`: Reducido de 202 a 48 líneas.
+   - `CategoryGridCard.jsx`: Tarjeta de categoría con icono reactivo y tag de estilo.
+   - `TiendaCategoryGrid.jsx`: Reducido de 169 a 81 líneas.
+4. **Dominio `layout/`:**
+   - `TiendaHeaderBrand.jsx`: Emblema con logo y títulos oficiales de la tienda.
+   - `TiendaHeaderCategories.jsx`: Enlaces horizontales de navegación a categorías activas.
+   - `TiendaHeaderActions.jsx`: Switch de tema, botón Mi Bolsa con badge dinámico y botón Panel Admin.
+   - `TiendaHeader.jsx`: Reducido de 221 a 62 líneas.
+   - `FooterBrandCol.jsx`: Identidad oficial y sello de garantía.
+   - `FooterCategoriesCol.jsx`: Índice de enlaces a categorías del catálogo.
+   - `FooterContactCol.jsx`: Atención directa y enlace oficial a WhatsApp.
+   - `TiendaFooter.jsx`: Reducido de 212 a 113 líneas.
+5. **Dominio `product-detail/`:**
+   - `useProductoDetalleVariants.js`: Hook para gestión síncrona de modelo, color, variante JPA, stock y cantidad.
+   - `VariantModelPills.jsx`: Píldoras de modelos de celulares compatibles.
+   - `VariantColorSwatches.jsx`: Swatches táctiles de colores con código hex.
+   - `ProductoVariantSelector.jsx`: Reducido de 166 a 63 líneas.
+   - `ProductoDetalleModal.jsx`: Reducido de 270 a 160 líneas, desacoplando la lógica de negocio en el custom hook.
+
+### Fase 3: VERIFICACIÓN
+- **Distribución de líneas:** Ningún archivo supera las 160 líneas de código; promedio de ~75 líneas por archivo.
+- **Build Frontend (`npm run build`):** **`0 ERRORS`** en 1.63s (1933 módulos transformados, 455.76 kB).
+- **Compilación Maven (`./mvnw.cmd test-compile`):** **`BUILD SUCCESS`** en 3.38s.
+- **Git status:** Verificado. `registro_errores_solucionados.md` excluido de Git.
+
+
 
 
 

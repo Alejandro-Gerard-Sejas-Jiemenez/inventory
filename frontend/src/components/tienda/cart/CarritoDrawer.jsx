@@ -1,11 +1,12 @@
 import React from 'react';
-import { ShoppingBag, X, ArrowRight, ShieldCheck } from 'lucide-react';
-import { Button } from '../../common/Button';
+import { ShoppingBag, X } from 'lucide-react';
 import { CarritoItem } from './CarritoItem';
+import { CarritoEmptyState } from './CarritoEmptyState';
+import { CarritoDrawerFooter } from './CarritoDrawerFooter';
 
 /**
  * Drawer deslizante lateral para la visualización y gestión de la bolsa de compras.
- * Responsabilidad: Vista general de la bolsa, cálculo de totales y checkout.
+ * Responsabilidad: Vista general de la bolsa y orquestador del listado de productos y checkout.
  */
 export function CarritoDrawer({
   isOpen,
@@ -125,43 +126,7 @@ export function CarritoDrawer({
         {/* Lista de Productos en el Carrito */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
           {cartItems.length === 0 ? (
-            <div
-              style={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                color: 'var(--text-muted)',
-                gap: '0.8rem',
-              }}
-            >
-              <div
-                style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: 'var(--radius-md)',
-                  backgroundColor: 'var(--bg-secondary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <ShoppingBag size={28} opacity={0.4} />
-              </div>
-              <div>
-                <strong style={{ color: 'var(--text-primary)', fontSize: '0.95rem', display: 'block' }}>
-                  Tu bolsa está vacía
-                </strong>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                  Explora el catálogo y agrega las fundas que desees comprar
-                </span>
-              </div>
-              <Button variant="brand" size="sm" onClick={onClose} style={{ marginTop: '0.5rem' }}>
-                Ver Fundas
-              </Button>
-            </div>
+            <CarritoEmptyState onClose={onClose} />
           ) : (
             cartItems.map((item) => (
               <CarritoItem
@@ -176,45 +141,7 @@ export function CarritoDrawer({
 
         {/* Footer con Resumen y Botón de Checkout */}
         {cartItems.length > 0 && (
-          <div
-            style={{
-              padding: '1.2rem',
-              borderTop: '1px solid var(--border-color)',
-              backgroundColor: 'var(--bg-secondary)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.8rem',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Subtotal estimado:</span>
-              <span style={{ color: 'var(--text-white)', fontWeight: 600, fontSize: '0.95rem' }}>
-                Bs. {Number(total).toFixed(2)}
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed var(--border-color)', paddingTop: '0.6rem' }}>
-              <span style={{ color: 'var(--text-white)', fontSize: '1.05rem', fontWeight: 800 }}>Total a Pagar:</span>
-              <span style={{ color: 'var(--brand-gold)', fontSize: '1.35rem', fontWeight: 800 }}>
-                Bs. {Number(total).toFixed(2)}
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.74rem', color: 'var(--brand-green)', justifyContent: 'center' }}>
-              <ShieldCheck size={14} />
-              <span>Coordinación directa y confirmación por WhatsApp</span>
-            </div>
-
-            <Button
-              variant="brand"
-              size="lg"
-              icon={ArrowRight}
-              onClick={onCheckout}
-              style={{ width: '100%', justifyContent: 'center', fontWeight: 800, fontSize: '0.95rem', padding: '0.85rem' }}
-            >
-              Completar Datos y Pedir por WhatsApp
-            </Button>
-          </div>
+          <CarritoDrawerFooter total={total} onCheckout={onCheckout} />
         )}
       </div>
     </div>
