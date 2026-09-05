@@ -31,6 +31,7 @@ export function useTiendaCatalog(productos = []) {
   const [search, setSearch] = useState('');
   const [selectedCategoria, setSelectedCategoria] = useState('ALL');
   const [selectedMarca, setSelectedMarca] = useState('ALL');
+  const [selectedDeviceModel, setSelectedDeviceModel] = useState('ALL');
   const [sortBy, setSortBy] = useState('featured');
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 8;
@@ -64,7 +65,23 @@ export function useTiendaCatalog(productos = []) {
       });
     }
 
-    // 3. Filtro de Búsqueda por Texto
+    // 3. Filtro por Modelo de Celular (Inspiración BURGA)
+    if (selectedDeviceModel !== 'ALL') {
+      const target = selectedDeviceModel.toLowerCase().trim();
+      list = list.filter((p) => {
+        const modRoot = p.modelo?.nombre?.toLowerCase() || '';
+        if (modRoot.includes(target)) return true;
+        if (Array.isArray(p.variantes)) {
+          return p.variantes.some((v) => {
+            const vMod = v.modelo?.nombre?.toLowerCase() || '';
+            return vMod.includes(target);
+          });
+        }
+        return false;
+      });
+    }
+
+    // 4. Filtro de Búsqueda por Texto
     if (search.trim()) {
       const q = search.toLowerCase().trim();
       list = list.filter((p) => {
@@ -106,7 +123,7 @@ export function useTiendaCatalog(productos = []) {
     }
 
     return list;
-  }, [productos, selectedCategoria, selectedMarca, search, sortBy]);
+  }, [productos, selectedCategoria, selectedMarca, selectedDeviceModel, search, sortBy]);
 
   const totalPages = Math.max(1, Math.ceil(filteredProductos.length / PAGE_SIZE));
   
@@ -118,6 +135,7 @@ export function useTiendaCatalog(productos = []) {
   const handleResetCatalog = () => {
     setSelectedCategoria('ALL');
     setSelectedMarca('ALL');
+    setSelectedDeviceModel('ALL');
     setSearch('');
     setSortBy('featured');
     setCurrentPage(1);
@@ -132,6 +150,8 @@ export function useTiendaCatalog(productos = []) {
     setSelectedCategoria,
     selectedMarca,
     setSelectedMarca,
+    selectedDeviceModel,
+    setSelectedDeviceModel,
     sortBy,
     setSortBy,
     currentPage,

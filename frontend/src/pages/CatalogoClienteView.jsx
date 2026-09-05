@@ -1,11 +1,16 @@
 import React, { useState, useMemo } from 'react';
 import { ShieldCheck, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
+import { TiendaAnnouncementBar } from '../components/tienda/TiendaAnnouncementBar';
 import { TiendaHeader } from '../components/tienda/TiendaHeader';
 import { TiendaLandingHero } from '../components/tienda/TiendaLandingHero';
+import { TiendaDeviceSelector } from '../components/tienda/TiendaDeviceSelector';
 import { TiendaEditorialFeatured } from '../components/tienda/TiendaEditorialFeatured';
 import { TiendaCategoryGrid } from '../components/tienda/TiendaCategoryGrid';
 import { TiendaCategoryNav } from '../components/tienda/TiendaCategoryNav';
 import { TiendaSearchCapsule } from '../components/tienda/TiendaSearchCapsule';
+import { TiendaCaseAnatomy } from '../components/tienda/TiendaCaseAnatomy';
+import { TiendaSocialProof } from '../components/tienda/TiendaSocialProof';
+import { TiendaWhatsAppBanner } from '../components/tienda/TiendaWhatsAppBanner';
 import { TiendaManifesto } from '../components/tienda/TiendaManifesto';
 import { TiendaTrustSignals } from '../components/tienda/TiendaTrustSignals';
 import { TiendaFooter } from '../components/tienda/TiendaFooter';
@@ -17,8 +22,8 @@ import { useTiendaCatalog } from '../hooks/useTiendaCatalog';
 
 /**
  * Vista Principal del Catálogo de Clientes (E-commerce & Landing Page).
- * Responsabilidad: Presentación de la Landing Page inspirada en Stitch Tech Accessories
- * combinada con el catálogo interactivo y carrito de compras en tiempo real.
+ * Responsabilidad: Presentación de la Landing Page inspirada en CASETiFY & BURGA
+ * con selector rápido de modelos, desglose técnico de protección y carrito interactivo en tiempo real.
  */
 export function CatalogoClienteView({
   productos = [],
@@ -77,7 +82,10 @@ export function CatalogoClienteView({
         transition: 'background 0.3s ease, color 0.3s ease',
       }}
     >
-      {/* 1. Header Translúcido */}
+      {/* 1. Top Announcement Ribbon (Estilo CASETiFY) */}
+      <TiendaAnnouncementBar />
+
+      {/* 2. Header Translúcido */}
       <TiendaHeader
         theme={catalog.theme}
         onToggleTheme={catalog.toggleTheme}
@@ -111,16 +119,26 @@ export function CatalogoClienteView({
         </div>
       )}
 
-      {/* 2. Hero Landing Oficial (Stitch Minimalist Tech Accessories) */}
+      {/* 3. Hero Landing Oficial estilo CASETiFY & BURGA */}
       <TiendaLandingHero
         onExploreCatalog={handleExploreCatalog}
         onExploreFeatured={handleExploreFeatured}
       />
 
-      {/* 3. Productos Destacados Editoriales (Titanium Case & Audio Hi-Res) */}
+      {/* 4. Selector Rápido de Dispositivo / Modelo (Patrón Insignia de BURGA) */}
+      <TiendaDeviceSelector
+        productos={productos}
+        selectedDeviceModel={catalog.selectedDeviceModel}
+        onSelectDeviceModel={(modelName) => {
+          catalog.setSelectedDeviceModel(modelName);
+          catalog.setCurrentPage(1);
+        }}
+      />
+
+      {/* 5. Productos Destacados Editoriales (Titanium Case & Audio Hi-Res) */}
       <TiendaEditorialFeatured onExploreCatalog={handleExploreCatalog} />
 
-      {/* 4. Cuadrícula de Categorías Oficial */}
+      {/* 6. Cuadrícula de Categorías Oficial */}
       <TiendaCategoryGrid
         categorias={categorias}
         selectedCategoria={catalog.selectedCategoria}
@@ -130,7 +148,7 @@ export function CatalogoClienteView({
         }}
       />
 
-      {/* 5. Barra de Navegación Centrada por Categorías Activas */}
+      {/* 7. Barra de Navegación Centrada por Categorías Activas */}
       <TiendaCategoryNav
         categorias={categorias}
         selectedCategoria={catalog.selectedCategoria}
@@ -173,8 +191,11 @@ export function CatalogoClienteView({
             {catalog.selectedMarca !== 'ALL' && (
               <span> de <strong style={{ color: 'var(--brand-gold)' }}>{marcas.find((m) => String(m.idMarca) === String(catalog.selectedMarca))?.nombre}</strong></span>
             )}
+            {catalog.selectedDeviceModel !== 'ALL' && (
+              <span> para <strong style={{ color: 'var(--brand-gold)' }}>{catalog.selectedDeviceModel}</strong></span>
+            )}
           </div>
-          {(catalog.search || catalog.selectedMarca !== 'ALL' || catalog.selectedCategoria !== 'ALL' || catalog.sortBy !== 'featured') && (
+          {(catalog.search || catalog.selectedMarca !== 'ALL' || catalog.selectedCategoria !== 'ALL' || catalog.selectedDeviceModel !== 'ALL' || catalog.sortBy !== 'featured') && (
             <button
               type="button"
               onClick={catalog.handleResetCatalog}
@@ -331,13 +352,22 @@ export function CatalogoClienteView({
         )}
       </main>
 
-      {/* 6. Manifiesto de Marca Oficial */}
+      {/* 8. Anatomía de Protección en 4 Capas (Ingeniería CASETiFY) */}
+      <TiendaCaseAnatomy />
+
+      {/* 9. Reseñas y Calificaciones de Clientes (Social Proof estilo BURGA) */}
+      <TiendaSocialProof />
+
+      {/* 10. Banner de Asistencia Directa por WhatsApp */}
+      <TiendaWhatsAppBanner />
+
+      {/* 11. Manifiesto de Marca Oficial */}
       <TiendaManifesto />
 
-      {/* 7. Señales de Confianza y Garantía */}
+      {/* 12. Señales de Confianza y Garantía */}
       <TiendaTrustSignals />
 
-      {/* 8. Footer Oficial */}
+      {/* 13. Footer Oficial */}
       <TiendaFooter />
 
       {/* 7. Drawer de Carrito */}
